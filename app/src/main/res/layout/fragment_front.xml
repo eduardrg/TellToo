@@ -1,0 +1,109 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.bauble_app.bauble.FrontFragment">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/front_feat">
+            <ImageView
+                android:id="@+id/front_img_feat_backg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/front_apacaliptia"
+                android:adjustViewBounds="true" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/front_txt_feat_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Post Apocalyptia"
+                    android:textColor="@color/colorBrandHighlight"
+                    android:textSize="40dp"/>
+                <TextView
+                    android:id="@+id/front_txt_feat_auth"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="catmium"
+                    android:textColor="@color/colorBrandHighlight"
+                    android:textAlignment="center"
+                    android:textSize="20dp"/>
+            </LinearLayout>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/front_feat"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/front_title_collection"
+                android:textSize="@dimen/section_title_textsize"
+                android:textStyle="bold"
+                android:padding="5dp"/>
+
+            <HorizontalScrollView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:background="@color/colorAccent"
+                        android:layout_margin="5dp"/>
+
+                    <Button
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:background="@color/colorAccent"
+                        android:layout_margin="5dp"/>
+
+                    <Button
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:background="@color/colorAccent"
+                        android:layout_margin="5dp"/>
+
+                    <Button
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:background="@color/colorAccent"
+                        android:layout_margin="5dp"/>
+
+                    <Button
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:background="@color/colorAccent"
+                        android:layout_margin="5dp"/>
+
+                    <Button
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:background="@color/colorAccent"
+                        android:layout_margin="5dp"/>
+
+                </LinearLayout>
+            </HorizontalScrollView>
+        </LinearLayout>
+    </RelativeLayout>
+
+
+</FrameLayout>

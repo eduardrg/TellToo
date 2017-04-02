@@ -5,9 +5,16 @@
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
 
+    <!--All the navbar stings-->
     <string name="title_front">Front</string>
     <string name="title_explore">Explore</string>
     <string name="title_create">Create</string>
     <string name="title_me">Me</string>
     <string name="title_messages">Messages</string>
+
+    <!--String for Feature page (Front)-->
+    <string name="front_title_collection">Collections</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
