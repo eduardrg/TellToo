@@ -15,6 +15,11 @@
     <!--String for Feature page (Front)-->
     <string name="front_title_collection">Collections</string>
 
+    <!--Strings for create page-->
+    <string name="create_btn_save_txt">Save</string>
+    <string name="create_btn_chain_txt">Chain</string>
+    <string name="create_btn_reply_txt">Reply</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
