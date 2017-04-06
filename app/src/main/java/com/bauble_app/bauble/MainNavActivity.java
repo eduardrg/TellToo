@@ -8,7 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-public class MainNavActivity extends AppCompatActivity {
+public class MainNavActivity extends MainActivity {
 
     private TextView mTextMessage;
     private FragmentManager fragManager;
@@ -35,7 +35,10 @@ public class MainNavActivity extends AppCompatActivity {
                             .commit();
                     return true;
                 case R.id.navigation_me:
-                    mTextMessage.setText(R.string.title_me);
+                    mTextMessage.setText("");
+                    fragManager.beginTransaction()
+                            .replace(R.id.content, new SignUpFragment())
+                            .commit();
                     return true;
                 case R.id.navigation_messages:
                     mTextMessage.setText(R.string.title_messages);
@@ -59,6 +62,10 @@ public class MainNavActivity extends AppCompatActivity {
         mTextMessage = (TextView) findViewById(R.id.message);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+    }
+
+    public FragmentManager getMyFragManager() {
+        return this.fragManager;
     }
 
 }
