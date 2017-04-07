@@ -27,7 +27,8 @@ public class MainNavActivity extends AppCompatActivity {
                             .commit();
                     return true;
                 case R.id.navigation_explore:
-                    mTextMessage.setText(R.string.title_explore);
+                    fragManager.beginTransaction().replace(R.id.content, new
+                            ExploreFragment()).commit();
                     return true;
                 case R.id.navigation_create:
                     mTextMessage.setText(R.string.title_create);
