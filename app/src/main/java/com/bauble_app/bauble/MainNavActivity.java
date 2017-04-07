@@ -9,7 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-public class MainNavActivity extends AppCompatActivity {
+public class MainNavActivity extends MainActivity {
 
     private TextView mTextMessage;
     private FragmentManager fragManager;
@@ -21,7 +21,6 @@ public class MainNavActivity extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_front:
-                    mTextMessage.setText(R.string.title_front);
                     fragManager.beginTransaction()
                             .replace(R.id.content, new FrontFragment())
                             .commit();
@@ -31,16 +30,19 @@ public class MainNavActivity extends AppCompatActivity {
                             ExploreFragment()).commit();
                     return true;
                 case R.id.navigation_create:
-                    mTextMessage.setText(R.string.title_create);
                     fragManager.beginTransaction()
                             .replace(R.id.content, new CreateFragment())
                             .commit();
                     return true;
                 case R.id.navigation_me:
-                    mTextMessage.setText(R.string.title_me);
+                    fragManager.beginTransaction()
+                            .replace(R.id.content, new SignUpFragment())
+                            .commit();
                     return true;
                 case R.id.navigation_messages:
-                    mTextMessage.setText(R.string.title_messages);
+                    fragManager.beginTransaction()
+                            .replace(R.id.content, new MessagesFragment())
+                            .commit();
                     return true;
             }
             return false;
@@ -58,9 +60,12 @@ public class MainNavActivity extends AppCompatActivity {
                 .replace(R.id.content, new FrontFragment())
                 .commit();
 
-        mTextMessage = (TextView) findViewById(R.id.message);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+    }
+
+    public FragmentManager getMyFragManager() {
+        return this.fragManager;
     }
 
 }

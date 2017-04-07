@@ -1,0 +1,133 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             xmlns:app="http://schemas.android.com/apk/res-auto"
+             tools:context="com.bauble_app.bauble.FrontFragment"
+    >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        >
+
+        <TextView
+            android:id="@+id/sign_in_page_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/sign_in_page_title"
+            android:textSize="18sp"
+            android:textColor="@color/colorPrimary"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/sign_in_page_desc"
+            android:text="@string/sign_in_page_desc"
+            android:layout_below="@id/sign_in_page_title"
+            android:layout_marginTop="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:textColor="@color/colorPrimary"
+            />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="16dp"
+            android:layout_below="@id/sign_in_page_desc"
+            android:gravity="top">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/sign_in_name_container">
+
+                <EditText
+                    android:id="@+id/sign_in_name_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="textPersonName"
+                    android:hint="@string/sign_in_enter_name"/>
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/sign_in_pass_container"
+                android:layout_below="@id/sign_in_name_container"
+                app:passwordToggleEnabled="true">
+
+                <EditText
+                    android:id="@+id/sign_in_pass_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="textPassword"
+                    android:hint="@string/sign_in_password"/>
+
+            </android.support.design.widget.TextInputLayout>
+
+            <Switch
+                android:id="@+id/sign_in_remember_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/sign_in_pass_container"
+                android:text="@string/remember_me"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="16dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/sign_in_pass_container"
+                android:text="Forgot password?"
+                android:layout_alignTop="@id/sign_in_remember_switch"
+                android:layout_alignBottom="@id/sign_in_remember_switch"
+                android:layout_toLeftOf="@id/sign_in_remember_switch"
+                android:textAlignment="center"
+                android:gravity="center"
+                android:textColor="#0000FF"/>
+
+            <LinearLayout
+                android:id="@+id/sign_in_buttons_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_below="@id/sign_in_remember_switch">
+
+                <Button
+                    android:id="@+id/sign_in_google_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="60dp"
+                    android:text="Google sign-in"
+                    android:layout_marginTop="16dp"
+                    android:layout_weight="1"/>
+
+                <Button
+                    android:id="@+id/sign_in_submit_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="60dp"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/sign_in_button_text"
+                    android:layout_weight="1"/>
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/sign_in_later"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_alignParentBottom="true"
+                android:text="@string/sign_in_later"
+                android:gravity="center"
+                />
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</FrameLayout>
