@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "802705676917",
+    "firebase_url": "https://bauble-90a48.firebaseio.com",
+    "project_id": "bauble-90a48",
+    "storage_bucket": "bauble-90a48.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:802705676917:android:8e1661ab38d43c79",
+        "android_client_info": {
+          "package_name": "com.bauble_app.bauble"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "802705676917-204v3fsk2nlf8e3u2auta83ogt482utb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bauble_app.bauble",
+            "certificate_hash": "a7242e8be566c47eb4bac3e479a1728a75791481"
+          }
+        },
+        {
+          "client_id": "802705676917-1b6b74bd3rgeokq20n7rcv2pava17lk8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCMR6zQjT_UfniTegXnbFF6q7WWoyGT6fo"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "802705676917-1b6b74bd3rgeokq20n7rcv2pava17lk8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,17 +1,12 @@
 package com.bauble_app.bauble;
 
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
 
 /**
  * Created by princ on 4/6/2017.
