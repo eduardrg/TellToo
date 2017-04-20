@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!--search functionality-->
+    <item android:id="@+id/action_search"
+        android:title="@string/title_search"
+        android:icon="@drawable/ic_search"
+        app:showAsAction="always"
+        app:actionViewClass="android.support.v7.widget.SearchView"/>
+
+    <!-- "Check Message", should appear as action button if possible -->
+    <item
+        android:id="@+id/action_message"
+        android:icon="@drawable/ic_action_nav_messages"
+        android:title="@string/title_messages"
+        app:showAsAction="ifRoom"/>
+
+    <!-- Settings, should always be in the overflow -->
+    <item android:id="@+id/action_settings"
+        android:title="@string/title_settings"
+        app:showAsAction="never"/>
+
+</menu>
