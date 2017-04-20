@@ -29,7 +29,7 @@ public class MainNavActivity extends MainActivity {
             switch (item.getItemId()) {
                 case R.id.navigation_front:
                     fragManager.beginTransaction()
-                            .replace(R.id.content, new FrontFragment())
+                            .replace(R.id.content, new FeedFragment())
                             .commit();
                     return true;
                 case R.id.navigation_explore:
@@ -48,7 +48,7 @@ public class MainNavActivity extends MainActivity {
                     return true;
                 case R.id.navigation_messages:
                     fragManager.beginTransaction()
-                            .replace(R.id.content, new MessagesFragment())
+                            .replace(R.id.content, new FrontFragment())
                             .commit();
                     return true;
             }
@@ -67,7 +67,7 @@ public class MainNavActivity extends MainActivity {
 
         fragManager = getSupportFragmentManager();
         fragManager.beginTransaction()
-                .replace(R.id.content, new FrontFragment())
+                .replace(R.id.content, new FeedFragment())
                 .commit();
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);

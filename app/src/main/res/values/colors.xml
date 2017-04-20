@@ -11,4 +11,6 @@
     <color name="colorBrandHighlight">#FFFFFF</color>
     <!--Gray-->
     <color name="colorBrandDisabled">#E2E2E2</color>
+
+    <color name="colorFeedListItem">#e0e0e0</color>
 </resources>

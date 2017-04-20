@@ -4,4 +4,7 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
 
     <dimen name="section_title_textsize">20dp</dimen>
+    <dimen name="listitem_feed_padding">10dp</dimen>
+    <dimen name="listitem_feed_margin">10dp</dimen>
+    <dimen name="listitem_feed_stat_margin">5dp</dimen>
 </resources>
