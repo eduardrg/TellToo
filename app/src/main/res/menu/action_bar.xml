@@ -6,7 +6,7 @@
     <item android:id="@+id/action_search"
         android:title="@string/title_search"
         android:icon="@drawable/ic_search"
-        app:showAsAction="always"
+        app:showAsAction="always|collapseActionView"
         app:actionViewClass="android.support.v7.widget.SearchView"/>
 
     <!-- "Check Message", should appear as action button if possible -->
@@ -14,7 +14,7 @@
         android:id="@+id/action_message"
         android:icon="@drawable/ic_action_nav_messages"
         android:title="@string/title_messages"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="always"/>
 
     <!-- Settings, should always be in the overflow -->
     <item android:id="@+id/action_settings"
