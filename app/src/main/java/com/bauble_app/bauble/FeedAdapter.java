@@ -18,7 +18,7 @@ public class FeedAdapter extends BaseAdapter {
     private List<StoryObject> data;
     private static LayoutInflater inflater = null;
 
-    public FeedAdapter(Context context, ArrayList<StoryObject> data) {
+    public FeedAdapter(Context context, List<StoryObject> data) {
         // TODO Auto-generated constructor stub
         this.context = context;
         this.data = data;
