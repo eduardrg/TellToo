@@ -1,6 +1,8 @@
 package com.bauble_app.bauble;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,9 +19,12 @@ public class FeedAdapter extends BaseAdapter {
     private Context context;
     private List<StoryObject> data;
     private static LayoutInflater inflater = null;
+    private Typeface tf;
 
     public FeedAdapter(Context context, List<StoryObject> data) {
         // TODO Auto-generated constructor stub
+        // Initialize font
+        this.tf = Typeface.createFromAsset(context.getAssets(), "fonts/unused/Lato-Italic.ttf");
         this.context = context;
         this.data = data;
         inflater = (LayoutInflater) context
@@ -54,6 +59,8 @@ public class FeedAdapter extends BaseAdapter {
 
         TextView title = (TextView) vi.findViewById(R.id.feed_listitem_title);
         title.setText(data.get(position).getTitle());
+        // Set font
+        title.setTypeface(tf);
 
         return vi;
     }

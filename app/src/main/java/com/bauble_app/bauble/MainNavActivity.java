@@ -101,7 +101,7 @@ public class MainNavActivity extends MainActivity {
         searchView.setIconifiedByDefault(false);
         ActionBar.LayoutParams params = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT);
         searchView.setLayoutParams(params);
-        searchItem.expandActionView();
+        // searchItem.expandActionView(); // Start with search open
 
 
         return true;

@@ -9,6 +9,7 @@ import java.util.*;
 public class StoryObject {
     private int durration;
     private List<StoryObject> chains;
+    private StoryObject parent;
     private int expire;
     private int plays;
     private String title;
