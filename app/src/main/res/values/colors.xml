@@ -13,4 +13,15 @@
     <color name="colorBrandDisabled">#E2E2E2</color>
 
     <color name="colorFeedListItem">#e0e0e0</color>
+    <!--Blue Accent-->
+    <color name="colorBlueAccent">#7B83FF</color>
+    <!--Yellow Accent-->
+    <color name="colorYellowAccent">#FFDB4C</color>
+    <!--Gray Accent-->
+    <color name="colorGrayAccent">#979797</color>
+    <!--Dark Text-->
+    <color name="colorDarkText">#262626</color>
+    <!--Cherry Accent-->
+    <color name="colorCherryAccent">#FE4B4B</color>
+    <color name="colorWhite">#FFFFFF</color>
 </resources>

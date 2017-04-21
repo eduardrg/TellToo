@@ -1,0 +1,86 @@
+<RelativeLayout
+    android:layout_gravity="center"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.bauble_app.bauble.FrontFragment"
+    android:gravity="center|top"
+    android:layout_margin="55dp"
+>
+
+    <com.bauble_app.bauble.CustomText
+        android:id="@+id/forgot_page_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:text="@string/darn"
+        android:textAlignment="center"
+    />
+
+    <com.bauble_app.bauble.CustomText
+        android:id="@+id/forgot_page_desc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/forgot_page_title"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:text="@string/forgot_page_desc"
+        android:textAlignment="center"
+        android:textSize="13sp"/>
+
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/forgot_email_input_container"
+        android:layout_below="@id/forgot_page_desc"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp">
+
+        <EditText
+            android:id="@+id/forgot_email_input"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/edit_text_height"
+            android:ems="10"
+            android:inputType="textEmailAddress"
+            android:background="@drawable/edittext"
+            android:hint="@string/enter_your_email"/>
+
+    </android.support.design.widget.TextInputLayout>
+
+        <com.bauble_app.bauble.CustomButton
+            android:id="@+id/forgot_next_btn"
+            android:layout_width="match_parent"
+            android:layout_height="38dp"
+            android:background="@drawable/btn_signin"
+            android:minHeight="0dp"
+            android:minWidth="0dp"
+            android:text="Next"
+            android:layout_alignLeft="@id/forgot_email_input_container"
+            android:layout_alignRight="@id/forgot_email_input_container"
+            android:layout_below="@id/forgot_email_input_container"
+            android:orientation="horizontal"
+            android:paddingTop="7dp"
+            android:gravity="top|center"
+            android:textSize="17sp"
+            android:layout_marginTop="30dp"
+            />
+
+        <com.bauble_app.bauble.CustomButton
+            android:id="@+id/forgot_cancel_btn"
+            android:layout_width="match_parent"
+            android:layout_marginTop="30dp"
+            android:layout_height="38dp"
+            android:layout_below="@id/forgot_next_btn"
+            android:background="@drawable/btn_forgot"
+            android:layout_alignLeft="@id/forgot_email_input_container"
+            android:layout_alignRight="@id/forgot_email_input_container"
+            android:paddingTop="7dp"
+            android:gravity="top|center"
+            android:textSize="17sp"
+            android:text="Cancel"
+        />
+
+</RelativeLayout>

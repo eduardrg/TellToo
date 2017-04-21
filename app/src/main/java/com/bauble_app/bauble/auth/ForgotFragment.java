@@ -1,4 +1,4 @@
-package com.bauble_app.bauble;
+package com.bauble_app.bauble.auth;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -7,15 +7,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import com.bauble_app.bauble.R;
 
 /**
- * Created by princ on 4/6/2017.
+ * Created by princ on 4/19/2017.
  */
 
-public class SignInFragment extends Fragment {
+public class ForgotFragment extends Fragment {
     private FragmentManager fragManager;
 
-    public SignInFragment() {
+    public ForgotFragment() {
         // Required empty public constructor
     }
 
@@ -23,17 +24,18 @@ public class SignInFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_sign_in, container, false);
+        View v = inflater.inflate(R.layout.fragment_forgot, container, false);
 
-        fragManager = ((MainNavActivity) getActivity()).getMyFragManager();
-
-        Button signInLater = (Button) v.findViewById(R.id.sign_in_later);
-        signInLater.setOnClickListener(new View.OnClickListener() {
+        fragManager = getFragmentManager();
+        Button cancel = (Button) v.findViewById(R.id.forgot_cancel_btn);
+        cancel.setOnClickListener(new View.OnClickListener() {
             public void onClick(View btn) {
-                fragManager.beginTransaction().replace(R.id.content, new SignUpFragment())
+                fragManager.beginTransaction().replace(R.id.content, new AuthChoiceFragment())
                         .commit();
             }
         });
+
         return v;
     }
+
 }

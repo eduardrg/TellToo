@@ -1,157 +1,152 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             xmlns:app="http://schemas.android.com/apk/res-auto"
-             tools:context="com.bauble_app.bauble.FrontFragment"
+<RelativeLayout
+    android:layout_gravity="center"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.bauble_app.bauble.FrontFragment"
+    android:gravity="center|top"
+    android:layout_marginTop="60dp"
+    android:layout_marginLeft="60dp"
+    android:layout_marginRight="60dp"
+    android:layout_marginBottom="30dp"
     >
 
-    <RelativeLayout
-        android:layout_width="match_parent"
+    <com.bauble_app.bauble.CustomText
+        android:id="@+id/sign_up_page_title"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        >
+        android:layout_centerHorizontal="true"
+        android:text="@string/sign_up_page_title"
+        android:textAlignment="center"
+        />
 
-        <TextView
-            android:id="@+id/sign_up_page_title"
-            android:layout_width="match_parent"
+    <com.bauble_app.bauble.CustomText
+        android:id="@+id/sign_up_page_desc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/forgot_page_title"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:text="@string/sign_up_page_desc"
+        android:textAlignment="center"/>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/sign_up_page_title"
-            android:textSize="18sp"
-            android:textColor="@color/colorPrimary"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/sign_up_page_desc"
-            android:text="@string/sign_up_page_desc"
-            android:layout_below="@id/sign_up_page_title"
-            android:layout_marginTop="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginStart="16dp"
-            android:textColor="@color/colorPrimary"
-            />
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="16dp"
+            android:id="@+id/sign_up_name_input_container"
             android:layout_below="@id/sign_up_page_desc"
-            android:gravity="center">
+            android:layout_marginTop="40dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            >
 
-            <ImageButton
-                android:id="@+id/sign_up_refresh"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center"
-                android:adjustViewBounds="false"
-                android:background="@drawable/button_circle_background"
-                android:contentDescription=""
-                app:srcCompat="@drawable/ic_signup_refresh"/>
-
-            <TextView
-                android:id="@+id/sign_up_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="@string/name_input_hint"
-                android:gravity="center"
-                android:textAlignment="center"
-                android:text="@string/sign_up_default_name"
-                android:layout_toRightOf="@id/sign_up_refresh"
-                android:layout_toEndOf="@id/sign_up_refresh"
-                android:layout_alignTop="@id/sign_up_refresh"
-                android:layout_alignBottom="@id/sign_up_refresh"
-                />
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/sign_up_pass_input_container"
-                android:layout_below="@id/sign_up_refresh"
-                app:passwordToggleEnabled="true">
-
-                <EditText
-                    android:id="@+id/sign_up_pass_input"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:inputType="textPassword"
-                    android:hint="@string/enter_a_password"/>
-
-            </android.support.design.widget.TextInputLayout>
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/sign_up_email_input_container"
-                android:layout_below="@id/sign_up_pass_input_container">
-                <EditText
-                    android:id="@+id/sign_up_email_input"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:inputType="textEmailAddress"
-                    android:hint="@string/enter_your_email"
-                    />
-            </android.support.design.widget.TextInputLayout>
-
-            <Switch
-                android:id="@+id/sign_up_remember_switch"
+            <RelativeLayout
+                android:id="@+id/sign_up_name_input_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/sign_up_email_input_container"
-                android:text="@string/remember_me"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_marginTop="16dp"/>
+                >
 
-                <Button
-                    android:id="@+id/sign_up_submit_button"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:layout_marginTop="16dp"
-                    android:text="@string/sign_up"
-                    android:layout_below="@id/sign_up_remember_switch"
-/>
-
-            <LinearLayout
-                android:id="@+id/sign_up_divider"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/sign_up_submit_button"
-                android:orientation="horizontal"
-                android:gravity="center"
-                android:layout_marginLeft="-16dp"
-                android:layout_marginRight="-16dp">
-                <View
+                <EditText
+                    android:id="@+id/sign_up_name_input"
                     android:layout_width="wrap_content"
-                    android:layout_height="1dp"
-                    android:background="@color/colorPrimary"
-                    android:layout_weight="1"/>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/sign_up_divider_text"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginBottom="16dp"
-                    android:layout_weight="1"
-                    android:textAlignment="center"/>
-                <View
-                    android:layout_width="wrap_content"
-                    android:layout_height="1dp"
-                    android:background="@color/colorPrimary"
-                    android:layout_weight="1"/>
-            </LinearLayout>
+                    android:layout_height="@dimen/edit_text_height"
+                    android:ems="10"
+                    android:inputType="textPersonName"
+                    android:background="@drawable/edittext"
+                    android:hint="@string/sign_up_name_hint"
+                    android:layout_marginRight="20dp"/>
 
-            <Button
-                android:id="@+id/sign_up_goto_signin"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_below="@id/sign_up_divider"
-                android:text="@string/sign_in_button_text"/>
+                <ImageButton
+                    android:id="@+id/sign_up_refresh_btn"
+                    android:layout_width="@dimen/edit_text_height"
+                    android:layout_height="@dimen/edit_text_height"
+                    android:background="@drawable/btn_circle_bg"
+                    app:srcCompat="@drawable/ic_signup_refresh"
+                    android:layout_marginLeft="20dp"
+                    android:contentDescription=""
+                    android:layout_alignParentRight="true"
+                    android:layout_alignBottom="@id/sign_up_name_input"
+                    />
+            </RelativeLayout>
 
-        </RelativeLayout>
-    </RelativeLayout>
+        </android.support.design.widget.TextInputLayout>
 
-</FrameLayout>
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/sign_up_pass_input_container"
+        android:layout_below="@+id/sign_up_name_input_container"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="20dp"
+        app:passwordToggleEnabled="true">
+
+        <EditText
+            android:id="@+id/sign_up_pass_input"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/edit_text_height"
+            android:ems="10"
+            android:inputType="textPassword"
+            android:background="@drawable/edittext"
+            android:hint="@string/sign_up_pass_hint"
+            />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/sign_up_email_input_container"
+        android:layout_below="@id/sign_up_pass_input_container"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="20dp"
+        android:layout_centerHorizontal="true">
+
+        <EditText
+            android:id="@+id/sign_up_email_input"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/edit_text_height"
+            android:ems="10"
+            android:inputType="textEmailAddress"
+            android:background="@drawable/edittext"
+            android:hint="@string/enter_your_email"/>
+
+    </android.support.design.widget.TextInputLayout>
+
+    <com.bauble_app.bauble.CustomButton
+        android:id="@+id/sign_up_submit_btn"
+        android:layout_width="match_parent"
+        android:layout_height="38dp"
+        android:layout_weight="1"
+        android:background="@drawable/btn_forgot"
+        android:text="Sign Up"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/sign_up_email_input_container"
+        android:orientation="horizontal"
+        android:gravity="top|center"
+        android:paddingTop="7dp"
+        android:textSize="17sp"
+        android:layout_marginTop="40dp"
+        />
+
+    <com.bauble_app.bauble.CustomButton
+        android:id="@+id/sign_up_cancel_btn"
+        android:layout_width="match_parent"
+        android:layout_height="38dp"
+        android:paddingTop="7dp"
+        android:layout_below="@id/sign_up_submit_btn"
+        android:background="@drawable/btn_signin"
+        android:layout_alignLeft="@id/sign_up_name_input_container"
+        android:layout_alignRight="@id/sign_up_name_input_container"
+        android:layout_marginTop="20dp"
+        android:textSize="17sp"
+        android:text="Cancel"
+        android:gravity="top|center"
+        />
+
+</RelativeLayout>

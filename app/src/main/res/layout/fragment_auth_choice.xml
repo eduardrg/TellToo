@@ -1,0 +1,80 @@
+<RelativeLayout
+        android:layout_gravity="center"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="com.bauble_app.bauble.FrontFragment"
+        android:gravity="center|top"
+        android:layout_margin="60dp"
+        >
+
+    <com.bauble_app.bauble.CustomText
+        android:id="@+id/auth_choice_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:text="@string/sign_up_page_title"
+        android:textAlignment="center"
+/>
+    <com.bauble_app.bauble.CustomText
+        android:id="@+id/auth_choice_desc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/auth_choice_title"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:text="@string/auth_choice_page_desc"
+        android:textAlignment="center"
+/>
+        <RelativeLayout
+            android:layout_alignLeft="@id/auth_choice_desc"
+            android:layout_alignRight="@id/auth_choice_desc"
+            android:id="@+id/auth_choice_btns"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/auth_choice_desc"
+            android:orientation="horizontal"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="30dp">
+
+            <com.bauble_app.bauble.CustomButton
+                android:id="@+id/auth_choice_signin"
+                android:layout_alignParentTop="true"
+                android:gravity="top|center"
+                android:paddingTop="7dp"
+                android:layout_width="wrap_content"
+                android:layout_height="38dp"
+                android:background="@drawable/btn_signin"
+                android:layout_alignParentLeft="true"
+                android:text="Sign In"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                android:textSize="17sp"/>
+
+            <com.bauble_app.bauble.CustomButton
+                android:id="@+id/auth_choice_signup"
+                android:layout_width="wrap_content"
+                android:paddingTop="7dp"
+                android:gravity="top|center"
+                android:layout_height="38dp"
+                android:background="@drawable/btn_signup"
+                android:text="Sign Up"
+                android:layout_alignParentRight="true"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                android:textSize="17sp"/>
+        </RelativeLayout>
+
+<!-- TODO: customize google auth button -->
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/auth_choice_gauth"
+        android:layout_marginTop="30dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/auth_choice_btns"
+        android:layout_alignRight="@id/auth_choice_btns"
+        android:layout_below="@id/auth_choice_btns"
+        />
+
+</RelativeLayout>

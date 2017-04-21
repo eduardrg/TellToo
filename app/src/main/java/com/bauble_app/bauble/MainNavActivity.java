@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
@@ -16,10 +17,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.bauble_app.bauble.auth.AuthChoiceFragment;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 public class MainNavActivity extends MainActivity {
 
     private TextView mTextMessage;
     private FragmentManager fragManager;
+    private FirebaseAuth mAuth;
+    private FirebaseUser currentUser;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -42,8 +49,15 @@ public class MainNavActivity extends MainActivity {
                             .commit();
                     return true;
                 case R.id.navigation_me:
+                    Fragment meFrag;
+                    // Decide whether to show signup or profile screen
+                    if (mAuth.getCurrentUser() == null) {
+                        meFrag = new AuthChoiceFragment();
+                    } else {
+                        meFrag = new ProfileFragment();
+                    }
                     fragManager.beginTransaction()
-                            .replace(R.id.content, new SignUpFragment())
+                            .replace(R.id.content, meFrag)
                             .commit();
                     return true;
                 case R.id.navigation_messages:
@@ -61,10 +75,12 @@ public class MainNavActivity extends MainActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_nav);
+
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
+        mAuth = FirebaseAuth.getInstance();
         fragManager = getSupportFragmentManager();
         fragManager.beginTransaction()
                 .replace(R.id.content, new FeedFragment())
@@ -105,6 +121,11 @@ public class MainNavActivity extends MainActivity {
 
 
         return true;
+    }
+
+    protected void onStart() {
+        super.onStart();
+        currentUser = mAuth.getCurrentUser();
     }
 
     public FragmentManager getMyFragManager() {
