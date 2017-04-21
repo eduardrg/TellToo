@@ -44,7 +44,7 @@ public class FeedFragment extends Fragment {
                 FeedFragment.this.fragManager = getActivity().getSupportFragmentManager();
                 // Placeholder frag transaction
                 fragManager.beginTransaction()
-                        .replace(R.id.content, new CreateFragment())
+                        .replace(R.id.content, new ViewFragment())
                         .commit();
                 // Toast.makeText(getActivity().getApplicationContext(), "Text message", Toast.LENGTH_SHORT).show();
 
