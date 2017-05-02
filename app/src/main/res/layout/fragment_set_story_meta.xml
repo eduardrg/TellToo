@@ -1,0 +1,28 @@
+<RelativeLayout
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    tools:context="com.bauble_app.bauble.create.SetMetaFragment">
+
+        <com.bauble_app.bauble.CustomButton
+            android:id="@+id/create_set_cover_image"
+            android:layout_width="230dp"
+            android:layout_height="230dp"
+            android:text="Set a cover image!"
+            android:layout_centerHorizontal="true"
+            android:textAlignment="center"
+            android:background="@drawable/btn_set_cover"
+            android:layout_marginTop="15dp"/>
+
+        <com.bauble_app.bauble.CustomButton
+            android:id="@+id/create_set_title"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:text="Add Title"
+            android:layout_below="@id/create_set_cover_image"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="15dp"
+            android:background="@drawable/btn_add_title"
+            />
+</RelativeLayout>
