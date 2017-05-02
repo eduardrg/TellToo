@@ -4,47 +4,131 @@
     android:layout_height="match_parent"
     tools:context="com.bauble_app.bauble.FrontFragment">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <RelativeLayout
-            android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/front_feat">
+            android:padding="@dimen/listitem_feed_padding"
+            android:layout_marginBottom="@dimen/listitem_feed_margin"
+            android:background="@color/colorFeedListItem">
+
             <ImageView
-                android:id="@+id/front_img_feat_backg"
+                android:id="@+id/community_listitem_picture"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/place_holder_img"/>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:src="@drawable/front_apacaliptia"
-                android:adjustViewBounds="true" />
+                android:layout_toRightOf="@id/community_listitem_picture"
+                android:orientation="vertical"
+                android:layout_centerInParent="true">
+                <TextView
+                    android:id="@+id/community_listitem_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Community Story"
+                    android:textAlignment="center"
+                    android:textSize="@dimen/section_title_textsize"
+                    android:textStyle="bold"/>
+                <TextView
+                    android:id="@+id/community_listitem_author"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="author"
+                    android:textAlignment="center" />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_gravity="center">
+                    <TextView
+                        android:id="@+id/community_listitem_length"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="time"
+                        android:layout_margin="@dimen/listitem_feed_stat_margin"/>
+                    <TextView
+                        android:id="@+id/community_listitem_chains"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="chains"
+                        android:layout_margin="@dimen/listitem_feed_stat_margin"/>
+                    <TextView
+                        android:id="@+id/community_listitem_expire"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="expire"
+                        android:layout_margin="@dimen/listitem_feed_stat_margin"/>
+                    <TextView
+                        android:id="@+id/community_listitem_plays"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="plays"
+                        android:layout_margin="@dimen/listitem_feed_stat_margin"/>
+                </LinearLayout>
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:orientation="vertical">
-                <TextView
-                    android:id="@+id/front_txt_feat_title"
+                android:orientation="horizontal"
+                android:layout_gravity="center">
+
+                <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Post Apocalyptia"
-                    android:textColor="@color/colorBrandHighlight"
-                    android:textSize="40dp"/>
+                    android:src="@drawable/ic_trending"/>
+
                 <TextView
-                    android:id="@+id/front_txt_feat_auth"
-                    android:layout_width="match_parent"
+                    android:id="@+id/community_tag_title"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="catmium"
-                    android:textColor="@color/colorBrandHighlight"
-                    android:textAlignment="center"
-                    android:textSize="20dp"/>
+                    android:text="Today's Trending Tags"
+                    android:textSize="@dimen/section_title_textsize"
+                    android:textStyle="bold"/>
+
             </LinearLayout>
-        </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text = "Tag 1"/>
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text = "Tag 2"/>
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text = "Tag 3"/>
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text = "Tag 4"/>
+            </LinearLayout>
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/front_feat"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_gravity="bottom">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -62,7 +146,9 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:background="@color/colorGrayAccent"
+                    android:padding="5dp">
 
                     <Button
                         android:layout_width="80dp"
@@ -103,7 +189,6 @@
                 </LinearLayout>
             </HorizontalScrollView>
         </LinearLayout>
-    </RelativeLayout>
-
+    </LinearLayout>
 
 </FrameLayout>

@@ -13,8 +13,8 @@
     <string name="title_search">Search</string>
     <string name="search_hint">Search stories...</string>
 
-    <!--String for Feature page (Front)-->
-    <string name="front_title_collection">Collections</string>
+    <!--String for Feature page (Community)-->
+    <string name="front_title_collection">TellToo Collections</string>
 
     <!--Strings for create page-->
     <string name="create_btn_save_txt">Save</string>
