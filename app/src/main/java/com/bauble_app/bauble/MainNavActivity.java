@@ -7,10 +7,8 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -18,6 +16,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.bauble_app.bauble.auth.AuthChoiceFragment;
+import com.bauble_app.bauble.create.CreateFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -44,9 +43,17 @@ public class MainNavActivity extends MainActivity {
                             ExploreFragment()).commit();
                     return true;
                 case R.id.navigation_create:
+                    Fragment createFrag = new CreateFragment();
+                    /*
+                    // Decide whether to show signup or create screen
+                    if (mAuth.getCurrentUser() == null) {
+                        createFrag = new AuthChoiceFragment();
+                    } else {
+                        createFrag = new CreateFragment();
+                    }
+                    */
                     fragManager.beginTransaction()
-                            .replace(R.id.content, new CreateFragment())
-                            .commit();
+                            .replace(R.id.content, createFrag).commit();
                     return true;
                 case R.id.navigation_me:
                     Fragment meFrag;
