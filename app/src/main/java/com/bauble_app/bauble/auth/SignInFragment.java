@@ -19,6 +19,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 /**
  * Created by princ on 4/6/2017.
@@ -27,6 +32,17 @@ import com.google.firebase.auth.FirebaseUser;
 public class SignInFragment extends Fragment {
     private FragmentManager fragManager;
     private FirebaseAuth mAuth;
+
+    private EditText mNameInput;
+    private EditText mPassInput;
+    private Button mSignUp;
+    private Button mForgot;
+    private DatabaseReference mFirebaseRef;
+    private Button mSignIn;
+    /*
+    private ProgressBar mProgress;
+    private int mProgressStatus;
+    */
 
     public SignInFragment() {
         // Required empty public constructor
@@ -40,48 +56,71 @@ public class SignInFragment extends Fragment {
 
         fragManager = getFragmentManager();
         mAuth = FirebaseAuth.getInstance();
+        mFirebaseRef = FirebaseDatabase.getInstance().getReference();
 
-        Button signUp = (Button) v.findViewById(R.id.sign_in_signup_btn);
-        signUp.setOnClickListener(new View.OnClickListener() {
+        // mProgressStatus = 0;
+
+        mNameInput = (EditText) v.findViewById(R.id.sign_in_name_input);
+        mPassInput = (EditText) v.findViewById(R.id.sign_in_pass_input);
+        mSignUp = (Button) v.findViewById(R.id.sign_in_signup_btn);
+        mForgot = (Button) v.findViewById(R.id.sign_in_forgot_butt);
+        mSignIn = (Button) v.findViewById(R.id.sign_in_signin_btn);
+        // mProgress = (ProgressBar) v.findViewById(R.id.sign_in_progress);
+
+        mSignUp.setOnClickListener(new View.OnClickListener() {
             public void onClick(View btn) {
                 fragManager.beginTransaction().replace(R.id.content, new SignUpFragment())
                         .commit();
             }
         });
 
-
-        Button forgot = (Button) v.findViewById(R.id.sign_in_forgot_butt);
-        forgot.setOnClickListener(new View.OnClickListener() {
+        mForgot.setOnClickListener(new View.OnClickListener() {
             public void onClick(View btn) {
                 fragManager.beginTransaction().replace(R.id.content, new ForgotFragment())
                         .commit();
             }
         });
 
-        attachSignInListener(v);
+        mSignIn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View btn) {
+                String emailOrName = getInput(mNameInput);
+                String pass = getInput(mPassInput);
+                signIn(emailOrName, pass);
+            }
+        });
 
         return v;
     }
 
-    // Attach a listener to the sign in button
-    private void attachSignInListener(final View v) {
-        Button signIn = (Button) v.findViewById(R.id.sign_in_signin_btn);
-        signIn.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View btn) {
-                String email = getInput(v, R.id.sign_in_name_input);
-                String pass = getInput(v, R.id.sign_in_pass_input);
-                signInWithEmail(email, pass);
-            }
-        });
+    private void signIn(final String nameOrEmail, final String password) {
+        if (AuthUtils.isValidEmail(nameOrEmail) && AuthUtils.isValidPassword(password)) {
+            signInWithEmail(nameOrEmail, password);
+        } else if (AuthUtils.isValidName(nameOrEmail) && AuthUtils.isValidPassword(password)){
+            mFirebaseRef.child("emails/" + nameOrEmail)
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                signInWithEmail(dataSnapshot.getValue()
+                                        .toString(), password);
+                            } else {
+                                Log.i("SignIn", "does not exist: " + nameOrEmail);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            //TODO: handle error
+                        }
+                    });
+        } else {
+            Toast.makeText(getContext(), "Invalid credentials.", Toast
+                    .LENGTH_SHORT).show();
+        }
     }
 
-    //TODO: complete method
-    private String getEmailFromUserId(String userId) {
-        return "eduardrg@uw.edu";
-    }
-
-    private String getInput(View v, int resId) {
-        return ((EditText) v.findViewById(resId)).getText().toString();
+    private String getInput(EditText input) {
+        return input.getText().toString().trim();
     }
 
     private void signInWithEmail(String email, String password) {

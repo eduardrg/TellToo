@@ -50,9 +50,12 @@ public class ProfileFragment extends Fragment {
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        String name = dataSnapshot.getValue().toString();
-                        ((TextView) v.findViewById(R.id.profile_username))
-                                .setText(name);
+                        if (dataSnapshot.exists()) {
+                            String name = dataSnapshot.getValue().toString();
+                            ((TextView) v.findViewById(R.id.profile_username))
+                                    .setText(name);
+                        }
+
                     }
 
                     @Override
