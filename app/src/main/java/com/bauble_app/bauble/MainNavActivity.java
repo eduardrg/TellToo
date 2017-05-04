@@ -22,9 +22,15 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class MainNavActivity extends MainActivity {
 
+    private DatabaseReference mDatabase; // for accessing JSON
     private TextView mTextMessage;
     private FragmentManager fragManager;
     private FirebaseAuth mAuth;
@@ -85,6 +91,32 @@ public class MainNavActivity extends MainActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_nav);
+
+        // TODO: need loading bar / splash screen for wait time for getting data
+        // Load data from firebase to singleton
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference reference = mDatabase.child("stories");
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Iterable<DataSnapshot> data = dataSnapshot.getChildren();
+                for(DataSnapshot snap : data) {
+                    String title = dataSnapshot.child("Title").getValue(String.class);
+                    Long chains = snap.child("chain").getValue(Long.class);
+                    String author = snap.child("author").getValue(String.class);
+                    Long plays = snap.child("play").getValue(Long.class);
+                    Long time = snap.child("duration").getValue(Long.class);
+                    String expire = snap.child("expiration").getValue(String.class);
+                    // String title, int durration, int chains, String expireDate, int plays
+                    StorySingleton.getInstance().addStory(new StoryObject(title, author, time, chains, expire, plays));
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e("MainNavActivity", "Database Error");
+            }
+        });
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);

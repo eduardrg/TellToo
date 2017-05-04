@@ -67,7 +67,7 @@ public class FeedFragment extends Fragment {
             list.add(new StoryObject(i + " Title " + i));
         }
 
-        adapter = new FeedAdapter(this.getContext(), list);
+        adapter = new FeedAdapter(this.getContext(), StorySingleton.getInstance().storyList);
 
         // Assign adapter to ListView
         listView.setAdapter(adapter);
