@@ -9,11 +9,11 @@ import java.util.*;
 public class StoryObject {
     private List<StoryObject> chainTo;
     private StoryObject parent;
-    private long durration;
-    private long chains;
+    private Long durration;
+    private Long chains;
     private int expire;
     private String expireDate;
-    private long plays;
+    private Long plays;
     private String title;
     private String author;
     private String content;
@@ -33,6 +33,15 @@ public class StoryObject {
 
     public String getTitle() {
         return this.title;
+    }
+    public String getAuthor() { return this.author; }
+    public Long getDurration() { return this.durration; }
+    public Long getChains() { return this.chains; }
+    public String getExpireDate() { return this.expireDate; }
+    public Long getPlays() { return this.plays; }
+
+    public String toString() {
+        return title + author + durration + chains + expireDate + plays;
     }
 
 

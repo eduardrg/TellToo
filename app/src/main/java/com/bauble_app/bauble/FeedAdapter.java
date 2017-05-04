@@ -59,6 +59,17 @@ public class FeedAdapter extends BaseAdapter {
 
         TextView title = (TextView) vi.findViewById(R.id.feed_listitem_title);
         title.setText(data.get(position).getTitle());
+        TextView author = (TextView) vi.findViewById(R.id.feed_listitem_author);
+        author.setText(data.get(position).getAuthor());
+        TextView time = (TextView) vi.findViewById(R.id.feed_listitem_length);
+        time.setText("00:" + data.get(position).getDurration().toString());
+        TextView chains = (TextView) vi.findViewById(R.id.feed_listitem_chains);
+        chains.setText(data.get(position).getChains().toString());
+        TextView expire = (TextView) vi.findViewById(R.id.feed_listitem_expire);
+        expire.setText(data.get(position).getExpireDate());
+        TextView plays = (TextView) vi.findViewById(R.id.feed_listitem_plays);
+        plays.setText(data.get(position).getPlays().toString());
+
         // Set font
         title.setTypeface(tf);
 

@@ -92,6 +92,16 @@ public class MainNavActivity extends MainActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_nav);
 
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        mAuth = FirebaseAuth.getInstance();
+        fragManager = getSupportFragmentManager();
+
+        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
         // TODO: need loading bar / splash screen for wait time for getting data
         // Load data from firebase to singleton
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -101,15 +111,20 @@ public class MainNavActivity extends MainActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Iterable<DataSnapshot> data = dataSnapshot.getChildren();
                 for(DataSnapshot snap : data) {
-                    String title = dataSnapshot.child("Title").getValue(String.class);
+                    String title = snap.child("title").getValue(String.class);
                     Long chains = snap.child("chain").getValue(Long.class);
                     String author = snap.child("author").getValue(String.class);
                     Long plays = snap.child("play").getValue(Long.class);
                     Long time = snap.child("duration").getValue(Long.class);
                     String expire = snap.child("expiration").getValue(String.class);
                     // String title, int durration, int chains, String expireDate, int plays
-                    StorySingleton.getInstance().addStory(new StoryObject(title, author, time, chains, expire, plays));
+                    StoryObject story = new StoryObject(title, author, time, chains, expire, plays);
+                    Log.e("MainNavActivity", story.toString());
+                    StorySingleton.getInstance().addStory(story);
                 }
+                fragManager.beginTransaction()
+                        .replace(R.id.content, new FeedFragment())
+                        .commit();
             }
 
             @Override
@@ -117,19 +132,6 @@ public class MainNavActivity extends MainActivity {
                 Log.e("MainNavActivity", "Database Error");
             }
         });
-
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
-        setSupportActionBar(myToolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-
-        mAuth = FirebaseAuth.getInstance();
-        fragManager = getSupportFragmentManager();
-        fragManager.beginTransaction()
-                .replace(R.id.content, new FeedFragment())
-                .commit();
-
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
     }
 
