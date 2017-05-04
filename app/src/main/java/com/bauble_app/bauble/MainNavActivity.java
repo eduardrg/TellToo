@@ -11,12 +11,15 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.bauble_app.bauble.auth.AuthChoiceFragment;
 import com.bauble_app.bauble.create.CreateFragment;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -95,6 +98,7 @@ public class MainNavActivity extends MainActivity {
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
     }
 
     @Override
@@ -133,6 +137,8 @@ public class MainNavActivity extends MainActivity {
     protected void onStart() {
         super.onStart();
         currentUser = mAuth.getCurrentUser();
+        // Check if user is signed in (non-null) and update UI accordingly.
+
     }
 
     public FragmentManager getMyFragManager() {
