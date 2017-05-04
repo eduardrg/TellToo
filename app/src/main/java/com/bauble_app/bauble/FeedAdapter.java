@@ -7,7 +7,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.*;
 
@@ -58,9 +64,11 @@ public class FeedAdapter extends BaseAdapter {
         }
 
         TextView title = (TextView) vi.findViewById(R.id.feed_listitem_title);
-        title.setText(data.get(position).getTitle());
+        String titleString = data.get(position).getTitle();
+        title.setText(titleString);
         TextView author = (TextView) vi.findViewById(R.id.feed_listitem_author);
-        author.setText(data.get(position).getAuthor());
+        String authorString = data.get(position).getAuthor();
+        author.setText(authorString);
         TextView time = (TextView) vi.findViewById(R.id.feed_listitem_length);
         time.setText("00:" + data.get(position).getDurration().toString());
         TextView chains = (TextView) vi.findViewById(R.id.feed_listitem_chains);
@@ -69,6 +77,21 @@ public class FeedAdapter extends BaseAdapter {
         expire.setText(data.get(position).getExpireDate());
         TextView plays = (TextView) vi.findViewById(R.id.feed_listitem_plays);
         plays.setText(data.get(position).getPlays().toString());
+
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        // Reference to an image file in Firebase Storage
+        StorageReference storageReference = storage.getReferenceFromUrl("gs://bauble-90a48.appspot.com");
+        String imagePath = authorString + titleString.replace(" ", "");
+        StorageReference pathReference = storageReference.child("thumbnails/" + imagePath + ".png");
+
+        // ImageView in your Activity
+        ImageView imageView = (ImageView) vi.findViewById(R.id.feed_listitem_picture);
+
+        // Load the image using Glide
+        Glide.with(context /* context */)
+                .using(new FirebaseImageLoader())
+                .load(pathReference)
+                .into(imageView);
 
         // Set font
         title.setTypeface(tf);
