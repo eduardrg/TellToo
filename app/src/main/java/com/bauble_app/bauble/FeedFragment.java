@@ -39,6 +39,9 @@ public class FeedFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+                //ARGUMENTS: AdapterView<?> parent, View view, int position, long id
+
+                StorySingleton.getInstance().setViewStory(arg2);
 
                 // Placeholder for transition to view
                 FeedFragment.this.fragManager = getActivity().getSupportFragmentManager();
@@ -61,11 +64,14 @@ public class FeedFragment extends Fragment {
         listView = (ListView) view.findViewById(R.id.feed_list);
 
 
+        // Old code for hard coding stories in
+        /*
         List<StoryObject> list = new ArrayList<StoryObject>();
 
         for (int i = 1; i <= 10; i++) {
             list.add(new StoryObject(i + " Title " + i));
         }
+        */
 
         adapter = new FeedAdapter(this.getContext(), StorySingleton.getInstance().storyList);
 
