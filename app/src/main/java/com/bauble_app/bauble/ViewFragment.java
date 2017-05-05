@@ -3,6 +3,7 @@ package com.bauble_app.bauble;
 
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,8 +14,18 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+import static com.facebook.FacebookSdk.getCacheDir;
 
 
 /**
@@ -43,6 +54,7 @@ public class ViewFragment extends Fragment {
         StorageReference storageReference = storage.getReferenceFromUrl("gs://bauble-90a48.appspot.com");
         String imagePath = story.getAuthor() + story.getTitle().replace(" ", "");
         StorageReference pathReference = storageReference.child("thumbnails/" + imagePath + ".png");
+        StorageReference audioPathReference = storageReference.child("teststories/" + imagePath + ".mp3");
 
         TextView title = (TextView) v.findViewById(R.id.view_title);
         title.setText(story.getTitle());
@@ -58,13 +70,53 @@ public class ViewFragment extends Fragment {
         plays.setText(story.getPlays().toString());
 
         mPlayer = MediaPlayer.create(getContext(), R.raw.law_of_the_jungle);
-        mPlayer.start();
+//        mPlayer.start();
 
         // Load the image using Glide
         Glide.with(getContext() /* context */)
                 .using(new FirebaseImageLoader())
                 .load(pathReference)
                 .into(thumbnail);
+
+        // Load and play audio
+        final long TEN_MEGABYTE = 1024 * 1024 * 10;
+        audioPathReference.getBytes(TEN_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                try {
+                    // Data for ".mp3" is returned, use this as needed
+                    // create temp file that will hold byte array
+                    File tempMp3 = File.createTempFile("kurchina", "mp3", getCacheDir());
+                    tempMp3.deleteOnExit();
+                    FileOutputStream fos = new FileOutputStream(tempMp3);
+                    fos.write(bytes);
+                    fos.close();
+
+                    // resetting mediaplayer instance to evade problems
+                    mPlayer.reset();
+
+                    // In case you run into issues with threading consider new instance like:
+                    // MediaPlayer mediaPlayer = new MediaPlayer();
+
+                    // Tried passing path directly, but kept getting
+                    // "Prepare failed.: status=0x1"
+                    // so using file descriptor instead
+                    FileInputStream fis = new FileInputStream(tempMp3);
+                    mPlayer.setDataSource(fis.getFD());
+
+                    mPlayer.prepare();
+                    mPlayer.start();
+                } catch(IOException ex) {
+                    System.out.println (ex.toString());
+                    System.out.println("Could not find file ");
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle any errors
+            }
+        });
 
         // Inflate the layout for this fragment
         return v;
