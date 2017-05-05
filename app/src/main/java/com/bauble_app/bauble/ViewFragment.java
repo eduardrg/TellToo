@@ -8,9 +8,11 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
@@ -46,7 +48,7 @@ public class ViewFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_view, container,
                 false);
 
-        StoryObject story = StorySingleton.getInstance().getViewStory();
+        final StoryObject story = StorySingleton.getInstance().getViewStory();
         ImageView thumbnail = (ImageView) v.findViewById(R.id.view_thumbnail);
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -69,6 +71,7 @@ public class ViewFragment extends Fragment {
         TextView plays = (TextView) v.findViewById(R.id.view_plays);
         plays.setText(story.getPlays().toString());
 
+        // Initializes MediaPlayer
         mPlayer = MediaPlayer.create(getContext(), R.raw.law_of_the_jungle);
 //        mPlayer.start();
 
@@ -79,6 +82,7 @@ public class ViewFragment extends Fragment {
                 .into(thumbnail);
 
         // Load and play audio
+        // TODO: Insure the phone has space to store TEN_MEGABYTE otherwise crash
         final long TEN_MEGABYTE = 1024 * 1024 * 10;
         audioPathReference.getBytes(TEN_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
             @Override
@@ -86,7 +90,7 @@ public class ViewFragment extends Fragment {
                 try {
                     // Data for ".mp3" is returned, use this as needed
                     // create temp file that will hold byte array
-                    File tempMp3 = File.createTempFile("kurchina", "mp3", getCacheDir());
+                    File tempMp3 = File.createTempFile("tempStory", "mp3", getCacheDir());
                     tempMp3.deleteOnExit();
                     FileOutputStream fos = new FileOutputStream(tempMp3);
                     fos.write(bytes);
@@ -115,6 +119,16 @@ public class ViewFragment extends Fragment {
             @Override
             public void onFailure(@NonNull Exception exception) {
                 // Handle any errors
+            }
+        });
+
+        // Add Button Click funtionality
+        ImageButton save = (ImageButton) v.findViewById(R.id.view_btn_save);
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getActivity().getApplicationContext(), story.getTitle() +
+                        " added to your collection", Toast.LENGTH_SHORT).show();
             }
         });
 
