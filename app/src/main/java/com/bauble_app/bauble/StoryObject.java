@@ -6,8 +6,8 @@ import java.util.*;
  * Created by ChrisLi on 4/20/17.
  */
 
-public class StoryObject {
-    private List<StoryObject> chainTo;
+public class StoryObject implements Comparable<StoryObject>{
+    private List<String> children; // Somewhat hacky way of storing story references
     private StoryObject parent;
     private Long durration;
     private Long chains;
@@ -29,6 +29,7 @@ public class StoryObject {
         this.chains = chains;
         this.expireDate = expireDate;
         this.plays = plays;
+        children = new ArrayList<String>();
     }
 
     public String getTitle() {
@@ -40,8 +41,27 @@ public class StoryObject {
     public String getExpireDate() { return this.expireDate; }
     public Long getPlays() { return this.plays; }
 
+    public void addChildStory(StoryObject story) {
+        this.children.add(story);
+    }
+
     public String toString() {
         return title + author + durration + chains + expireDate + plays;
+    }
+
+    public int compareTo(StoryObject other) {
+//        if(equal(other)) {
+//            return 0;
+//        }
+        return this.title.compareTo(other.title);
+    }
+
+    private boolean equal(StoryObject other) {
+        return this.title.equals(other.title);
+    }
+
+    public boolean equals(StoryObject other) {
+        return this.title.equals(other.title);
     }
 
 
