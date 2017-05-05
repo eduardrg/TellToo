@@ -1,6 +1,7 @@
 package com.bauble_app.bauble;
 
 
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -21,6 +22,7 @@ import com.google.firebase.storage.StorageReference;
  */
 public class ViewFragment extends Fragment {
 
+    MediaPlayer mPlayer;
 
     public ViewFragment() {
         // Required empty public constructor
@@ -55,6 +57,9 @@ public class ViewFragment extends Fragment {
         TextView plays = (TextView) v.findViewById(R.id.view_plays);
         plays.setText(story.getPlays().toString());
 
+        mPlayer = MediaPlayer.create(getContext(), R.raw.law_of_the_jungle);
+        mPlayer.start();
+
         // Load the image using Glide
         Glide.with(getContext() /* context */)
                 .using(new FirebaseImageLoader())
@@ -65,4 +70,9 @@ public class ViewFragment extends Fragment {
         return v;
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mPlayer.stop();
+    }
 }
