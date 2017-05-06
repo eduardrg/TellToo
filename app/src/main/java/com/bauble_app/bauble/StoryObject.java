@@ -41,8 +41,8 @@ public class StoryObject implements Comparable<StoryObject>{
     public String getExpireDate() { return this.expireDate; }
     public Long getPlays() { return this.plays; }
 
-    public void addChildStory(StoryObject story) {
-        this.children.add(story);
+    public void addChildStory(String storyRef) {
+        this.children.add(storyRef);
     }
 
     public String toString() {
@@ -56,12 +56,17 @@ public class StoryObject implements Comparable<StoryObject>{
         return this.title.compareTo(other.title);
     }
 
+    // currently not used for anthing
     private boolean equal(StoryObject other) {
         return this.title.equals(other.title);
     }
 
     public boolean equals(StoryObject other) {
         return this.title.equals(other.title);
+    }
+
+    public List<String> getChildren() {
+        return this.children;
     }
 
 

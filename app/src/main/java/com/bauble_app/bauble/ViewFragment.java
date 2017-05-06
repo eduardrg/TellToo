@@ -5,12 +5,15 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,6 +38,7 @@ import static com.facebook.FacebookSdk.getCacheDir;
  */
 public class ViewFragment extends Fragment {
 
+    private FragmentManager fragManager;
     MediaPlayer mPlayer;
 
     public ViewFragment() {
@@ -70,6 +74,36 @@ public class ViewFragment extends Fragment {
         expire.setText(story.getExpireDate());
         TextView plays = (TextView) v.findViewById(R.id.view_plays);
         plays.setText(story.getPlays().toString());
+
+        LinearLayout childrenContainer = (LinearLayout) v.findViewById(R.id.view_container_childern);
+        if (story.getChildren().size() > 0) {
+            for (String childName: story.getChildren()) {
+                ImageView child = new ImageView(getContext());
+                child.setLayoutParams(new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        1f));
+                child.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        StorySingleton.getInstance().setViewStory(2);
+                        // Placeholder for transition to view
+                        ViewFragment.this.fragManager = getActivity().getSupportFragmentManager();
+                        fragManager.beginTransaction()
+                                .replace(R.id.content, new ViewFragment())
+                                .commit();
+                    }
+                });
+                childrenContainer.addView(child);
+                StorageReference childPath = storageReference.child("thumbnails/" + childName + ".png");
+                Log.e("ViewFragment", "thumbnails/" + childName + ".png");
+                // Load the image using Glide
+                Glide.with(getContext() /* context */)
+                        .using(new FirebaseImageLoader())
+                        .load(childPath)
+                        .into(child);
+            }
+        }
 
         // Initializes MediaPlayer
         mPlayer = MediaPlayer.create(getContext(), R.raw.law_of_the_jungle);

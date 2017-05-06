@@ -160,7 +160,11 @@ public class MainNavActivity extends MainActivity {
                     // String title, int durration, int chains, String expireDate, int plays
                     StoryObject story = new StoryObject(title, author, time, chains, expire, plays);
                     if (snap.child("children").getChildren() != null) {
+                        for(DataSnapshot child : snap.child("children").getChildren()) {
+                            story.addChildStory(child.getValue(String.class));
 
+                        }
+                        Log.i("MainNavActivity", story.getChildren().toString());
                     }
                     if (!StorySingleton.getInstance().containsStory(story)) {
                         Log.e("MainNavActivity", "" + StorySingleton.getInstance().containsStory(story));

@@ -3,159 +3,186 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.bauble_app.bauble.ViewFragment">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-        <ImageView
-            android:id="@+id/view_thumbnail"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:src="@drawable/place_holder_img"
-            android:adjustViewBounds="true"
-            android:scaleType="centerCrop"
-            android:layout_gravity="center_horizontal"/>
-        <TextView
-            android:id="@+id/view_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="pupi pls"
-            android:textAlignment="center"
-            android:textSize="@dimen/section_title_textsize"
-            android:textStyle="bold"/>
-
-        <TextView
-            android:id="@+id/view_author"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="by eduard-the-g"
-            android:textAlignment="center"/>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_gravity="center">
-            <TextView
-                android:id="@+id/view_length"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="time"
-                android:layout_margin="@dimen/listitem_feed_stat_margin"/>
-            <TextView
-                android:id="@+id/view_chains"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="chains"
-                android:layout_margin="@dimen/listitem_feed_stat_margin"/>
-            <TextView
-                android:id="@+id/view_expire"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="expire"
-                android:layout_margin="@dimen/listitem_feed_stat_margin"/>
-            <TextView
-                android:id="@+id/view_plays"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="plays"
-                android:layout_margin="@dimen/listitem_feed_stat_margin"/>
-        </LinearLayout>
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/wave_forms"
-            android:adjustViewBounds="true"
-            android:scaleType="centerCrop"
-            android:layout_marginTop="15dp"
-            android:layout_marginBottom="15dp"/>
-
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="505dp">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="5dp">
-
-            <Space
-                android:layout_width="0dp"
+            android:orientation="vertical">
+            <ImageView
+                android:id="@+id/view_thumbnail"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:src="@drawable/place_holder_img"
+                android:adjustViewBounds="true"
+                android:scaleType="centerCrop"
+                android:layout_gravity="center_horizontal"/>
+            <TextView
+                android:id="@+id/view_title"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"/>
+                android:text="pupi pls"
+                android:textAlignment="center"
+                android:textSize="@dimen/section_title_textsize"
+                android:textStyle="bold"/>
 
-            <LinearLayout
-                android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/view_author"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
-                <ImageButton
-                    android:id="@+id/view_btn_save"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:background="@drawable/round_button"
-                    android:src="@drawable/ic_action_btn_save"
-                    android:adjustViewBounds="true"
-                    android:tint="@color/colorBrandHighlight"
-                    android:scaleType="fitCenter"/>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/create_btn_save_txt"
-                    android:textAlignment="center"/>
-            </LinearLayout>
-
-            <Space
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"/>
+                android:text="by eduard-the-g"
+                android:textAlignment="center"/>
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
-                <ImageButton
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:background="@drawable/round_button"
-                    android:src="@drawable/ic_action_btn_chain"
-                    android:adjustViewBounds="true"
-                    android:scaleType="fitCenter"/>
+                android:orientation="horizontal"
+                android:layout_gravity="center">
                 <TextView
-                    android:layout_width="match_parent"
+                    android:id="@+id/view_length"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/create_btn_chain_txt"
-                    android:textAlignment="center"/>
+                    android:text="time"
+                    android:layout_margin="@dimen/listitem_feed_stat_margin"/>
+                <TextView
+                    android:id="@+id/view_chains"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="chains"
+                    android:layout_margin="@dimen/listitem_feed_stat_margin"/>
+                <TextView
+                    android:id="@+id/view_expire"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="expire"
+                    android:layout_margin="@dimen/listitem_feed_stat_margin"/>
+                <TextView
+                    android:id="@+id/view_plays"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="plays"
+                    android:layout_margin="@dimen/listitem_feed_stat_margin"/>
             </LinearLayout>
 
-            <Space
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"/>
-
-            <LinearLayout
+            <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
-                <ImageButton
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:background="@drawable/round_button"
-                    android:src="@drawable/ic_action_btn_record"
-                    android:adjustViewBounds="true"
-                    android:scaleType="fitCenter"/>
-                <TextView
-                    android:layout_width="match_parent"
+                android:src="@drawable/wave_forms"
+                android:adjustViewBounds="true"
+                android:scaleType="centerCrop"
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="5dp">
+
+                <Space
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="@string/create_btn_reply_txt"
-                    android:textAlignment="center"/>
+                    android:layout_weight="1"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <ImageButton
+                        android:id="@+id/view_btn_save"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:background="@drawable/round_button"
+                        android:src="@drawable/ic_action_btn_save"
+                        android:adjustViewBounds="true"
+                        android:tint="@color/colorBrandHighlight"
+                        android:scaleType="fitCenter"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/create_btn_save_txt"
+                        android:textAlignment="center"/>
+                </LinearLayout>
+
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <ImageButton
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:background="@drawable/round_button"
+                        android:src="@drawable/ic_action_btn_chain"
+                        android:adjustViewBounds="true"
+                        android:scaleType="fitCenter"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/create_btn_chain_txt"
+                        android:textAlignment="center"/>
+                </LinearLayout>
+
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <ImageButton
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:background="@drawable/round_button"
+                        android:src="@drawable/ic_action_btn_record"
+                        android:adjustViewBounds="true"
+                        android:scaleType="fitCenter"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/create_btn_reply_txt"
+                        android:textAlignment="center"/>
+                </LinearLayout>
+
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"/>
+
             </LinearLayout>
 
-            <Space
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"/>
+            <LinearLayout
+                android:id="@+id/view_container_childern"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:orientation="horizontal"
+                android:background="@color/authui_colorPrimary">
+                <!--<ImageView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:src="@drawable/place_holder_img"-->
+                    <!--android:layout_weight="1"/>-->
+                <!--<ImageView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:src="@drawable/place_holder_img"-->
+                    <!--android:layout_weight="1"/>-->
+                <!--<ImageView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:src="@drawable/place_holder_img"-->
+                    <!--android:layout_weight="1"/>-->
+
+            </LinearLayout>
 
         </LinearLayout>
-
-    </LinearLayout>
+    </ScrollView>
 
 </FrameLayout>
