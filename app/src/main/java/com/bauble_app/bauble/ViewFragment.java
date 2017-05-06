@@ -94,7 +94,7 @@ public class ViewFragment extends Fragment {
                         // Stop sound before transaction
                         mPlayer.stop();
                         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                        ft.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left)
+                        ft.setCustomAnimations(R.anim.enter_from_top, R.anim.slide_out_left)
                             .replace(R.id.content, new ViewFragment())
                             // TODO: even though add to back stack, need to find way to load correct story when back pressed
                             .addToBackStack("tag")
@@ -117,6 +117,10 @@ public class ViewFragment extends Fragment {
 
         // Initializes MediaPlayer
         mPlayer = MediaPlayer.create(getContext(), R.raw.law_of_the_jungle);
+        if (mPlayer.isPlaying()) {
+            mPlayer.stop();
+            mPlayer.reset();
+        }
 //        mPlayer.start();
 
         // Load the image using Glide
@@ -178,6 +182,12 @@ public class ViewFragment extends Fragment {
 
         // Inflate the layout for this fragment
         return v;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mPlayer.stop();
     }
 
     @Override
