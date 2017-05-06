@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -27,7 +26,6 @@ import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -94,7 +92,7 @@ public class ViewFragment extends Fragment {
                         // Stop sound before transaction
                         mPlayer.stop();
                         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                        ft.setCustomAnimations(R.anim.enter_from_top, R.anim.slide_out_left)
+                        ft.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_top)
                             .replace(R.id.content, new ViewFragment())
                             // TODO: even though add to back stack, need to find way to load correct story when back pressed
                             .addToBackStack("tag")
