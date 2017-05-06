@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -88,10 +89,19 @@ public class ViewFragment extends Fragment {
                     public void onClick(View v) {
                         StorySingleton.getInstance().setViewStory(2);
                         // Placeholder for transition to view
-                        ViewFragment.this.fragManager = getActivity().getSupportFragmentManager();
-                        fragManager.beginTransaction()
-                                .replace(R.id.content, new ViewFragment())
-                                .commit();
+                        // ViewFragment.this.fragManager = getActivity().getSupportFragmentManager();
+
+                        // Stop sound before transaction
+                        mPlayer.stop();
+                        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                        ft.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left)
+                            .replace(R.id.content, new ViewFragment())
+                            // TODO: even though add to back stack, need to find way to load correct story when back pressed
+                            .addToBackStack("tag")
+                            .commit();
+//                        fragManager.beginTransaction()
+//                                .replace(R.id.content, new ViewFragment())
+//                                .commit();
                     }
                 });
                 childrenContainer.addView(child);
