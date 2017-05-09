@@ -1,9 +1,12 @@
 package com.bauble_app.bauble.create;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.media.MediaRecorder;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -30,8 +33,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import static android.media.MediaRecorder.AudioSource.MIC;
-
 /**
  * Created by princ on 5/1/2017.
  */
@@ -43,6 +44,37 @@ public class CreateToolsFragment extends Fragment {
     private RecordButton mRecordButton;
     private MediaRecorder recorder;
     private int recordCount;
+
+    // Requesting permission to RECORD_AUDIO
+    private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
+    private boolean permissionToRecordAccepted = false;
+    private String [] permissions = {Manifest.permission.RECORD_AUDIO};
+    private CreateFragment mCreateFrag;
+
+    // Handles the event of the user allowing/denying permission to record.
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case REQUEST_RECORD_AUDIO_PERMISSION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                    Log.d("tag", "permission granted");
+                    permissionToRecordAccepted = true;
+                    break;
+                } else {
+                    Log.d("tag", "in permission denied");
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+        }
+
+    }
 
     public CreateToolsFragment() {
         // required empty constructor
@@ -58,6 +90,8 @@ public class CreateToolsFragment extends Fragment {
         mFileExtension = ".mp4";
         recordCount = 0;
 
+        mCreateFrag = (CreateFragment) getParentFragment();
+
         // Append the record buttons to the layout
         appendButtons(v);
 
@@ -67,12 +101,9 @@ public class CreateToolsFragment extends Fragment {
         btn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View btn) {
                 processFiles();
-                Bundle data = new Bundle();
-                data.putString("fileLocation", mFilePath + mFileName + mFileExtension);
-                data.putString("fileName", mFileName +
+                mCreateFrag.setRecordingPath(mFilePath + mFileName +
                         mFileExtension);
                 Fragment editFrag = new EditFragment();
-                editFrag.setArguments(data);
                 getFragmentManager().beginTransaction().replace(R.id
                         .create_tools, editFrag).commit();
             }
@@ -112,13 +143,20 @@ public class CreateToolsFragment extends Fragment {
         // the button is tapped
         OnClickListener clicker = new OnClickListener() {
             public void onClick(View v) {
-                onRecord(mStartRecording);
-                if (mStartRecording) {
-                    setImageResource(R.drawable.ic_action_btn_stop);
+                if (permissionToRecordAccepted) {
+                    Log.d("clicker", "permission accepted");
+                    onRecord(mStartRecording);
+                    if (mStartRecording) {
+                        setImageResource(R.drawable.ic_action_btn_stop);
+                    } else {
+                        setImageResource(R.drawable.ic_action_btn_record);
+                    }
+                    mStartRecording = !mStartRecording;
                 } else {
-                    setImageResource(R.drawable.ic_action_btn_record);
+                    Log.d("clicker", "permission not accepted");
+                    requestPermissions(permissions,
+                            REQUEST_RECORD_AUDIO_PERMISSION);
                 }
-                mStartRecording = !mStartRecording;
             }
         };
 
@@ -139,34 +177,39 @@ public class CreateToolsFragment extends Fragment {
         }
     }
 
-    private MediaRecorder initializeRecorder() {
-        MediaRecorder recorder = new MediaRecorder();
-        recorder.setAudioSource(MIC);
-        recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-        recorder.setOutputFile(mFilePath + "/" + mFileName + "(" +
-                recordCount + ")" + mFileExtension);
-        recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+    private void initializeRecorder() {
         try {
+            recorder = new MediaRecorder();
+            recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+            recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+            recorder.setOutputFile(mFilePath + "/" + mFileName + "(" +
+                    recordCount + ")" + mFileExtension);
+            recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
             recorder.prepare();
         } catch (IOException e) {
-            Log.e("MR", e.getMessage() + ": " + mFileName);
+            e.printStackTrace();
         }
-        return recorder;
+
     }
 
     private void startRecording() {
-        recorder = initializeRecorder();
+        if (recorder == null) {
+            initializeRecorder();
+        }
         recorder.start();
         recordCount++;
     }
 
     private void stopRecording() {
-        recorder.stop();
-        recorder.release();
-        recorder = null;
+        if (recorder != null) {
+            recorder.stop();
+            recorder.release();
+            recorder = null;
+        }
     }
 
     // Uses the isoparser-1.1.22 library to concatenate MP4 files
+    //
     private void processFiles() {
         List<Movie> inMovies = new ArrayList<Movie>();
 
@@ -217,11 +260,15 @@ public class CreateToolsFragment extends Fragment {
     }
 
     private void onRecord(boolean start) {
-        if (start) {
-            startRecording();
-        } else {
-            stopRecording();
-        }
+            if (start) {
+                startRecording();
+            } else {
+                stopRecording();
+            }
+    }
+
+    private Fragment getFragment() {
+        return this;
     }
 
     @Override
