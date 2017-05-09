@@ -16,7 +16,7 @@
             android:layout_marginTop="15dp"/>
 
         <com.bauble_app.bauble.CustomButton
-            android:id="@+id/create_set_title"
+            android:id="@+id/create_add_title"
             android:layout_width="wrap_content"
             android:layout_height="30dp"
             android:text="Add Title"
@@ -24,5 +24,38 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="15dp"
             android:background="@drawable/btn_add_title"
+            android:visibility="visible"
             />
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/create_title_input_layout"
+            android:layout_below="@id/create_set_cover_image"
+            android:layout_marginTop="15dp"
+            android:layout_alignLeft="@id/create_set_cover_image"
+            android:visibility="gone">
+
+            <EditText
+                android:id="@+id/create_title_input"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/edit_text_height"
+                android:ems="10"
+                android:inputType="text"
+                android:background="@drawable/edittext"
+                android:hint="Add a title"/>
+
+        </android.support.design.widget.TextInputLayout>
+
+    <com.bauble_app.bauble.CustomButton
+        android:id="@+id/create_title_input_done"
+        android:text="Set"
+        android:layout_height="@dimen/edit_text_height"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/btn_add_title"
+        android:layout_alignBottom="@id/create_title_input_layout"
+        android:layout_alignRight="@id/create_set_cover_image"
+        android:visibility="gone"
+        android:layout_width="wrap_content"/>
+
 </RelativeLayout>
