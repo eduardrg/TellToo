@@ -1,51 +1,35 @@
 package com.bauble_app.bauble.create;
 
 
-import android.Manifest;
-import android.content.pm.PackageManager;
-import android.media.MediaRecorder;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bauble_app.bauble.BuildConfig;
 import com.bauble_app.bauble.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class CreateFragment extends Fragment {
-    private MediaRecorder recorder;
-    private View mRecordButton;
-    private String mFilePath;
-    private String mFileName;
-    private int recordCount;
+    private String mTitle;
+    private String mAuthor;
+    private String mRecordingPath;
+    private String mThumbnailPath;
 
-    // Requesting permission to RECORD_AUDIO
-    private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
-    private boolean permissionToRecordAccepted = false;
-    private String [] permissions = {Manifest.permission.RECORD_AUDIO};
-    private String mFileExtension;
-
-    // Handles the event of the user allowing/denying permission to record.
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode){
-            case REQUEST_RECORD_AUDIO_PERMISSION:
-                permissionToRecordAccepted  = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-                break;
-        }
-        if (!permissionToRecordAccepted ) {
-         //TODO: disable UI and prompt for permission again if the user
-            // attempts to record
-        }
-
-    }
+    private FirebaseAuth mAuth;
+    private FirebaseDatabase mDatabase;
+    private String FDBTag = "FDB";
 
     public CreateFragment() {
         // Required empty public constructor
@@ -56,6 +40,30 @@ public class CreateFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_create, container, false);
+        mAuth = FirebaseAuth.getInstance();
+        mDatabase = FirebaseDatabase.getInstance();
+        mAuthor = "Anonymous";
+        mTitle = "Untitled";
+        mThumbnailPath = "android.resource://"+ BuildConfig
+                .APPLICATION_ID+"‌​/" + R.drawable.place_holder_img;
+
+        String userId = mAuth.getCurrentUser().getUid();
+        DatabaseReference users = mDatabase.getReference("users/" + userId +
+                "/name");
+        users.child(userId).child("name").addValueEventListener(new
+                                                                   ValueEventListener
+                () {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                mAuthor = dataSnapshot.getValue().toString();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e(FDBTag, "Failed to read user name: " + databaseError
+                        .getCode());
+            }
+        });
 
         // Insert the fragment that handles setting a story's metadata (cover
         // image, title)
@@ -67,11 +75,38 @@ public class CreateFragment extends Fragment {
         getChildFragmentManager().beginTransaction().replace(R.id
                 .create_tools, createToolsFrag).commit();
 
-        // Request permission to use the microphone
-        ActivityCompat.requestPermissions(getActivity(), permissions,
-                REQUEST_RECORD_AUDIO_PERMISSION);
-
         return v;
     }
 
+    public String getTitle() {
+        return mTitle;
+    }
+
+    public void setTitle(String title) {
+        this.mTitle = title;
+    }
+
+    public String getAuthor() {
+        return mAuthor;
+    }
+
+    public void setAuthor(String author) {
+        this.mAuthor = author;
+    }
+
+    public String getRecordingPath() {
+        return mRecordingPath;
+    }
+
+    public void setRecordingPath(String recordingPath) {
+        this.mRecordingPath = recordingPath;
+    }
+
+    public String getThumbnailPath() {
+        return mThumbnailPath;
+    }
+
+    public void setThumbnailPath(String thumbnailPath) {
+        this.mThumbnailPath = thumbnailPath;
+    }
 }
