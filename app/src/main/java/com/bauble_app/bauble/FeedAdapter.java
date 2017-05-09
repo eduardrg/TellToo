@@ -1,6 +1,5 @@
 package com.bauble_app.bauble;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
@@ -70,7 +69,7 @@ public class FeedAdapter extends BaseAdapter {
         String authorString = data.get(position).getAuthor();
         author.setText(authorString);
         TextView time = (TextView) vi.findViewById(R.id.feed_listitem_length);
-        time.setText("00:" + data.get(position).getDurration().toString());
+        time.setText("00:" + data.get(position).getDuration().toString());
         TextView chains = (TextView) vi.findViewById(R.id.feed_listitem_chains);
         chains.setText(data.get(position).getChains().toString());
         TextView expire = (TextView) vi.findViewById(R.id.feed_listitem_expire);

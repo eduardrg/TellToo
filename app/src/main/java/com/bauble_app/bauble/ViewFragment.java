@@ -66,7 +66,7 @@ public class ViewFragment extends Fragment {
         TextView author = (TextView) v.findViewById(R.id.view_author);
         author.setText("by " + story.getAuthor());
         TextView time = (TextView) v.findViewById(R.id.view_length);
-        time.setText("00:" + story.getDurration());
+        time.setText("00:" + story.getDuration());
         TextView chains = (TextView) v.findViewById(R.id.view_chains);
         chains.setText(story.getChains().toString());
         TextView expire = (TextView) v.findViewById(R.id.view_expire);
