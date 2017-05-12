@@ -2,6 +2,8 @@ package com.bauble_app.bauble.create;
 
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -20,18 +22,15 @@ import com.bauble_app.bauble.R;
 import com.bauble_app.bauble.StoryObject;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 
@@ -81,12 +80,37 @@ public class EditFragment extends Fragment {
                     Uri imageFile = Uri.fromFile(new File(mCreateFrag
                         .getThumbnailPath()));
 
-                    StorageReference testStoriesRef = mStorage.child
-                            ("teststories/" + mCreateFrag.getAuthor() +
-                                    mCreateFrag.getTitle());
+                    Bitmap thumbBitmap = BitmapFactory.decodeFile(imageFile
+                            .getPath());
+
+
+                StorageReference testStoriesRef = mStorage.child
+                        ("teststories/" + mCreateFrag.getAuthor() +
+                                mCreateFrag.getTitle().replace(" ", "") +
+                                ".mp4");
+                StorageReference thumbnailsRef = mStorage.child
+                        ("thumbnails/" + mCreateFrag.getAuthor() +
+                                mCreateFrag.getTitle().replace(" ", "") + ".jpg");
+                
+                FileOutputStream out = null;
+                try {
+                    File file = new File(getActivity()
+                            .getExternalCacheDir().getAbsolutePath() +
+                            "/thumbPng.png");
+                    out = new FileOutputStream(file);
+                    thumbBitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+                    out.close();
+                    imageFile = Uri.fromFile(file);
                     StorageReference thumbnailsRef = mStorage.child
                             ("thumbnails/" + mCreateFrag.getAuthor() +
-                                    mCreateFrag.getTitle());
+                                    mCreateFrag.getTitle().replace(" ", "") + "" +
+                                    ".png");
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
 
                     testStoriesRef.putFile(audioFile)
                             .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {

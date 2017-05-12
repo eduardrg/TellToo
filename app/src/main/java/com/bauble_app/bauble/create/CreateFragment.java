@@ -48,8 +48,7 @@ public class CreateFragment extends Fragment {
                 .APPLICATION_ID+"‌​/" + R.drawable.place_holder_img;
 
         String userId = mAuth.getCurrentUser().getUid();
-        DatabaseReference users = mDatabase.getReference("users/" + userId +
-                "/name");
+        DatabaseReference users = mDatabase.getReference("users");
         users.child(userId).child("name").addValueEventListener(new
                                                                    ValueEventListener
                 () {
