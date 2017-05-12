@@ -9,7 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar" >
-        <activity android:name=".MainNavActivity">
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -21,9 +21,9 @@
             <meta-data android:name="android.app.searchable"
                 android:resource="@layout/searchable" />
         </activity>
-        <!--<activity-->
-            <!--android:name=".MainNavActivity"-->
-            <!--android:label="@string/title_activity_main_nav"></activity>-->
+        <activity
+            android:name=".MainNavActivity"
+            android:label="@string/title_activity_main_nav"></activity>
     </application>
 
 </manifest>

@@ -45,18 +45,36 @@
                     android:layout_height="wrap_content"
                     android:text="time"
                     android:layout_margin="@dimen/listitem_feed_stat_margin"/>
+                <ImageView
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:src="@drawable/ic_stat_chains"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="9dp" />
                 <TextView
                     android:id="@+id/view_chains"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="chains"
                     android:layout_margin="@dimen/listitem_feed_stat_margin"/>
+                <ImageView
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:src="@drawable/ic_stat_time"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="9dp"/>
                 <TextView
                     android:id="@+id/view_expire"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="expire"
                     android:layout_margin="@dimen/listitem_feed_stat_margin"/>
+                <ImageView
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:src="@drawable/ic_stat_plays"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="9dp"/>
                 <TextView
                     android:id="@+id/view_plays"
                     android:layout_width="wrap_content"
@@ -163,7 +181,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="80dp"
                 android:orientation="horizontal"
-                android:background="@color/authui_colorPrimary">
+                android:background="@color/colorFeedListItem"
+                android:padding="5dp">
                 <!--<ImageView-->
                     <!--android:layout_width="wrap_content"-->
                     <!--android:layout_height="wrap_content"-->
