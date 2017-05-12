@@ -197,9 +197,13 @@ public class SetMetaFragment extends Fragment {
 
                 // Prepare the RelativeLayout rules for the View directly
                 // below the old "set cover" button
+                TextInputLayout setTitle = (TextInputLayout) getView().findViewById(R.id
+                        .create_title_input_layout);
                 Button addTitle = (Button) getView().findViewById(R.id
                         .create_add_title);
-                RelativeLayout.LayoutParams addTitleParams = (RelativeLayout.LayoutParams) addTitle
+                RelativeLayout.LayoutParams addTitleParams = (RelativeLayout
+                        .LayoutParams) addTitle.getLayoutParams();
+                RelativeLayout.LayoutParams setTitleParams = (RelativeLayout.LayoutParams) setTitle
                         .getLayoutParams();
 
                 // hide the old "set cover" button
@@ -211,7 +215,10 @@ public class SetMetaFragment extends Fragment {
 
                 // Update the RelativeLayout rules for the View directly
                 // below the old "set cover" button
+                setTitleParams.addRule(RelativeLayout.BELOW, R.id.create_cover_image);
                 addTitleParams.addRule(RelativeLayout.BELOW, R.id.create_cover_image);
+                setTitle.setLayoutParams(setTitleParams);
+                addTitle.setLayoutParams(addTitleParams);
 
                 /*
                 setCover.setBackground(myBitmap);
@@ -229,12 +236,12 @@ public class SetMetaFragment extends Fragment {
                         DefaultCallback() {
                             @Override
                             public void onImagePickerError(Exception e, EasyImage.ImageSource source, int type) {
-                                //Some error handling
+                                //TODO: error wrangling
                             }
 
                             @Override
                             public void onImagesPicked(List<File> imagesFiles, EasyImage.ImageSource source, int type) {
-                                //Handle the images
+                                //Handle the images picked by user
                                 onPhotosReturned(imagesFiles);
                             }
                         });
