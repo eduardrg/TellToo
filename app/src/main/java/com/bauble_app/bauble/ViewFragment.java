@@ -59,7 +59,8 @@ public class ViewFragment extends Fragment {
         StorageReference storageReference = storage.getReferenceFromUrl("gs://bauble-90a48.appspot.com");
         String imagePath = story.getAuthor() + story.getTitle().replace(" ", "");
         StorageReference pathReference = storageReference.child("thumbnails/" + imagePath + ".png");
-        StorageReference audioPathReference = storageReference.child("teststories/" + imagePath + ".mp3");
+        StorageReference audioPathReference = storageReference.child
+                ("teststories/" + imagePath + ".mp4");
 
         TextView title = (TextView) v.findViewById(R.id.view_title);
         title.setText(story.getTitle());
@@ -134,11 +135,12 @@ public class ViewFragment extends Fragment {
             @Override
             public void onSuccess(byte[] bytes) {
                 try {
-                    // Data for ".mp3" is returned, use this as needed
+                    // Data for ".mp4" is returned, use this as needed
                     // create temp file that will hold byte array
-                    File tempMp3 = File.createTempFile("tempStory", "mp3", getCacheDir());
-                    tempMp3.deleteOnExit();
-                    FileOutputStream fos = new FileOutputStream(tempMp3);
+                    File tempMp4 = File.createTempFile("tempStory", "mp4",
+                            getCacheDir());
+                    tempMp4.deleteOnExit();
+                    FileOutputStream fos = new FileOutputStream(tempMp4);
                     fos.write(bytes);
                     fos.close();
 
@@ -151,7 +153,7 @@ public class ViewFragment extends Fragment {
                     // Tried passing path directly, but kept getting
                     // "Prepare failed.: status=0x1"
                     // so using file descriptor instead
-                    FileInputStream fis = new FileInputStream(tempMp3);
+                    FileInputStream fis = new FileInputStream(tempMp4);
                     mPlayer.setDataSource(fis.getFD());
 
                     mPlayer.prepare();
