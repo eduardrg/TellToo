@@ -70,7 +70,7 @@ public class CreateFragment extends Fragment {
         getChildFragmentManager().beginTransaction().replace(R.id.create_set_meta, setMetaFrag).commit();
 
         // Insert the fragment that handles recording
-        Fragment createToolsFrag = new CreateToolsFragment();
+        Fragment createToolsFrag = new RecordFragment();
         getChildFragmentManager().beginTransaction().replace(R.id
                 .create_tools, createToolsFrag).commit();
 

@@ -5,7 +5,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
@@ -16,14 +16,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 
 import com.bauble_app.bauble.R;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.File;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+import pl.aprilapps.easyphotopicker.Constants;
 import pl.aprilapps.easyphotopicker.DefaultCallback;
 import pl.aprilapps.easyphotopicker.EasyImage;
+
+import static android.app.Activity.RESULT_OK;
 
 
 /**
@@ -38,9 +45,11 @@ public class SetMetaFragment extends Fragment {
     private CreateFragment mCreateFrag;
 
     // Requesting permission to read external storage
-    private static final int REQUEST_READ_EXTERNAL_PERMISSION = 200;
+    private static final int MULTIPLE_PERMISSIONS_REQUEST = 123;
     private boolean permissionToReadExternalAccepted = false;
-    private String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE};
+    private boolean permissionToWriteExternalAccepted = false;
+    private String[] permissions = {Manifest.permission
+            .READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
     public SetMetaFragment() {
         // Required empty public constructor
@@ -59,20 +68,7 @@ public class SetMetaFragment extends Fragment {
         mCreateFrag = (CreateFragment) getParentFragment();
 
         Button setCover = (Button) v.findViewById(R.id.create_set_cover_image);
-        setCover.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View btn) {
-                // TODO: handle setting story image
-                if (!permissionToReadExternalAccepted) {
-                    Log.d("tag", "in if");
-                    requestPermissions(permissions,
-                            REQUEST_READ_EXTERNAL_PERMISSION);
-                } else {
-                    Log.d("tag", "in else");
-                    EasyImage.openChooserWithGallery(getFragment(), "Pick a cover " +
-                            "image", 0);
-                }
-            }
-        });
+        attachCoverListener(setCover);
 
 
         mTitleInputDone.setOnClickListener(new View.OnClickListener() {
@@ -102,27 +98,53 @@ public class SetMetaFragment extends Fragment {
         return v;
     }
 
+    // Sets an onclick listener for changing the cover image & returns the id
+    // of the view affected
+
+    private int attachCoverListener(View v) {
+        v.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View btn) {
+                if (!(permissionToReadExternalAccepted &&
+                        permissionToWriteExternalAccepted)) {
+                    Log.d("tag", "in if");
+                    requestPermissions(permissions,
+                            MULTIPLE_PERMISSIONS_REQUEST);
+                } else {
+                    Log.d("tag", "in else");
+                    EasyImage.openChooserWithGallery(getFragment(), "Pick a cover " +
+                            "image", 0);
+                }
+            }
+        });
+        return v.getId();
+    }
+
     // Callback called after user accepts or denies permission
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         Log.d("tag", "in permissions callback");
         switch (requestCode) {
-            case REQUEST_READ_EXTERNAL_PERMISSION: {
+            case MULTIPLE_PERMISSIONS_REQUEST: {
                 // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-                    Log.d("tag", "permission granted");
-                    permissionToReadExternalAccepted = true;
-                    EasyImage.openChooserWithGallery(getFragment(), "Pick a cover " +
-                            "image", 0);
-                    break;
+                if (grantResults.length > 0) {
+                    boolean writePermission = grantResults[1] == PackageManager
+                            .PERMISSION_GRANTED;
+                    boolean readPermission = grantResults[0] == PackageManager
+                            .PERMISSION_GRANTED;
+                    if (writePermission && readPermission) {
+                        // permission was granted, yay! Do the
+                        // contacts-related task you need to do.
+                        Log.d("tag", "permission granted");
+                        permissionToReadExternalAccepted = true;
+                        permissionToWriteExternalAccepted = true;
+                        EasyImage.openChooserWithGallery(getFragment(), "Pick a cover " +
+                                "image", 0);
+                        break;
+                    }
                 } else {
                     Log.d("tag", "in permission denied");
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
+                    // permission denied
                 }
                 return;
             }
@@ -133,38 +155,94 @@ public class SetMetaFragment extends Fragment {
         return this;
     }
 
+    // Callback when EasyImage picker returns a file
     private void onPhotosReturned(List<File> imagesFiles) {
         File imageFile = imagesFiles.get(0);
-        mCreateFrag.setThumbnailPath(imageFile.getAbsolutePath());
-        Button setCover = (Button) getView().findViewById(R.id
-                .create_set_cover_image);
-        BitmapDrawable myBitmap = new BitmapDrawable(getResources(),
-                BitmapFactory
-                .decodeFile(imageFile
-                .getAbsolutePath
-                ()));
-        setCover.setBackground(myBitmap);
-        setCover.setText(null);
-
+        // Crop the image to required dimensions (a circle between 100x100
+        // and 500x500 pixels in size)
+        CropImage.activity(Uri.fromFile(imageFile)).setCropShape(CropImageView
+                .CropShape
+                .OVAL).setMinCropResultSize(100, 100).setMaxCropResultSize
+                (500,500).setFixAspectRatio
+                (true)
+                .start(getContext(), this);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        EasyImage.handleActivityResult(requestCode, resultCode, data, getActivity(), new
-                DefaultCallback() {
-            @Override
-            public void onImagePickerError(Exception e, EasyImage.ImageSource source, int type) {
-                //Some error handling
+        // This is a result from the image cropper
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult
+                    (data);
+            if (resultCode == RESULT_OK) {
+                Uri resultUri = result.getUri();
+                mCreateFrag.setThumbnailPath(resultUri.getPath());
+                /*
+                Button setCover = (Button) getView().findViewById(R.id
+                .create_set_cover_image);
+                BitmapDrawable myBitmap = new BitmapDrawable(getResources(),
+                BitmapFactory.decodeFile(resultUri.getPath()));
+*/
+                // Find the existing but hidden CircleImageView that will
+                // display the cover image
+                CircleImageView cover = (CircleImageView) getView()
+                        .findViewById(R.id
+                                .create_cover_image);
+                // Set the CircleImageView's image and attach a listener so
+                // the image can still be replaced
+                cover.setImageBitmap(BitmapFactory.decodeFile(resultUri
+                        .getPath()));
+                attachCoverListener(cover);
+
+                // Prepare the RelativeLayout rules for the View directly
+                // below the old "set cover" button
+                Button addTitle = (Button) getView().findViewById(R.id
+                        .create_add_title);
+                RelativeLayout.LayoutParams addTitleParams = (RelativeLayout.LayoutParams) addTitle
+                        .getLayoutParams();
+
+                // hide the old "set cover" button
+                getView().findViewById(R.id.create_set_cover_image)
+                        .setVisibility(View.GONE);
+
+                // Show the new CircularImageView
+                cover.setVisibility(View.VISIBLE);
+
+                // Update the RelativeLayout rules for the View directly
+                // below the old "set cover" button
+                addTitleParams.addRule(RelativeLayout.BELOW, R.id.create_cover_image);
+
+                /*
+                setCover.setBackground(myBitmap);
+                setCover.setText(null);
+                */
+                System.out.println("result ok");
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Exception error = result.getError();
+                Log.d("Error", "cropper error", error);
+            }
+            // This is a result from EasyImage image picker
+        } else if ((requestCode & Constants.RequestCodes.EASYIMAGE_IDENTIFICATOR) > 0) {
+            if (resultCode == RESULT_OK) {
+                EasyImage.handleActivityResult(requestCode, resultCode, data, getActivity(), new
+                        DefaultCallback() {
+                            @Override
+                            public void onImagePickerError(Exception e, EasyImage.ImageSource source, int type) {
+                                //Some error handling
+                            }
+
+                            @Override
+                            public void onImagesPicked(List<File> imagesFiles, EasyImage.ImageSource source, int type) {
+                                //Handle the images
+                                onPhotosReturned(imagesFiles);
+                            }
+                        });
             }
 
-            @Override
-            public void onImagesPicked(List<File> imagesFiles, EasyImage.ImageSource source, int type) {
-                //Handle the images
-                onPhotosReturned(imagesFiles);
-            }
-        });
+        }
     }
 
 
 }
+

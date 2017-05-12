@@ -101,7 +101,7 @@ public class EditFragment extends Fragment {
                     thumbBitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
                     out.close();
                     imageFile = Uri.fromFile(file);
-                    StorageReference thumbnailsRef = mStorage.child
+                    thumbnailsRef = mStorage.child
                             ("thumbnails/" + mCreateFrag.getAuthor() +
                                     mCreateFrag.getTitle().replace(" ", "") + "" +
                                     ".png");

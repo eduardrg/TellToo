@@ -37,13 +37,15 @@ import java.util.List;
  * Created by princ on 5/1/2017.
  */
 
-public class CreateToolsFragment extends Fragment {
+public class RecordFragment extends Fragment {
     private String mFilePath;
     private String mFileName;
     private String mFileExtension;
     private RecordButton mRecordButton;
     private MediaRecorder recorder;
     private int recordCount;
+
+    private boolean mSupportsPause;
 
     // Requesting permission to RECORD_AUDIO
     private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
@@ -76,16 +78,18 @@ public class CreateToolsFragment extends Fragment {
 
     }
 
-    public CreateToolsFragment() {
+    public RecordFragment() {
         // required empty constructor
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_create_tools, container,
                 false);
+        mSupportsPause = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N);
         // Record to the external cache directory for visibility
-        mFilePath = getActivity().getExternalCacheDir().getAbsolutePath();
+        mFilePath = getActivity().getExternalFilesDir(null).getAbsolutePath();
         mFileName = "/audiorecordtest";
         mFileExtension = ".mp4";
         recordCount = 0;
@@ -100,7 +104,13 @@ public class CreateToolsFragment extends Fragment {
         Button btn = (Button) v.findViewById(R.id.create_next_btn);
         btn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View btn) {
-                processFiles();
+                if (!mSupportsPause) {
+                    processFiles();
+                } else {
+                    if (recorder != null) {
+                        recorder.stop();
+                    }
+                }
                 mCreateFrag.setRecordingPath(mFilePath + mFileName +
                         mFileExtension);
                 Fragment editFrag = new EditFragment();
@@ -179,32 +189,41 @@ public class CreateToolsFragment extends Fragment {
 
     private void initializeRecorder() {
         try {
-            recorder = new MediaRecorder();
+            if (recorder == null) {
+                recorder = new MediaRecorder();
+            }
             recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
             recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-            recorder.setOutputFile(mFilePath + "/" + mFileName + "(" +
-                    recordCount + ")" + mFileExtension);
+            if (mSupportsPause) {
+                recorder.setOutputFile(mFilePath + "/" + mFileName +
+                        mFileExtension);
+            } else {
+                recorder.setOutputFile(mFilePath + "/" + mFileName + "(" +
+                        recordCount + ")" + mFileExtension);
+            }
             recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
             recorder.prepare();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     private void startRecording() {
-        if (recorder == null) {
-            initializeRecorder();
+        initializeRecorder();
+        if (recordCount == 0 || !mSupportsPause) {
+            recorder.start();
+        } else {
+            recorder.resume();
         }
-        recorder.start();
-        recordCount++;
     }
 
     private void stopRecording() {
-        if (recorder != null) {
+        if (mSupportsPause) {
+            recorder.pause();
+        } else {
             recorder.stop();
-            recorder.release();
-            recorder = null;
+            recordCount++;
+            recorder.reset();
         }
     }
 
