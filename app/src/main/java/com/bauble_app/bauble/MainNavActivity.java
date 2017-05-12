@@ -2,6 +2,7 @@ package com.bauble_app.bauble;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -80,12 +81,16 @@ public class MainNavActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_nav);
 
+        fragManager = getSupportFragmentManager();
+        fragManager.beginTransaction()
+                .replace(R.id.content, new FeedFragment())
+                .commit();
+
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         mAuth = FirebaseAuth.getInstance();
-        fragManager = getSupportFragmentManager();
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -128,7 +133,13 @@ public class MainNavActivity extends AppCompatActivity {
         return true;
     }
 
-
+/*
+    protected void onStart() {
+        super.onStart();
+        currentUser = mAuth.getCurrentUser();
+        // Check if user is signed in (non-null) and update UI accordingly.
+    }
+*/
     public FragmentManager getMyFragManager() {
         return this.fragManager;
     }

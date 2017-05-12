@@ -59,6 +59,8 @@ public class ViewFragment extends Fragment {
         StorageReference storageReference = storage.getReferenceFromUrl("gs://bauble-90a48.appspot.com");
         String imagePath = story.getAuthor() + story.getTitle().replace(" ", "");
         StorageReference pathReference = storageReference.child("thumbnails/" + imagePath + ".png");
+        // StorageReference audioPathReference = storageReference.child("teststories/" + imagePath + ".mp3");
+        // TODO: also uniform file type For Tech Demo
         StorageReference audioPathReference = storageReference.child
                 ("teststories/" + imagePath + ".mp4");
 
@@ -137,8 +139,10 @@ public class ViewFragment extends Fragment {
                 try {
                     // Data for ".mp3" is returned, use this as needed
                     // create temp file that will hold byte array
-                    File tempMp3 = File.createTempFile("tempStory", "mp4",
-                            getCacheDir());
+                    // File tempMp3 = File.createTempFile("tempStory", "mp3", getCacheDir());
+                    // TODO: make the files all mp4 or all mp3, For Tech Demo
+                    File tempMp3 = File.createTempFile("tempStory", "mp4", getCacheDir());
+
                     tempMp3.deleteOnExit();
                     FileOutputStream fos = new FileOutputStream(tempMp3);
                     fos.write(bytes);
