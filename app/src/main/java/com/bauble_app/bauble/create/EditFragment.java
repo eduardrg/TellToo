@@ -53,6 +53,7 @@ public class EditFragment extends Fragment {
     // file in Firebase Storage, respectively. These are only available after
     // we upload, so they are not stored in the CreateFragment parent.
     private StoryObject makeStoryObject() {
+
         return new StoryObject(mRecordingStoragePath, mCreateFrag.getAuthor()
                 , mThumbnailStoragePath,
                 mCreateFrag.getTitle());

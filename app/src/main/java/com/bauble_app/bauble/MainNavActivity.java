@@ -9,32 +9,22 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.bauble_app.bauble.auth.AuthChoiceFragment;
 import com.bauble_app.bauble.create.CreateFragment;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
-public class MainNavActivity extends MainActivity {
+public class MainNavActivity extends AppCompatActivity {
 
-    private DatabaseReference mDatabase; // for accessing JSON
     private TextView mTextMessage;
     private FragmentManager fragManager;
     private FirebaseAuth mAuth;
-    private FirebaseUser currentUser;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -52,17 +42,15 @@ public class MainNavActivity extends MainActivity {
                             ExploreFragment()).commit();
                     return true;
                 case R.id.navigation_create:
-                    Fragment createFrag = new CreateFragment();
-                    /*
+                    Fragment frag;
                     // Decide whether to show signup or create screen
                     if (mAuth.getCurrentUser() == null) {
-                        createFrag = new AuthChoiceFragment();
+                        frag = new AuthChoiceFragment();
                     } else {
-                        createFrag = new CreateFragment();
+                        frag = new CreateFragment();
                     }
-                    */
                     fragManager.beginTransaction()
-                            .replace(R.id.content, createFrag).commit();
+                            .replace(R.id.content, frag).commit();
                     return true;
                 case R.id.navigation_me:
                     Fragment meFrag;
@@ -101,6 +89,9 @@ public class MainNavActivity extends MainActivity {
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        fragManager.beginTransaction()
+                .replace(R.id.content, new FeedFragment())
+                .commit();
 
     }
 
@@ -137,53 +128,6 @@ public class MainNavActivity extends MainActivity {
         return true;
     }
 
-    protected void onStart() {
-        super.onStart();
-        currentUser = mAuth.getCurrentUser();
-        // Check if user is signed in (non-null) and update UI accordingly.
-
-        // TODO: need loading bar / splash screen for wait time for getting data
-        // Load data from firebase to singleton
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-        DatabaseReference reference = mDatabase.child("stories");
-        reference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Iterable<DataSnapshot> data = dataSnapshot.getChildren();
-                for(DataSnapshot snap : data) {
-                    String title = snap.child("title").getValue(String.class);
-                    Long chains = snap.child("chain").getValue(Long.class);
-                    String author = snap.child("author").getValue(String.class);
-                    Long plays = snap.child("play").getValue(Long.class);
-                    Long time = snap.child("duration").getValue(Long.class);
-                    String expire = snap.child("expiration").getValue(String.class);
-                    // String title, int durration, int chains, String expireDate, int plays
-                    StoryObject story = new StoryObject(title, author, time, chains, expire, plays);
-                    if (snap.child("children").getChildren() != null) {
-                        for(DataSnapshot child : snap.child("children").getChildren()) {
-                            story.addChildStory(child.getValue(String.class));
-
-                        }
-                        Log.i("MainNavActivity", story.getChildren().toString());
-                    }
-                    if (!StorySingleton.getInstance().containsStory(story)) {
-                        Log.e("MainNavActivity", "" + StorySingleton.getInstance().containsStory(story));
-                        Log.e("MainNavActivity", story.toString());
-                        StorySingleton.getInstance().addStory(story);
-                    }
-                }
-                fragManager.beginTransaction()
-                        .replace(R.id.content, new FeedFragment())
-                        .commit();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.e("MainNavActivity", "Database Error");
-            }
-        });
-
-    }
 
     public FragmentManager getMyFragManager() {
         return this.fragManager;
