@@ -15,14 +15,6 @@
       },
       "oauth_client": [
         {
-          "client_id": "802705676917-4j2heog2qcu592p8mu6hr2mrmq1dsuf2.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.bauble_app.bauble",
-            "certificate_hash": "8f1cc0231c147aba74b101dde00a3252f0b099b7"
-          }
-        },
-        {
           "client_id": "802705676917-204v3fsk2nlf8e3u2auta83ogt482utb.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

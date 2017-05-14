@@ -1,15 +1,22 @@
 package com.bauble_app.bauble;
 
+<<<<<<< HEAD
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.support.constraint.solver.SolverVariable;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+=======
+>>>>>>> 11ff45042a5ac26ce95381ff61ee77bf8ab9f561
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+<<<<<<< HEAD
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+=======
+>>>>>>> 11ff45042a5ac26ce95381ff61ee77bf8ab9f561
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;

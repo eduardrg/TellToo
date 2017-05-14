@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.bauble_app.bauble">
+          package="com.bauble_app.bauble">
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -19,11 +21,14 @@
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
             <meta-data android:name="android.app.searchable"
-                android:resource="@layout/searchable" />
+                       android:resource="@layout/searchable" />
         </activity>
         <activity
-            android:name=".MainNavActivity"
-            android:label="@string/title_activity_main_nav"></activity>
+            android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:theme="@style/Base.Theme.AppCompat" />
+        <!--<activity-->
+        <!--android:name=".MainNavActivity"-->
+        <!--android:label="@string/title_activity_main_nav"></activity>-->
     </application>
 
 </manifest>
