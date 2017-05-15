@@ -41,10 +41,10 @@ public class MainActivity extends AppCompatActivity {
                 Iterable<DataSnapshot> data = dataSnapshot.getChildren();
                 for (DataSnapshot snap : data) {
                     String title = snap.child("title").getValue(String.class);
-                    Long chains = snap.child("chain").getValue(Long.class);
+                    long chains = snap.child("chains").getValue(Long.class);
                     String author = snap.child("author").getValue(String.class);
-                    Long plays = snap.child("play").getValue(Long.class);
-                    Long time = snap.child("duration").getValue(Long.class);
+                    long plays = snap.child("plays").getValue(Long.class);
+                    long time = snap.child("duration").getValue(Long.class);
                     String expire = snap.child("expiration").getValue(String.class);
                     // String title, int durration, int chains, String expireDate, int plays
                     StoryObject story = new StoryObject(title, author, time, chains, expire, plays);

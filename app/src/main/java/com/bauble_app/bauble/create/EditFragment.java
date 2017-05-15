@@ -88,7 +88,7 @@ public class EditFragment extends Fragment {
                 StorageReference testStoriesRef = mStorage.child
                         ("teststories/" + mCreateFrag.getAuthor() +
                                 mCreateFrag.getTitle().replace(" ", "") +
-                                ".mp4");
+                                ".m4a");
                 StorageReference thumbnailsRef = mStorage.child
                         ("thumbnails/" + mCreateFrag.getAuthor() +
                                 mCreateFrag.getTitle().replace(" ", "") + ".jpg");

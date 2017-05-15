@@ -4,7 +4,6 @@ package com.bauble_app.bauble;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,11 +12,7 @@ import android.widget.ListView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 
 /**
@@ -38,67 +33,25 @@ public class FeedFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        final View v = inflater.inflate(R.layout.fragment_feed, container,
+        View v = inflater.inflate(R.layout.fragment_feed, container,
                 false);
-        mAuth = FirebaseAuth.getInstance();
-        mCurrentUser = mAuth.getCurrentUser();
-        // Check if user is signed in (non-null) and update UI accordingly.
 
-        // TODO: need loading bar / splash screen for wait time for getting data
-        // Load data from firebase to singleton
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-        DatabaseReference reference = mDatabase.child("stories");
-        reference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Iterable<DataSnapshot> data = dataSnapshot.getChildren();
-                for(DataSnapshot snap : data) {
-                    String title = snap.child("title").getValue(String.class);
-                    long chains = snap.child("chains").getValue(Long.class);
-                    String author = snap.child("author").getValue(String.class);
-                    long plays = snap.child("plays").getValue(Long.class);
-                    long time = snap.child("duration").getValue(Long.class);
-                    String expire = snap.child("expiration").getValue(String.class);
-                    // String title, int durration, int chains, String expireDate, int plays
-                    StoryObject story = new StoryObject(title, author, time, chains, expire, plays);
-                    if (snap.child("children").getChildren() != null) {
-                        for(DataSnapshot child : snap.child("children").getChildren()) {
-                            story.addChildStory(child.getValue(String.class));
+        // Old code for hard coding stories in
+        /*
+        List<StoryObject> list = new ArrayList<StoryObject>();
 
-                        }
-                        Log.i("MainNavActivity", story.getChildren().toString());
-                    }
-                    if (!StorySingleton.getInstance().containsStory(story)) {
-                        Log.e("MainNavActivity", "" + StorySingleton.getInstance().containsStory(story));
-                        Log.e("MainNavActivity", story.toString());
-                        StorySingleton.getInstance().addStory(story);
-                    }
-                }
-                // Get ListView object from xml
-                listView = (ListView) v.findViewById(R.id.feed_list);
-
-
-                // Old code for hard coding stories in
-                /*
-                List<StoryObject> list = new ArrayList<StoryObject>();
-
-                for (int i = 1; i <= 10; i++) {
-                    list.add(new StoryObject(i + " Title " + i));
-                }
+        for (int i = 1; i <= 10; i++) {
+            list.add(new StoryObject(i + " Title " + i));
+        }
         */
 
-                adapter = new FeedAdapter(getContext(), StorySingleton.getInstance().storyList);
+        // Get ListView object from xml
+        listView = (ListView) v.findViewById(R.id.feed_list);
 
-                // Assign adapter to ListView
-                listView.setAdapter(adapter);
-            }
+        adapter = new FeedAdapter(getContext(), StorySingleton.getInstance().storyList);
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.e("MainNavActivity", "Database Error");
-            }
-        });
-
+        // Assign adapter to ListView
+        listView.setAdapter(adapter);
         return v;
     }
 

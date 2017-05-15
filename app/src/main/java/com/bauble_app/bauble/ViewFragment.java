@@ -62,7 +62,7 @@ public class ViewFragment extends Fragment {
         // StorageReference audioPathReference = storageReference.child("teststories/" + imagePath + ".mp3");
         // TODO: also uniform file type For Tech Demo
         StorageReference audioPathReference = storageReference.child
-                ("teststories/" + imagePath + ".mp4");
+                ("teststories/" + imagePath + ".m4a");
 
         TextView title = (TextView) v.findViewById(R.id.view_title);
         title.setText(story.getTitle());
@@ -141,10 +141,11 @@ public class ViewFragment extends Fragment {
                     // create temp file that will hold byte array
                     // File tempMp3 = File.createTempFile("tempStory", "mp3", getCacheDir());
                     // TODO: make the files all mp4 or all mp3, For Tech Demo
-                    File tempMp3 = File.createTempFile("tempStory", "mp4", getCacheDir());
+                    File tempM4a = File.createTempFile("tempStory", "m4a",
+                            getCacheDir());
 
-                    tempMp3.deleteOnExit();
-                    FileOutputStream fos = new FileOutputStream(tempMp3);
+                    tempM4a.deleteOnExit();
+                    FileOutputStream fos = new FileOutputStream(tempM4a);
                     fos.write(bytes);
                     fos.close();
 
@@ -157,7 +158,7 @@ public class ViewFragment extends Fragment {
                     // Tried passing path directly, but kept getting
                     // "Prepare failed.: status=0x1"
                     // so using file descriptor instead
-                    FileInputStream fis = new FileInputStream(tempMp3);
+                    FileInputStream fis = new FileInputStream(tempM4a);
                     mPlayer.setDataSource(fis.getFD());
 
                     mPlayer.prepare();

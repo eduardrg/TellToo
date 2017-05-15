@@ -91,7 +91,7 @@ public class RecordFragment extends Fragment {
         // Record to the external cache directory for visibility
         mFilePath = getActivity().getExternalFilesDir(null).getAbsolutePath();
         mFileName = "/audiorecordtest";
-        mFileExtension = ".mp4";
+        mFileExtension = ".m4a";
         recordCount = 0;
 
         mCreateFrag = (CreateFragment) getParentFragment();

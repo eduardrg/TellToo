@@ -29,7 +29,7 @@ public class FeedAdapter extends BaseAdapter {
     public FeedAdapter(Context context, List<StoryObject> data) {
         // TODO Auto-generated constructor stub
         // Initialize font
-        this.tf = Typeface.createFromAsset(context.getAssets(), "fonts/unused/Lato-Italic.ttf");
+        this.tf = FontHelper.getTypeface("Lato-Italic", context);
         this.context = context;
         this.data = data;
         inflater = (LayoutInflater) context
