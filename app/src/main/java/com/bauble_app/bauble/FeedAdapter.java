@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -14,7 +13,9 @@ import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.util.*;
+import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by ChrisLi on 4/20/17.
@@ -84,13 +85,14 @@ public class FeedAdapter extends BaseAdapter {
         StorageReference pathReference = storageReference.child("thumbnails/" + imagePath + ".png");
 
         // ImageView in your Activity
-        ImageView imageView = (ImageView) vi.findViewById(R.id.feed_listitem_picture);
+        CircleImageView circleImageView = (CircleImageView) vi.findViewById(R.id
+                .feed_listitem_picture);
 
         // Load the image using Glide
         Glide.with(context /* context */)
                 .using(new FirebaseImageLoader())
                 .load(pathReference)
-                .into(imageView);
+                .into(circleImageView);
 
         // Set font
         title.setTypeface(tf);

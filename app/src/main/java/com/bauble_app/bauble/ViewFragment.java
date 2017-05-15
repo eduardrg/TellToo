@@ -29,6 +29,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 import static com.facebook.FacebookSdk.getCacheDir;
 
 
@@ -52,7 +54,7 @@ public class ViewFragment extends Fragment {
                 false);
 
         final StoryObject story = StorySingleton.getInstance().getViewStory();
-        ImageView thumbnail = (ImageView) v.findViewById(R.id.view_thumbnail);
+        CircleImageView thumbnail = (CircleImageView) v.findViewById(R.id.view_thumbnail);
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
         // Reference to an image file in Firebase Storage
