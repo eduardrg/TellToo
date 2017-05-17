@@ -82,6 +82,7 @@ public class ViewFragment extends Fragment {
         LinearLayout childrenContainer = (LinearLayout) v.findViewById(R.id.view_container_childern);
         if (story.getChildren().size() > 0) {
             for (String childName: story.getChildren()) {
+                final String uniqueIdentifyer = childName;
                 ImageView child = new ImageView(getContext());
                 child.setLayoutParams(new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -90,7 +91,14 @@ public class ViewFragment extends Fragment {
                 child.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        StorySingleton.getInstance().setViewStory(2);
+                        for (int i = 0;  i < StorySingleton.getInstance().storyList.size(); i++) {
+                            StoryObject story = StorySingleton.getInstance().storyList.get(i);
+                            if ((story.getAuthor() + story.getTitle().replace(" ","")).equals(uniqueIdentifyer)) {
+                                StorySingleton.getInstance().setViewStory(i);
+                            }
+                        }
+                        //StorySingleton.getInstance().setViewStory(2); // hardcoded 2
+
                         // Placeholder for transition to view
                         // ViewFragment.this.fragManager = getActivity().getSupportFragmentManager();
 
