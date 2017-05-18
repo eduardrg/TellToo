@@ -34,6 +34,7 @@ public class StorySingleton {
         this.viewStory = index;
     }
 
+    // return story to view form list of stories loaded
     public int getViewStoryIndex() {
         return this.viewStory;
     }
