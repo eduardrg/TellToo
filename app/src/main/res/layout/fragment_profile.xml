@@ -17,4 +17,19 @@
         android:text="log me out"
         android:layout_gravity="center"
         android:background="@drawable/btn_forgot"/>
+
+    <ProgressBar
+        android:id="@+id/profile_loading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical">
+    </ProgressBar>
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/profile_list"
+        android:layout_marginTop="10dp">
+
+    </ListView>
 </LinearLayout>
