@@ -31,6 +31,8 @@ public class StoryObject implements Comparable<StoryObject>{
     private String title;
     private StoryObject parent;
 
+    private String uniqueId; // used to store the id of story as on Firebase
+
 
     // Constructor that sets all attributes to 0 or null
     // Required for writing to Firebase Database
@@ -49,6 +51,8 @@ public class StoryObject implements Comparable<StoryObject>{
         this.price = 0;
         this.title = null;
         this.parent = null;
+
+        this.uniqueId = null;
     }
 
     // Constructor that sets all
@@ -133,6 +137,8 @@ public class StoryObject implements Comparable<StoryObject>{
         this.parent = parent;
     }
 
+    // TODO: still needed or just for testing?
+    // Constructor for setting a story with just
     public StoryObject(String title) {
         this();
         setTitle(title);
@@ -224,6 +230,10 @@ public class StoryObject implements Comparable<StoryObject>{
         return parent;
     }
 
+    public String getUniqueId() {
+        return this.uniqueId;
+    }
+
     // Setters
     public void setAccess(String access) {
         this.access = access;
@@ -279,5 +289,12 @@ public class StoryObject implements Comparable<StoryObject>{
 
     public void setParent(com.bauble_app.bauble.StoryObject parent) {
         this.parent = parent;
+    }
+
+    public void setUniqueId(String uniqueId) {
+        if (uniqueId == null) {
+            throw new IllegalArgumentException();
+        }
+        this.uniqueId = uniqueId;
     }
 }

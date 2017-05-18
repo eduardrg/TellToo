@@ -3,6 +3,7 @@ package com.bauble_app.bauble;
 
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -30,6 +31,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -44,6 +50,7 @@ public class ViewFragment extends Fragment {
     private FragmentManager fragManager;
     MediaPlayer mPlayer;
     private DatabaseReference mDatabase; // Do I have to have this field any time
+    private CountDownTimer countDownTimer; // So I can count down
 
     public ViewFragment() {
         // Required empty public constructor
@@ -64,7 +71,7 @@ public class ViewFragment extends Fragment {
         Long storyPlays = story.getPlays() + 1;
         story.setPlays(storyPlays);
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase.child("stories").child("" + (storyNumber + 1)).child("plays").setValue(storyPlays);
+        mDatabase.child("stories").child(story.getUniqueId()).child("plays").setValue(storyPlays);
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
         // Reference to an image file in Firebase Storage
@@ -84,8 +91,39 @@ public class ViewFragment extends Fragment {
         time.setText("00:" + story.getDuration());
         TextView chains = (TextView) v.findViewById(R.id.view_chains);
         chains.setText(story.getChains().toString());
-        TextView expire = (TextView) v.findViewById(R.id.view_expire);
+        final TextView expire = (TextView) v.findViewById(R.id.view_expire);
         expire.setText(story.getExpireDate());
+        final String expireDate = story.getExpireDate();
+        // Experimental countdown timer
+        DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
+        Date date = null;
+        Date currentDate = new Date();
+        try {
+            date = format.parse(expireDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        Long timeTill = calculateExpire(date, currentDate); // seconds till expire
+        if (timeTill > 0) {
+            countDownTimer = new CountDownTimer(timeTill * 1000, 1000) { // 5 second timer
+                @Override
+                public void onTick(long millisUntilFinished) {
+                    expire.setText("" + millisUntilFinished / 1000); // to get seconds
+                }
+
+                @Override
+                public void onFinish() {
+
+                    expire.setText("expired");
+                }
+            };
+            countDownTimer.start();
+        } else {
+            expire.setText("expired");
+        }
+
+
+
         TextView plays = (TextView) v.findViewById(R.id.view_plays);
         plays.setText(story.getPlays().toString());
 
@@ -219,5 +257,15 @@ public class ViewFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         mPlayer.stop();
+    }
+
+    // Returns seconds remaining
+    private Long calculateExpire(Date expire, Date current) {
+        // Get msec from each, and subtract.
+        Long diff = expire.getTime() - current.getTime();
+        Long diffSeconds = diff / 1000;
+        Long diffMinutes = diff / (60 * 1000);
+        Long diffHours = diff / (60 * 60 * 1000);
+        return diffSeconds;
     }
 }

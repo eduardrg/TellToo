@@ -61,8 +61,12 @@ public class MainActivity extends AppCompatActivity {
                         Log.i("MainNavActivity", story.getChildren().toString());
                     }
                     if (!StorySingleton.getInstance().containsStory(story)) {
-                        Log.e("MainNavActivity", "" + StorySingleton.getInstance().containsStory(story));
-                        Log.e("MainNavActivity", story.toString());
+                        if (DEBUG) {
+                            Log.e("MainNavActivity", "" + StorySingleton.getInstance().containsStory(story));
+                            Log.e("MainNavActivity", story.toString());
+                            Log.e("MainNavActivity", snap.getKey().toString());
+                        }
+                        story.setUniqueId(snap.getKey().toString());
                         StorySingleton.getInstance().addStory(story);
                     }
                 }
