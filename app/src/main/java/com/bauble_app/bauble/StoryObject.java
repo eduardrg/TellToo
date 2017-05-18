@@ -230,6 +230,7 @@ public class StoryObject implements Comparable<StoryObject>{
         return parent;
     }
 
+    // TODO: With unique ID some code could be changed to use this value instead of creating one
     public String getUniqueId() {
         return this.uniqueId;
     }

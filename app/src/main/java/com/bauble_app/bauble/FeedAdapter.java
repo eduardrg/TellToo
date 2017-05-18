@@ -94,10 +94,12 @@ public class FeedAdapter extends BaseAdapter {
         }
         Long timeTill = calculateExpire(date, currentDate); // seconds till expire
         if (timeTill > 0) {
-            countDownTimer = new CountDownTimer(timeTill * 1000, 1000) { // 5 second timer
+            final int countDownInterval = 1000;
+
+            countDownTimer = new CountDownTimer(timeTill * 1000, countDownInterval) { // 5 second timer
                 @Override
                 public void onTick(long millisUntilFinished) {
-                    expire.setText("" + millisUntilFinished / 1000); // to get seconds
+                    expire.setText("" + millisUntilFinished / countDownInterval); // to get seconds
                 }
 
                 @Override

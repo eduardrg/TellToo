@@ -104,11 +104,33 @@ public class ViewFragment extends Fragment {
             e.printStackTrace();
         }
         Long timeTill = calculateExpire(date, currentDate); // seconds till expire
-        if (timeTill > 0) {
-            countDownTimer = new CountDownTimer(timeTill * 1000, 1000) { // 5 second timer
+        if (timeTill > 60) { // timeTill = seconds
+            final int countDownInterval = 1000 * 60; // one minite countdown interval
+            final int minutesLeft = timeTill.intValue() / 60;
+
+            expire.setText("" + (timeTill / 60) + "m");
+            countDownTimer = new CountDownTimer(timeTill * 1000, countDownInterval) { // 5 second timer
                 @Override
-                public void onTick(long millisUntilFinished) {
-                    expire.setText("" + millisUntilFinished / 1000); // to get seconds
+                public void onTick(long millsUntilFinished) { //milliseconds?
+                    expire.setText("" + (millsUntilFinished / countDownInterval) + "m"); // to get seconds
+                }
+
+                @Override
+                public void onFinish() {
+
+                    expire.setText("expired");
+                }
+            };
+            countDownTimer.start();
+        } else if (timeTill > 0) {
+            final int countDownInterval = 1000; // one second countdown interval
+            final int minutesLeft = timeTill.intValue() / 60;
+
+            expire.setText("" + (timeTill) + "s");
+            countDownTimer = new CountDownTimer(timeTill * 1000, countDownInterval) { // 5 second timer
+                @Override
+                public void onTick(long millsUntilFinished) { //milliseconds?
+                    expire.setText("" + (millsUntilFinished / countDownInterval) + "s"); // to get seconds
                 }
 
                 @Override
