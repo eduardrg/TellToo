@@ -34,6 +34,10 @@ public class StorySingleton {
         this.viewStory = index;
     }
 
+    public int getViewStoryIndex() {
+        return this.viewStory;
+    }
+
     public boolean containsStory(StoryObject story) {
         for (int i = 0; i < storyList.size(); i++) {
             if (storyList.get(i).equals(story)) {

@@ -21,6 +21,8 @@ import com.bumptech.glide.Glide;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -41,6 +43,7 @@ public class ViewFragment extends Fragment {
 
     private FragmentManager fragManager;
     MediaPlayer mPlayer;
+    private DatabaseReference mDatabase; // Do I have to have this field any time
 
     public ViewFragment() {
         // Required empty public constructor
@@ -55,6 +58,13 @@ public class ViewFragment extends Fragment {
 
         final StoryObject story = StorySingleton.getInstance().getViewStory();
         CircleImageView thumbnail = (CircleImageView) v.findViewById(R.id.view_thumbnail);
+
+        // update database
+        int storyNumber = StorySingleton.getInstance().getViewStoryIndex();
+        Long storyPlays = story.getPlays() + 1;
+        story.setPlays(storyPlays);
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase.child("stories").child("" + (storyNumber + 1)).child("plays").setValue(storyPlays);
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
         // Reference to an image file in Firebase Storage

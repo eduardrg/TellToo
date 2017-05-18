@@ -14,6 +14,8 @@ import com.google.firebase.database.ValueEventListener;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static final boolean DEBUG = false; // set to true if want to debug
+
     private DatabaseReference mDatabase; // for accessing JSON
     private FragmentManager fragManager;
 
@@ -40,6 +42,9 @@ public class MainActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Iterable<DataSnapshot> data = dataSnapshot.getChildren();
                 for (DataSnapshot snap : data) {
+                    if (DEBUG) {
+                        Log.i("MainActivity", snap.child("title").toString() + snap.child("chains").toString());
+                    }
                     String title = snap.child("title").getValue(String.class);
                     long chains = snap.child("chains").getValue(Long.class);
                     String author = snap.child("author").getValue(String.class);
