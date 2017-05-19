@@ -1,9 +1,11 @@
 package com.bauble_app.bauble;
 
 
+import android.content.res.Resources;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -15,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,6 +54,8 @@ public class ViewFragment extends Fragment {
     MediaPlayer mPlayer;
     private DatabaseReference mDatabase; // Do I have to have this field any time
     private CountDownTimer countDownTimer; // So I can count down
+    private ImageView waveforms;
+    private ProgressBar loading;
 
     public ViewFragment() {
         // Required empty public constructor
@@ -62,6 +67,10 @@ public class ViewFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_view, container,
                 false);
+        // Hide waveforms initially until loading complete
+        waveforms = (ImageView) v.findViewById(R.id.view_waveforms);
+        waveforms.setVisibility(View.GONE);
+        loading = (ProgressBar) v.findViewById(R.id.view_loading);
 
         final StoryObject story = StorySingleton.getInstance().getViewStory();
         CircleImageView thumbnail = (CircleImageView) v.findViewById(R.id.view_thumbnail);
@@ -229,6 +238,7 @@ public class ViewFragment extends Fragment {
                     fos.write(bytes);
                     fos.close();
 
+
                     // resetting mediaplayer instance to evade problems
                     mPlayer.reset();
 
@@ -243,6 +253,10 @@ public class ViewFragment extends Fragment {
 
                     mPlayer.prepare();
                     mPlayer.start();
+
+                    waveforms.setVisibility(View.VISIBLE);
+                    loading.setVisibility(View.GONE);
+
                 } catch(IOException ex) {
                     System.out.println (ex.toString());
                     System.out.println("Could not find file ");

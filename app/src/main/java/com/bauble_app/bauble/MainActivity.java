@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
                     StoryObject story = new StoryObject(title, author, time, chains, expire, plays);
                     if (snap.child("children").getChildren() != null) {
                         for (DataSnapshot child : snap.child("children").getChildren()) {
-                            story.addChildStory(child.getValue(String.class));
+                            // story.addChildStory(child.getValue(String.class)); Broken because firebase change
 
                         }
                         Log.i("MainNavActivity", story.getChildren().toString());
