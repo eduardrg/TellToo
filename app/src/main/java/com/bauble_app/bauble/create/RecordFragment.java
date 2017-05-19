@@ -53,6 +53,12 @@ public class RecordFragment extends Fragment {
     private String [] permissions = {Manifest.permission.RECORD_AUDIO};
     private CreateFragment mCreateFrag;
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
+
     // Handles the event of the user allowing/denying permission to record.
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

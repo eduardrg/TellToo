@@ -8,8 +8,10 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,6 +45,7 @@ public class SetMetaFragment extends Fragment {
     private Button mTitleInputDone;
 
     private CreateFragment mCreateFrag;
+    private FragmentManager mFragManager;
 
     // Requesting permission to read external storage
     private static final int MULTIPLE_PERMISSIONS_REQUEST = 123;
@@ -56,10 +59,17 @@ public class SetMetaFragment extends Fragment {
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mFragManager = getFragmentManager();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_set_story_meta, container, false);
+
         mTitleInput = (EditText) v.findViewById(R.id.create_title_input);
         mTitleInputLayout = (TextInputLayout) v.findViewById(R.id
                 .create_title_input_layout);
@@ -69,7 +79,6 @@ public class SetMetaFragment extends Fragment {
 
         Button setCover = (Button) v.findViewById(R.id.create_set_cover_image);
         attachCoverListener(setCover);
-
 
         mTitleInputDone.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,7 +104,16 @@ public class SetMetaFragment extends Fragment {
             }
         });
 
+        if (savedInstanceState != null) {
+
+        }
         return v;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
     }
 
     // Sets an onclick listener for changing the cover image & returns the id
@@ -171,19 +189,14 @@ public class SetMetaFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        // This is a result from the image cropper
+
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            // This is a result from the image cropper
             CropImage.ActivityResult result = CropImage.getActivityResult
                     (data);
             if (resultCode == RESULT_OK) {
                 Uri resultUri = result.getUri();
                 mCreateFrag.setThumbnailPath(resultUri.getPath());
-                /*
-                Button setCover = (Button) getView().findViewById(R.id
-                .create_set_cover_image);
-                BitmapDrawable myBitmap = new BitmapDrawable(getResources(),
-                BitmapFactory.decodeFile(resultUri.getPath()));
-*/
                 // Find the existing but hidden CircleImageView that will
                 // display the cover image
                 CircleImageView cover = (CircleImageView) getView()
@@ -220,17 +233,14 @@ public class SetMetaFragment extends Fragment {
                 setTitle.setLayoutParams(setTitleParams);
                 addTitle.setLayoutParams(addTitleParams);
 
-                /*
-                setCover.setBackground(myBitmap);
-                setCover.setText(null);
-                */
                 System.out.println("result ok");
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
                 Log.d("Error", "cropper error", error);
             }
-            // This is a result from EasyImage image picker
+
         } else if ((requestCode & Constants.RequestCodes.EASYIMAGE_IDENTIFICATOR) > 0) {
+            // This is a result from EasyImage image picker
             if (resultCode == RESULT_OK) {
                 EasyImage.handleActivityResult(requestCode, resultCode, data, getActivity(), new
                         DefaultCallback() {

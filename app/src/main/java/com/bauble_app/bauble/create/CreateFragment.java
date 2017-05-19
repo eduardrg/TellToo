@@ -2,14 +2,21 @@ package com.bauble_app.bauble.create;
 
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.bauble_app.bauble.BuildConfig;
 import com.bauble_app.bauble.R;
+import com.bauble_app.bauble.StoryObject;
+import com.bauble_app.bauble.StorySingleton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -27,31 +34,32 @@ public class CreateFragment extends Fragment {
     private String mRecordingPath;
     private String mThumbnailPath;
 
+    private FragmentManager mChildFragManager;
+    private StorySingleton mStorySingleton;
+
     private FirebaseAuth mAuth;
     private FirebaseDatabase mDatabase;
     private String FDBTag = "FDB";
+    private int mReplyStoryIndex = -1;
 
     public CreateFragment() {
         // Required empty public constructor
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_create, container, false);
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
+        mStorySingleton = StorySingleton.getInstance();
+        mChildFragManager = getChildFragmentManager();
         mAuthor = "Anonymous";
         mTitle = "Untitled";
         mThumbnailPath = "android.resource://"+ BuildConfig
                 .APPLICATION_ID+"‌​/" + R.drawable.place_holder_img;
-
         String userId = mAuth.getCurrentUser().getUid();
         DatabaseReference users = mDatabase.getReference("users");
-        users.child(userId).child("name").addValueEventListener(new
-                                                                   ValueEventListener
-                () {
+        users.child(userId).child("name").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 mAuthor = dataSnapshot.getValue().toString();
@@ -63,18 +71,61 @@ public class CreateFragment extends Fragment {
                         .getCode());
             }
         });
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View v = inflater.inflate(R.layout.fragment_create, container, false);
+        // Insert the fragment that handles showing the story being replied
+        // to if this is going to be a reply
+        if (getArguments() != null) {
+            mReplyStoryIndex = getArguments().getInt("replyStoryIndex", -1);
+        }
+        if (mReplyStoryIndex > 0) {
+            Bundle bundle = new Bundle();
+            bundle.putInt("replyStoryIndex", mReplyStoryIndex);
+            Fragment replyFrag = new ReplyFragment();
+            replyFrag.setArguments(bundle);
+            mChildFragManager.beginTransaction().replace(R.id
+                    .create_reply, replyFrag).commit();
+
+            // Add "Replying to:" title above story being replied to
+            TextView replyingTo = new TextView(getContext());
+            replyingTo.setText("Replying to:");
+            RelativeLayout.LayoutParams params = new RelativeLayout
+                    .LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
+                    RelativeLayout.LayoutParams.WRAP_CONTENT);
+
+            int dp20 = (int) TypedValue.applyDimension(TypedValue
+                    .COMPLEX_UNIT_DIP, 50, getResources()
+                    .getDisplayMetrics());
+            // params.addRule(RelativeLayout.ABOVE, R.id.feed_listitem_picture);
+            params.setMargins(0, 0, 0, dp20);
+            replyingTo.setLayoutParams(params);
+
+            RelativeLayout innerLayout = (RelativeLayout) v.findViewById(R.id
+                    .record_root_viewgroup);
+            innerLayout.addView(replyingTo, 0);
+        }
 
         // Insert the fragment that handles setting a story's metadata (cover
         // image, title)
         Fragment setMetaFrag = new SetMetaFragment();
-        getChildFragmentManager().beginTransaction().replace(R.id.create_set_meta, setMetaFrag).commit();
+        mChildFragManager.beginTransaction().replace(R.id.create_set_meta, setMetaFrag)
+                .commit();
 
         // Insert the fragment that handles recording
         Fragment createToolsFrag = new RecordFragment();
-        getChildFragmentManager().beginTransaction().replace(R.id
+        mChildFragManager.beginTransaction().replace(R.id
                 .create_tools, createToolsFrag).commit();
 
         return v;
+    }
+
+    public StoryObject getReplyParent() {
+        return mStorySingleton.getStory(mReplyStoryIndex);
     }
 
     public String getTitle() {
@@ -107,5 +158,10 @@ public class CreateFragment extends Fragment {
 
     public void setThumbnailPath(String thumbnailPath) {
         this.mThumbnailPath = thumbnailPath;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
     }
 }

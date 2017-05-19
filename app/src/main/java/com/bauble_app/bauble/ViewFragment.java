@@ -18,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bauble_app.bauble.create.CreateFragment;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -46,11 +47,13 @@ import static com.facebook.FacebookSdk.getCacheDir;
  * A simple {@link Fragment} subclass.
  */
 public class ViewFragment extends Fragment {
-
     private FragmentManager fragManager;
-    MediaPlayer mPlayer;
     private DatabaseReference mDatabase; // Do I have to have this field any time
     private CountDownTimer countDownTimer; // So I can count down
+    private ImageButton mReplyButton;
+    private FragmentManager mFragManager;
+    private MediaPlayer mPlayer;
+    private StorySingleton mStorySingleton;
 
     public ViewFragment() {
         // Required empty public constructor
@@ -62,8 +65,29 @@ public class ViewFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_view, container,
                 false);
+        mFragManager = getActivity().getSupportFragmentManager();
+        mStorySingleton = StorySingleton.getInstance();
+        final StoryObject story = mStorySingleton.getViewStory();
 
-        final StoryObject story = StorySingleton.getInstance().getViewStory();
+        mReplyButton = (ImageButton) v.findViewById(R.id.view_reply_btn);
+        mReplyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.out.println("replybtn1");
+                Bundle bundle = new Bundle();
+                bundle.putInt("replyStoryIndex", mStorySingleton.getViewIndex
+                        ());
+                // set Fragmentclass Arguments
+                CreateFragment createFrag = new CreateFragment();
+                createFrag.setArguments(bundle);
+
+                mFragManager.beginTransaction().replace(R.id.content,
+                        createFrag, "REPLY_FRAG").commit();
+
+                System.out.println("replybtn2");
+            }
+        });
+
         CircleImageView thumbnail = (CircleImageView) v.findViewById(R.id.view_thumbnail);
 
         // update database
@@ -174,7 +198,7 @@ public class ViewFragment extends Fragment {
 
                         // Stop sound before transaction
                         mPlayer.stop();
-                        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                        FragmentTransaction ft = mFragManager.beginTransaction();
                         ft.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_top)
                             .replace(R.id.content, new ViewFragment())
                             // TODO: even though add to back stack, need to find way to load correct story when back pressed

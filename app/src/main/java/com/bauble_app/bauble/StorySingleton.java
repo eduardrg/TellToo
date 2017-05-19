@@ -15,8 +15,6 @@ public class StorySingleton {
         return ourInstance;
     }
 
-
-
     private StorySingleton() {
         storyList = new ArrayList<StoryObject>();
         viewStory = 0;
@@ -28,6 +26,17 @@ public class StorySingleton {
 
     public StoryObject getViewStory() {
         return this.storyList.get(viewStory);
+    }
+
+    public StoryObject getStory(int index) {
+        if (index >= this.storyList.size()) {
+            return null;
+        }
+        return this.storyList.get(index);
+    }
+
+    public int getViewIndex() {
+        return this.viewStory;
     }
 
     public void setViewStory(int index) {
