@@ -33,6 +33,9 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import static android.widget.RelativeLayout.ALIGN_PARENT_BOTTOM;
+import static android.widget.RelativeLayout.BELOW;
+
 /**
  * Created by princ on 5/1/2017.
  */
@@ -45,6 +48,7 @@ public class RecordFragment extends Fragment {
     private MediaRecorder recorder;
     private int recordCount;
 
+    private Button mNextButton;
     private boolean mSupportsPause;
 
     // Requesting permission to RECORD_AUDIO
@@ -53,11 +57,6 @@ public class RecordFragment extends Fragment {
     private String [] permissions = {Manifest.permission.RECORD_AUDIO};
     private CreateFragment mCreateFrag;
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setRetainInstance(true);
-    }
 
     // Handles the event of the user allowing/denying permission to record.
     @Override
@@ -89,26 +88,28 @@ public class RecordFragment extends Fragment {
     }
 
 
+    // Perform initialization that does not require Views to have been rendered
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_create_tools, container,
-                false);
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         mSupportsPause = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N);
         // Record to the external cache directory for visibility
         mFilePath = getActivity().getExternalFilesDir(null).getAbsolutePath();
         mFileName = "/audiorecordtest";
         mFileExtension = ".m4a";
         recordCount = 0;
+    }
 
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.fragment_create_tools, container,
+                false);
         mCreateFrag = (CreateFragment) getParentFragment();
 
-        // Append the record buttons to the layout
-        appendButtons(v);
-
-        // Add a listener for the 'next' button to show the EditFragment for
+        // Add a listener for the 'next' button to show the UploadFragment for
         // reviewing/editing the audio
-        Button btn = (Button) v.findViewById(R.id.create_next_btn);
-        btn.setOnClickListener(new View.OnClickListener() {
+        mNextButton = (Button) v.findViewById(R.id.create_next_btn);
+        mNextButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View btn) {
                 if (!mSupportsPause) {
                     processFiles();
@@ -119,11 +120,15 @@ public class RecordFragment extends Fragment {
                 }
                 mCreateFrag.setRecordingPath(mFilePath + mFileName +
                         mFileExtension);
-                Fragment editFrag = new EditFragment();
+                Fragment editFrag = new UploadFragment();
                 getFragmentManager().beginTransaction().replace(R.id
                         .create_tools, editFrag).commit();
             }
         });
+
+        // Append the record buttons to the layout
+        appendButtons(v);
+
         return v;
     }
     private void appendButtons(View v) {
@@ -142,12 +147,19 @@ public class RecordFragment extends Fragment {
         RelativeLayout.LayoutParams mRecordButtonParams = new RelativeLayout
                 .LayoutParams(dp, dp);
 
-        mRecordButtonParams.addRule(RelativeLayout.BELOW, R.id.create_wave_forms);
+        mRecordButtonParams.addRule(BELOW, R.id.create_wave_forms);
         mRecordButtonParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
 
         mRecordButton.setLayoutParams(mRecordButtonParams);
 
+        RelativeLayout.LayoutParams mNextButtonParams = (RelativeLayout
+                .LayoutParams) mNextButton.getLayoutParams();
+
         layout.addView(mRecordButton);
+
+        mNextButtonParams.addRule(ALIGN_PARENT_BOTTOM, 0);
+        mNextButtonParams.addRule(BELOW, R.id.create_record_btn);
+        mNextButton.setLayoutParams(mNextButtonParams);
     }
 
     // Button that starts or stops the audio recorder in CreateFragment

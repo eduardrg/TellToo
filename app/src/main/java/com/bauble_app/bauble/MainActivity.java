@@ -73,10 +73,12 @@ public class MainActivity extends AppCompatActivity {
 
                     // String title, int durration, int chains, String expireDate, int plays
                     StoryObject story = new StoryObject(title, author, time, chains, expire, plays);
+                    story.setUniqueId(snap.getKey());
                     if (snap.child("children").getChildren() != null) {
                         for (DataSnapshot child : snap.child("children").getChildren()) {
-                            story.addChildStory(child.getValue(String.class));
-
+                            if (child.getValue(Boolean.class)) {
+                                story.addChildStory(child.getKey());
+                            }
                         }
                         Log.i("MainNavActivity", story.getChildren().toString());
                     }

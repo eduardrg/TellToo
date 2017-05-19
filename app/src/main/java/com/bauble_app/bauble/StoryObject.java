@@ -30,6 +30,7 @@ public class StoryObject implements Comparable<StoryObject>{
     private int price;
     private String title;
     private StoryObject parent;
+    private String key;
 
     private String uniqueId; // used to store the id of story as on Firebase
 
@@ -230,8 +231,7 @@ public class StoryObject implements Comparable<StoryObject>{
         return parent;
     }
 
-    // TODO: With unique ID some code could be changed to use this value instead of creating one
-    public String getUniqueId() {
+    public String grabUniqueId() {
         return this.uniqueId;
     }
 
@@ -298,4 +298,5 @@ public class StoryObject implements Comparable<StoryObject>{
         }
         this.uniqueId = uniqueId;
     }
+
 }

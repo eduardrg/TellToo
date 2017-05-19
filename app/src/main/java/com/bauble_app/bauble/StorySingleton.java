@@ -9,6 +9,7 @@ public class StorySingleton {
     private static final StorySingleton ourInstance = new StorySingleton();
 
     public List<StoryObject> storyList; // BAD STYLE TODO: make get list method
+    private Map<String, StoryObject> storyMap;
     private int viewStory;
 
     public static StorySingleton getInstance() {
@@ -57,4 +58,11 @@ public class StorySingleton {
         return false;
     }
 
+    public Map<String, StoryObject> getStoryMap() {
+        return storyMap;
+    }
+
+    public void setStoryMap(Map<String, StoryObject> storyMap) {
+        this.storyMap = storyMap;
+    }
 }

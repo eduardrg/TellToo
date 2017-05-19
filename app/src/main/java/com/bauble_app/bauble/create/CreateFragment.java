@@ -6,14 +6,12 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.bauble_app.bauble.BuildConfig;
+import com.bauble_app.bauble.CustomText;
 import com.bauble_app.bauble.R;
 import com.bauble_app.bauble.StoryObject;
 import com.bauble_app.bauble.StorySingleton;
@@ -84,30 +82,15 @@ public class CreateFragment extends Fragment {
             mReplyStoryIndex = getArguments().getInt("replyStoryIndex", -1);
         }
         if (mReplyStoryIndex > 0) {
+            CustomText replyTitle = (CustomText) v.findViewById(R.id
+                    .create_reply_title);
+            replyTitle.setVisibility(View.VISIBLE);
             Bundle bundle = new Bundle();
             bundle.putInt("replyStoryIndex", mReplyStoryIndex);
             Fragment replyFrag = new ReplyFragment();
             replyFrag.setArguments(bundle);
             mChildFragManager.beginTransaction().replace(R.id
                     .create_reply, replyFrag).commit();
-
-            // Add "Replying to:" title above story being replied to
-            TextView replyingTo = new TextView(getContext());
-            replyingTo.setText("Replying to:");
-            RelativeLayout.LayoutParams params = new RelativeLayout
-                    .LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
-                    RelativeLayout.LayoutParams.WRAP_CONTENT);
-
-            int dp20 = (int) TypedValue.applyDimension(TypedValue
-                    .COMPLEX_UNIT_DIP, 50, getResources()
-                    .getDisplayMetrics());
-            // params.addRule(RelativeLayout.ABOVE, R.id.feed_listitem_picture);
-            params.setMargins(0, 0, 0, dp20);
-            replyingTo.setLayoutParams(params);
-
-            RelativeLayout innerLayout = (RelativeLayout) v.findViewById(R.id
-                    .record_root_viewgroup);
-            innerLayout.addView(replyingTo, 0);
         }
 
         // Insert the fragment that handles setting a story's metadata (cover

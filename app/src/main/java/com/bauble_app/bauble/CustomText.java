@@ -2,10 +2,8 @@ package com.bauble_app.bauble;
 
 import android.content.Context;
 import android.graphics.Typeface;
-import android.os.Build;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.view.View;
 
 /**
  * Created by princ on 4/19/2017.
@@ -37,11 +35,7 @@ public class CustomText extends android.support.v7.widget.AppCompatTextView {
         // they are changed in the if/else block below
         int textColor = getResources().getColor(R.color.colorDarkText);
         float textSize = 13;
-        int textAlignment = 0;
-        // Only supported in API levels >=17
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            textAlignment = View.TEXT_ALIGNMENT_CENTER;
-        }
+
         String typefaceName = "Roboto-Regular";
 
         // Depending on what the id contains, change styles
@@ -56,9 +50,5 @@ public class CustomText extends android.support.v7.widget.AppCompatTextView {
         setTypeface(customFont);
         setTextColor(textColor);
         setTextSize(textSize);
-        // Only supported in API levels >=17
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            setTextAlignment(textAlignment);
-        }
     }
 }

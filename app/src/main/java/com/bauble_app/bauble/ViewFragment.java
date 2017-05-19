@@ -95,12 +95,12 @@ public class ViewFragment extends Fragment {
         Long storyPlays = story.getPlays() + 1;
         story.setPlays(storyPlays);
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase.child("stories").child(story.getUniqueId()).child("plays").setValue(storyPlays);
+        mDatabase.child("stories").child(story.grabUniqueId()).child("plays").setValue(storyPlays);
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
         // Reference to an image file in Firebase Storage
         StorageReference storageReference = storage.getReferenceFromUrl("gs://bauble-90a48.appspot.com");
-        String imagePath = story.getAuthor() + story.getTitle().replace(" ", "");
+        String imagePath = story.grabKey();
         StorageReference pathReference = storageReference.child("thumbnails/" + imagePath + ".png");
         // StorageReference audioPathReference = storageReference.child("teststories/" + imagePath + ".mp3");
         // TODO: also uniform file type For Tech Demo
