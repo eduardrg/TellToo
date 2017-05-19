@@ -37,5 +37,17 @@
                     android:layout_centerHorizontal="true"
                     android:layout_below="@id/create_set_meta"/>
 
+                <com.bauble_app.bauble.CustomButton
+                    android:id="@+id/create_next_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:layout_alignParentBottom="true"
+                    android:text="Next"
+                    android:background="@drawable/btn_add_title"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@id/create_tools"/>
+
         </RelativeLayout>
 </ScrollView>

@@ -33,7 +33,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import static android.widget.RelativeLayout.ALIGN_PARENT_BOTTOM;
 import static android.widget.RelativeLayout.BELOW;
 
 /**
@@ -106,10 +105,15 @@ public class RecordFragment extends Fragment {
                 false);
         mCreateFrag = (CreateFragment) getParentFragment();
 
-        // Add a listener for the 'next' button to show the UploadFragment for
-        // reviewing/editing the audio
-        mNextButton = (Button) v.findViewById(R.id.create_next_btn);
-        mNextButton.setOnClickListener(new View.OnClickListener() {
+        // Append the record buttons to the layout
+        appendButtons(v);
+
+        return v;
+    }
+
+    View.OnClickListener getNextListener() {
+        View.OnClickListener listener = new View.OnClickListener() {
+            @Override
             public void onClick(View btn) {
                 if (!mSupportsPause) {
                     processFiles();
@@ -120,17 +124,19 @@ public class RecordFragment extends Fragment {
                 }
                 mCreateFrag.setRecordingPath(mFilePath + mFileName +
                         mFileExtension);
+                Fragment tagFrag = new TagFragment();
+                getFragmentManager().beginTransaction().replace(R.id
+                        .create_tools, tagFrag).commit();
+                /*
                 Fragment editFrag = new UploadFragment();
                 getFragmentManager().beginTransaction().replace(R.id
                         .create_tools, editFrag).commit();
+                        */
             }
-        });
-
-        // Append the record buttons to the layout
-        appendButtons(v);
-
-        return v;
+        };
+        return listener;
     }
+
     private void appendButtons(View v) {
         ViewGroup layout = (ViewGroup) v;
 
@@ -152,14 +158,8 @@ public class RecordFragment extends Fragment {
 
         mRecordButton.setLayoutParams(mRecordButtonParams);
 
-        RelativeLayout.LayoutParams mNextButtonParams = (RelativeLayout
-                .LayoutParams) mNextButton.getLayoutParams();
-
         layout.addView(mRecordButton);
 
-        mNextButtonParams.addRule(ALIGN_PARENT_BOTTOM, 0);
-        mNextButtonParams.addRule(BELOW, R.id.create_record_btn);
-        mNextButton.setLayoutParams(mNextButtonParams);
     }
 
     // Button that starts or stops the audio recorder in CreateFragment

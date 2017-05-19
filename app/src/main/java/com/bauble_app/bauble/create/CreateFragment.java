@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.bauble_app.bauble.BuildConfig;
 import com.bauble_app.bauble.CustomText;
@@ -31,6 +32,7 @@ public class CreateFragment extends Fragment {
     private String mAuthor;
     private String mRecordingPath;
     private String mThumbnailPath;
+    private Button mNextButton;
 
     private FragmentManager mChildFragManager;
     private StorySingleton mStorySingleton;
@@ -76,6 +78,8 @@ public class CreateFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_create, container, false);
+
+        mNextButton = (Button) v.findViewById(R.id.create_next_btn);
         // Insert the fragment that handles showing the story being replied
         // to if this is going to be a reply
         if (getArguments() != null) {
@@ -100,10 +104,11 @@ public class CreateFragment extends Fragment {
                 .commit();
 
         // Insert the fragment that handles recording
-        Fragment createToolsFrag = new RecordFragment();
+        RecordFragment recordFrag =  new RecordFragment();
         mChildFragManager.beginTransaction().replace(R.id
-                .create_tools, createToolsFrag).commit();
+                .create_tools, recordFrag).commit();
 
+        mNextButton.setOnClickListener(recordFrag.getNextListener());
         return v;
     }
 
@@ -146,5 +151,9 @@ public class CreateFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+    }
+
+    public void setNextListener(View.OnClickListener listener) {
+        this.mNextButton.setOnClickListener(listener);
     }
 }
