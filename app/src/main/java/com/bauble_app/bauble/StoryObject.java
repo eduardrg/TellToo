@@ -32,6 +32,7 @@ public class StoryObject implements Comparable<StoryObject>{
     private int price;
     private String title;
     private StoryObject parent;
+    private String parentString; // hacky alt for parent
     private String key;
     private String[] tags;
 
@@ -234,8 +235,15 @@ public class StoryObject implements Comparable<StoryObject>{
         return parent;
     }
 
+    // Firebase looks through all get methods and adds them to as attributes
+    // to the firebase object. uniqueId would be duplicated if this was called
+    // getUniqueId
     public String grabUniqueId() {
         return this.uniqueId;
+    }
+
+    public String getParentString() {
+        return this.parentString;
     }
 
     // Setters
@@ -313,4 +321,12 @@ public class StoryObject implements Comparable<StoryObject>{
     public void setTags(String[] tags) {
         this.tags = tags;
     }
+
+    public void setParentString(String parentId) {
+        if (parentId == null) {
+            throw new IllegalArgumentException();
+        }
+        this.parentString = parentId;
+    }
+    
 }
