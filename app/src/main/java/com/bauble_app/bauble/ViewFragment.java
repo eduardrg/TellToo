@@ -21,6 +21,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bauble_app.bauble.create.CreateFragment;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -50,12 +51,17 @@ import static com.facebook.FacebookSdk.getCacheDir;
  */
 public class ViewFragment extends Fragment {
 
-    private FragmentManager fragManager;
-    MediaPlayer mPlayer;
     private DatabaseReference mDatabase; // Do I have to have this field any time
     private CountDownTimer countDownTimer; // So I can count down
+
     private ImageView waveforms;
     private ProgressBar loading;
+
+    private ImageButton mReplyButton;
+    private FragmentManager mFragManager;
+    private MediaPlayer mPlayer;
+    private StorySingleton mStorySingleton;
+
 
     public ViewFragment() {
         // Required empty public constructor
@@ -67,12 +73,34 @@ public class ViewFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_view, container,
                 false);
+
         // Hide waveforms initially until loading complete
         waveforms = (ImageView) v.findViewById(R.id.view_waveforms);
         waveforms.setVisibility(View.GONE);
         loading = (ProgressBar) v.findViewById(R.id.view_loading);
 
-        final StoryObject story = StorySingleton.getInstance().getViewStory();
+        mFragManager = getActivity().getSupportFragmentManager();
+        mStorySingleton = StorySingleton.getInstance();
+        final StoryObject story = mStorySingleton.getViewStory();
+
+        mReplyButton = (ImageButton) v.findViewById(R.id.view_reply_btn);
+        mReplyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                System.out.println("replybtn1");
+                Bundle bundle = new Bundle();
+                bundle.putString("replyStoryKey", mStorySingleton.getViewKey());
+                // set Fragmentclass Arguments
+                CreateFragment createFrag = new CreateFragment();
+                createFrag.setArguments(bundle);
+
+                mFragManager.beginTransaction().replace(R.id.content,
+                        createFrag, "REPLY_FRAG").commit();
+
+                System.out.println("replybtn2");
+            }
+        });
+
         CircleImageView thumbnail = (CircleImageView) v.findViewById(R.id.view_thumbnail);
 
         // update database
@@ -80,12 +108,12 @@ public class ViewFragment extends Fragment {
         Long storyPlays = story.getPlays() + 1;
         story.setPlays(storyPlays);
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase.child("stories").child(story.getUniqueId()).child("plays").setValue(storyPlays);
+        mDatabase.child("stories").child(story.grabUniqueId()).child("plays").setValue(storyPlays);
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
         // Reference to an image file in Firebase Storage
         StorageReference storageReference = storage.getReferenceFromUrl("gs://bauble-90a48.appspot.com");
-        String imagePath = story.getAuthor() + story.getTitle().replace(" ", "");
+        String imagePath = story.grabUniqueId();
         StorageReference pathReference = storageReference.child("thumbnails/" + imagePath + ".png");
         // StorageReference audioPathReference = storageReference.child("teststories/" + imagePath + ".mp3");
         // TODO: also uniform file type For Tech Demo
@@ -162,6 +190,7 @@ public class ViewFragment extends Fragment {
         if (story.getChildren().size() > 0) {
             for (String childName: story.getChildren()) {
                 final String uniqueIdentifyer = childName;
+
                 ImageView child = new ImageView(getContext());
                 child.setLayoutParams(new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -170,20 +199,13 @@ public class ViewFragment extends Fragment {
                 child.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        for (int i = 0;  i < StorySingleton.getInstance().storyList.size(); i++) {
-                            StoryObject story = StorySingleton.getInstance().storyList.get(i);
-                            if ((story.getAuthor() + story.getTitle().replace(" ","")).equals(uniqueIdentifyer)) {
-                                StorySingleton.getInstance().setViewStory(i);
-                            }
-                        }
-                        //StorySingleton.getInstance().setViewStory(2); // hardcoded 2
-
+                        StorySingleton.getInstance().setViewKey(uniqueIdentifyer);
                         // Placeholder for transition to view
                         // ViewFragment.this.fragManager = getActivity().getSupportFragmentManager();
 
                         // Stop sound before transaction
                         mPlayer.stop();
-                        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                        FragmentTransaction ft = mFragManager.beginTransaction();
                         ft.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_top)
                             .replace(R.id.content, new ViewFragment())
                             // TODO: even though add to back stack, need to find way to load correct story when back pressed
@@ -195,8 +217,8 @@ public class ViewFragment extends Fragment {
                     }
                 });
                 childrenContainer.addView(child);
-                StorageReference childPath = storageReference.child("thumbnails/" + childName + ".png");
-                Log.e("ViewFragment", "thumbnails/" + childName + ".png");
+                StorageReference childPath = storageReference.child("thumbnails/" + uniqueIdentifyer + ".png");
+                Log.e("ViewFragment", "thumbnails/" + uniqueIdentifyer + ".png");
                 // Load the image using Glide
                 Glide.with(getContext() /* context */)
                         .using(new FirebaseImageLoader())

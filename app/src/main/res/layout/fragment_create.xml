@@ -1,22 +1,41 @@
-<RelativeLayout
-    android:id="@+id/record_root_viewgroup"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.bauble_app.bauble.create.CreateFragment">
-
-        <FrameLayout
-            android:id="@+id/create_set_meta"
-            android:layout_width="wrap_content"
+<ScrollView android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            tools:context="com.bauble_app.bauble.create.CreateFragment">
+        <RelativeLayout
+            android:id="@+id/record_root_viewgroup"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"/>
+            android:layout_width="match_parent">
 
-        <FrameLayout
-            android:id="@+id/create_tools"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_below="@id/create_set_meta"/>
+                <com.bauble_app.bauble.CustomText
+                    android:id="@+id/create_reply_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="Replying to"
+                    android:visibility="gone"/>
 
-</RelativeLayout>
+                <FrameLayout
+                    android:id="@+id/create_reply"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@id/create_reply_title"/>
+
+                <FrameLayout
+                    android:id="@+id/create_set_meta"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@id/create_reply"/>
+
+                <FrameLayout
+                    android:id="@+id/create_tools"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@id/create_set_meta"/>
+
+        </RelativeLayout>
+</ScrollView>

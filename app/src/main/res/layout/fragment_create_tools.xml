@@ -25,7 +25,8 @@
         android:layout_alignParentBottom="true"
         android:text="Next"
         android:background="@drawable/btn_add_title"
-        android:layout_marginBottom="15dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
         android:layout_centerHorizontal="true"/>
 
 </RelativeLayout>

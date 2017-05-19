@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.List;
 import java.text.DateFormat;
 import java.util.Locale;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -29,17 +30,21 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class FeedAdapter extends BaseAdapter {
     private Context context;
-    private List<StoryObject> data;
     private static LayoutInflater inflater = null;
     private Typeface tf;
     private CountDownTimer countDownTimer;
 
-    public FeedAdapter(Context context, List<StoryObject> data) {
+    private Map<String, StoryObject> mData;
+    private List<String> mKeys;
+
+    public FeedAdapter(Context context, Map<String, StoryObject> data,
+                       List<String> keys) {
         // TODO Auto-generated constructor stub
         // Initialize font
         this.tf = FontHelper.getTypeface("Lato-Italic", context);
         this.context = context;
-        this.data = data;
+        this.mData = data;
+        this.mKeys = keys;
         inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -47,13 +52,13 @@ public class FeedAdapter extends BaseAdapter {
     @Override
     public int getCount() {
         // TODO Auto-generated method stub
-        return data.size();
+        return mData.size();
     }
 
     @Override
     public Object getItem(int position) {
         // TODO Auto-generated method stub
-        return data.get(position);
+        return mData.get(mKeys.get(position));
     }
 
     @Override
@@ -70,19 +75,22 @@ public class FeedAdapter extends BaseAdapter {
             vi = inflater.inflate(R.layout.listitem_feed, null);
         }
 
+        String key = mKeys.get(position);
+        StoryObject story = (StoryObject) getItem(position);
+
         TextView title = (TextView) vi.findViewById(R.id.feed_listitem_title);
-        String titleString = data.get(position).getTitle();
+        String titleString = story.getTitle();
         title.setText(titleString);
         TextView author = (TextView) vi.findViewById(R.id.feed_listitem_author);
-        String authorString = data.get(position).getAuthor();
+        String authorString = story.getAuthor();
         author.setText(authorString);
         TextView time = (TextView) vi.findViewById(R.id.feed_listitem_length);
-        time.setText("00:" + data.get(position).getDuration().toString());
+        time.setText("00:" + story.getDuration().toString());
         TextView chains = (TextView) vi.findViewById(R.id.feed_listitem_chains);
-        chains.setText(data.get(position).getChains().toString());
+        chains.setText(story.getChains().toString());
         final TextView expire = (TextView) vi.findViewById(R.id.feed_listitem_expire);
-        expire.setText(data.get(position).getExpireDate());
-        final String expireDate = data.get(position).getExpireDate();
+        expire.setText(story.getExpireDate());
+        final String expireDate = story.getExpireDate();
         // Experimental countdown timer
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
         Date date = null;
@@ -112,14 +120,13 @@ public class FeedAdapter extends BaseAdapter {
         } else {
             expire.setText("expired");
         }
-
         TextView plays = (TextView) vi.findViewById(R.id.feed_listitem_plays);
-        plays.setText(data.get(position).getPlays().toString());
+        plays.setText(story.getPlays().toString());
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
         // Reference to an image file in Firebase Storage
         StorageReference storageReference = storage.getReferenceFromUrl("gs://bauble-90a48.appspot.com");
-        String imagePath = authorString + titleString.replace(" ", "");
+        String imagePath = story.grabUniqueId();
         StorageReference pathReference = storageReference.child("thumbnails/" + imagePath + ".png");
 
         // ImageView in your Activity

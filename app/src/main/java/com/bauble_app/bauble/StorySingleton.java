@@ -7,45 +7,74 @@ import java.util.*;
 
 public class StorySingleton {
     private static final StorySingleton ourInstance = new StorySingleton();
-
-    public List<StoryObject> storyList; // BAD STYLE TODO: make get list method
-    private int viewStory;
+    private Map<String, StoryObject> storyMap;
+    private ArrayList<String> mKeys;
+    private String viewKey;
 
     public static StorySingleton getInstance() {
         return ourInstance;
     }
 
-
-
     private StorySingleton() {
-        storyList = new ArrayList<StoryObject>();
-        viewStory = 0;
+        storyMap = new LinkedHashMap<String, StoryObject>();
+        mKeys = new ArrayList<String>();
+        viewKey = "";
     }
 
     public void addStory(StoryObject story) {
-        storyList.add(story);
+        mKeys.add(story.grabUniqueId());
+        storyMap.put(story.grabUniqueId(), story);
     }
 
     public StoryObject getViewStory() {
-        return this.storyList.get(viewStory);
+        if (this.storyMap.containsKey(this.viewKey)) {
+            return this.storyMap.get(this.viewKey);
+        }
+        return null;
+    }
+
+    public StoryObject getStory(int index) {
+        if (index >= this.mKeys.size()) {
+            return null;
+        } else {
+            String key = this.mKeys.get(index);
+            return this.getStory(key);
+        }
+    }
+
+    public StoryObject getStory(String key) {
+        if (this.storyMap.containsKey(key)) {
+            return this.storyMap.get(key);
+        }
+        return null;
+    }
+
+    public String getViewKey() {
+        return this.viewKey;
     }
 
     public void setViewStory(int index) {
-        this.viewStory = index;
+        this.viewKey = this.mKeys.get(index);
+    }
+
+    public void setViewKey(String key) {
+        this.viewKey = key;
     }
 
     // return story to view form list of stories loaded
     public int getViewStoryIndex() {
-        return this.viewStory;
+        return this.mKeys.indexOf(viewKey);
     }
 
     public boolean containsStory(StoryObject story) {
-        for (int i = 0; i < storyList.size(); i++) {
-            if (storyList.get(i).equals(story)) {
-                return true;
-            }
-        }
-        return false;
+        return this.storyMap.containsKey(story.grabUniqueId());
     }
 
+    public Map<String, StoryObject> getStoryMap() {
+        return storyMap;
+    }
+
+    public ArrayList<String> getKeys() {
+        return this.mKeys;
+    }
 }

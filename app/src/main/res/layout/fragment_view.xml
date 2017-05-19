@@ -165,6 +165,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
                     <ImageButton
+                        android:id="@+id/view_reply_btn"
                         android:layout_width="60dp"
                         android:layout_height="60dp"
                         android:background="@drawable/round_button"

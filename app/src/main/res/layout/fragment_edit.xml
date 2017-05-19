@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    tools:context="com.bauble_app.bauble.create.EditFragment"
+    tools:context="com.bauble_app.bauble.create.UploadFragment"
     android:id="@+id/edit_root_viewgroup">
 
     <Button

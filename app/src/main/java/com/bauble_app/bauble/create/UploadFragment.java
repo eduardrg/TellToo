@@ -37,7 +37,7 @@ import java.io.IOException;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class EditFragment extends Fragment {
+public class UploadFragment extends Fragment {
     private String mThumbnailStoragePath;
     private String mRecordingStoragePath;
     private PlayButton mPlayButton;
@@ -53,13 +53,16 @@ public class EditFragment extends Fragment {
     // file in Firebase Storage, respectively. These are only available after
     // we upload, so they are not stored in the CreateFragment parent.
     private StoryObject makeStoryObject() {
-
-        return new StoryObject(mRecordingStoragePath, mCreateFrag.getAuthor()
+        StoryObject so = new StoryObject(mRecordingStoragePath, mCreateFrag
+                        .getAuthor()
                 , mThumbnailStoragePath,
                 mCreateFrag.getTitle());
+        so.setParent(mCreateFrag.getReplyParent());
+        return so;
     }
 
-    public EditFragment() {
+
+    public UploadFragment() {
         // Required empty public constructor
     }
 
@@ -84,14 +87,24 @@ public class EditFragment extends Fragment {
                     Bitmap thumbBitmap = BitmapFactory.decodeFile(imageFile
                             .getPath());
 
+                // Save the other story data to FirebaseDatabase
+                StoryObject story = makeStoryObject();
+                DatabaseReference dbStoriesRef = mDatabase.getReference().child
+                        ("stories");
+                String key = dbStoriesRef.push().getKey();
+                dbStoriesRef.child(key).setValue(story);
+                StoryObject parent = story.getParent();
+                // Add this story as a child of its parent in Firebase Database
+                if (parent != null) {
+                    dbStoriesRef.child(parent.grabUniqueId()).child("children")
+                            .child(key).setValue(true);
+                }
 
                 StorageReference testStoriesRef = mStorage.child
-                        ("teststories/" + mCreateFrag.getAuthor() +
-                                mCreateFrag.getTitle().replace(" ", "") +
+                        ("teststories/" + key +
                                 ".m4a");
                 StorageReference thumbnailsRef = mStorage.child
-                        ("thumbnails/" + mCreateFrag.getAuthor() +
-                                mCreateFrag.getTitle().replace(" ", "") + ".jpg");
+                        ("thumbnails/" + key + ".jpg");
                 
                 FileOutputStream out = null;
                 try {
@@ -103,8 +116,7 @@ public class EditFragment extends Fragment {
                     out.close();
                     imageFile = Uri.fromFile(file);
                     thumbnailsRef = mStorage.child
-                            ("thumbnails/" + mCreateFrag.getAuthor() +
-                                    mCreateFrag.getTitle().replace(" ", "") + "" +
+                            ("thumbnails/" + key +
                                     ".png");
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
@@ -149,12 +161,7 @@ public class EditFragment extends Fragment {
                         }
                     });
 
-                // Save the other story data to FirebaseDatabase
-                StoryObject story = makeStoryObject();
-                DatabaseReference dbStoriesRef = mDatabase.getReference().child
-                        ("stories");
-                String key = dbStoriesRef.push().getKey();
-                dbStoriesRef.child(key).setValue(story);
+
 
             }
         });

@@ -45,17 +45,41 @@ public class MainActivity extends AppCompatActivity {
                     if (DEBUG) {
                         Log.i("MainActivity", snap.child("title").toString() + snap.child("chains").toString());
                     }
-                    String title = snap.child("title").getValue(String.class);
-                    long chains = snap.child("chains").getValue(Long.class);
-                    String author = snap.child("author").getValue(String.class);
-                    long plays = snap.child("plays").getValue(Long.class);
-                    long time = snap.child("duration").getValue(Long.class);
-                    String expire = snap.child("expiration").getValue(String.class);
+                    String title = "";
+                    if (snap.hasChild("title")) {
+                        title = snap.child("title").getValue(String.class);
+                    }
+                    Long chains = 0L;
+                    if (snap.hasChild("chains")) {
+                        chains = snap.child("chains").getValue(Long.class);
+                    }
+                    String author = "";
+                    if (snap.hasChild("author")) {
+                        author = snap.child("author").getValue(String.class);
+                    }
+                    long plays = 0L;
+                    if (snap.hasChild("plays")) {
+                        plays = snap.child("plays")
+                                .getValue(Long.class);
+                    }
+                    long time = 0L;
+                    if (snap.hasChild("duration")) {
+                        time = snap.child("duration").getValue(Long.class);
+                    }
+                    String expire = "";
+                    if (snap.hasChild("expiration")) {
+                        expire = snap.child("expiration").getValue(String.class);
+                    }
+
                     // String title, int durration, int chains, String expireDate, int plays
                     StoryObject story = new StoryObject(title, author, time, chains, expire, plays);
+                    story.setUniqueId(snap.getKey());
                     if (snap.child("children").getChildren() != null) {
                         for (DataSnapshot child : snap.child("children").getChildren()) {
-                            // story.addChildStory(child.getValue(String.class)); Broken because firebase change
+
+                            if (child.getValue(Boolean.class)) {
+                                story.addChildStory(child.getKey());
+                            }
 
                         }
                         Log.i("MainNavActivity", story.getChildren().toString());

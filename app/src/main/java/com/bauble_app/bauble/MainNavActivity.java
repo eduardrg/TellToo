@@ -21,11 +21,10 @@ import com.bauble_app.bauble.create.CreateFragment;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class MainNavActivity extends AppCompatActivity {
-
     private TextView mTextMessage;
-    private FragmentManager fragManager;
+    private FragmentManager mFragManager;
     private FirebaseAuth mAuth;
-
+    private BottomNavigationView mNavigation;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -33,25 +32,26 @@ public class MainNavActivity extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_front:
-                    fragManager.beginTransaction()
+                    mFragManager.beginTransaction()
                             .replace(R.id.content, new FeedFragment())
                             .commit();
                     return true;
                 case R.id.navigation_explore:
-                    fragManager.beginTransaction().replace(R.id.content, new
+                    mFragManager.beginTransaction().replace(R.id.content, new
                             ExploreFragment()).commit();
                     return true;
                 case R.id.navigation_create:
                     Fragment frag;
-                    // Decide whether to show signup or create screen
                     if (mAuth.getCurrentUser() == null) {
+                        // User is unauthenticated; show signup screen
                         frag = new AuthChoiceFragment();
                     } else {
                         frag = new CreateFragment();
                     }
-                    fragManager.beginTransaction()
+                    mFragManager.beginTransaction()
                             .replace(R.id.content, frag).commit();
                     return true;
+
                 case R.id.navigation_me:
                     Fragment meFrag;
                     // Decide whether to show signup or profile screen
@@ -60,12 +60,12 @@ public class MainNavActivity extends AppCompatActivity {
                     } else {
                         meFrag = new ProfileFragment();
                     }
-                    fragManager.beginTransaction()
+                    mFragManager.beginTransaction()
                             .replace(R.id.content, meFrag)
                             .commit();
                     return true;
                 case R.id.navigation_messages:
-                    fragManager.beginTransaction()
+                    mFragManager.beginTransaction()
                             .replace(R.id.content, new FrontFragment())
                             .commit();
                     return true;
@@ -80,8 +80,8 @@ public class MainNavActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_nav);
 
-        fragManager = getSupportFragmentManager();
-        fragManager.beginTransaction()
+        mFragManager = getSupportFragmentManager();
+        mFragManager.beginTransaction()
                 .replace(R.id.content, new FeedFragment())
                 .commit();
 
@@ -91,12 +91,16 @@ public class MainNavActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-        fragManager.beginTransaction()
+        mNavigation = (BottomNavigationView) findViewById(R.id.navigation);
+        mNavigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        mFragManager.beginTransaction()
                 .replace(R.id.content, new FeedFragment())
                 .commit();
 
+    }
+
+    public BottomNavigationView getNav() {
+        return this.mNavigation;
     }
 
     @Override
@@ -140,7 +144,7 @@ public class MainNavActivity extends AppCompatActivity {
     }
 */
     public FragmentManager getMyFragManager() {
-        return this.fragManager;
+        return this.mFragManager;
     }
 
 }
