@@ -61,6 +61,7 @@ public class ViewFragment extends Fragment {
     private FragmentManager mFragManager;
     private MediaPlayer mPlayer;
     private StorySingleton mStorySingleton;
+    private de.hdodenhof.circleimageview.CircleImageView storyImage;
 
 
     public ViewFragment() {
@@ -181,7 +182,24 @@ public class ViewFragment extends Fragment {
             expire.setText("expired");
         }
 
-
+        // Set on click for parent
+        storyImage = (de.hdodenhof.circleimageview.CircleImageView) v.findViewById(R.id.view_thumbnail);
+        storyImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (story.getParentString() != null) {
+                    String uniqueIdentifier = story.getParentString(); // could be null
+                    StorySingleton.getInstance().setViewKey(uniqueIdentifier);
+                    mPlayer.stop();
+                    FragmentTransaction ft = mFragManager.beginTransaction();
+                    ft.setCustomAnimations(R.anim.enter_from_top, R.anim.exit_to_bottom)
+                            .replace(R.id.content, new ViewFragment())
+                            // TODO: even though add to back stack, need to find way to load correct story when back pressed
+                            .addToBackStack("tag")
+                            .commit();
+                }
+            }
+        });
 
         TextView plays = (TextView) v.findViewById(R.id.view_plays);
         plays.setText(story.getPlays().toString());

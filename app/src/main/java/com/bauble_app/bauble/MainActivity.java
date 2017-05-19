@@ -84,6 +84,13 @@ public class MainActivity extends AppCompatActivity {
                         }
                         Log.i("MainNavActivity", story.getChildren().toString());
                     }
+
+                    // Set parent string
+                    String parentString = snap.child("parentString").getValue(String.class);
+                    if (parentString != null) {
+                        story.setParentString(parentString);
+                    }
+
                     if (!StorySingleton.getInstance().containsStory(story)) {
                         if (DEBUG) {
                             Log.e("MainNavActivity", "" + StorySingleton.getInstance().containsStory(story));
