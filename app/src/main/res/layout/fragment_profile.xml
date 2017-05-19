@@ -3,20 +3,41 @@
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
-    <com.bauble_app.bauble.CustomText
-        android:id="@+id/profile_username"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:textSize="30sp"
-        android:text="THIS TEXT WILL BECOME YOUR USERNAME IN 3..2..1"/>
-    <com.bauble_app.bauble.CustomButton
-        android:id="@+id/profile_logout"
-        android:layout_marginTop="30dp" android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:text="log me out"
-        android:layout_gravity="center"
-        android:background="@drawable/btn_forgot"/>
+        android:orientation="horizontal">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/feed_profile_picture"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_margin="20dp"
+            android:src="@drawable/place_holder_img"
+            />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <com.bauble_app.bauble.CustomText
+                android:id="@+id/profile_username"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:textSize="30sp"
+                android:text="THIS TEXT WILL BECOME YOUR USERNAME IN 3..2..1"/>
+            <com.bauble_app.bauble.CustomButton
+                android:id="@+id/profile_logout"
+                android:layout_marginTop="30dp" android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:text="log me out"
+                android:layout_gravity="center"
+                android:background="@drawable/btn_forgot"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
 
     <ProgressBar
         android:id="@+id/profile_loading"
