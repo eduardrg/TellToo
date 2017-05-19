@@ -7,7 +7,7 @@ import java.util.*;
 
 public class StorySingleton {
     private static final StorySingleton ourInstance = new StorySingleton();
-    private Map<String, StoryObject> storyMap;
+    private Map<String, StoryObject> storyMap; // story key to story object
     private ArrayList<String> mKeys;
     private String viewKey;
 
