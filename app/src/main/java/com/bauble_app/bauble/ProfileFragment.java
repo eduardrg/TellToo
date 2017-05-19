@@ -3,7 +3,6 @@ package com.bauble_app.bauble;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +21,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by princ on 4/19/2017.
@@ -72,14 +73,22 @@ public class ProfileFragment extends Fragment {
                         listView = (ListView) v.findViewById(R.id.profile_list);
 
                         // get's stories created by user
-                        List<StoryObject> ownedStories = new ArrayList<StoryObject>();
-                        for (StoryObject story : StorySingleton.getInstance().storyList) {
+                        Map<String, StoryObject> ownedStories = new
+                                LinkedHashMap<String, StoryObject>();
+                        List<String> ownedStoriesKeys = new ArrayList<String>();
+                        for (String key : StorySingleton.getInstance()
+                                .getStoryMap().keySet()) {
+                            StoryObject story = StorySingleton.getInstance()
+                                    .getStoryMap()
+                                    .get(key);
                             if (story.getAuthor().equals(name)) {
-                                ownedStories.add(story);
+                                ownedStories.put(key, story);
+                                ownedStoriesKeys.add(key);
                             }
                         }
 
-                        adapter = new FeedAdapter(getContext(), ownedStories);
+                        adapter = new FeedAdapter(getContext(), ownedStories,
+                                ownedStoriesKeys);
 
                         // Assign adapter to ListView
                         listView.setAdapter(adapter);

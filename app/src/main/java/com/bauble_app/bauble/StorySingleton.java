@@ -22,8 +22,8 @@ public class StorySingleton {
     }
 
     public void addStory(StoryObject story) {
-        mKeys.add(story.grabKey());
-        storyMap.put(story.grabKey(), story);
+        mKeys.add(story.grabUniqueId());
+        storyMap.put(story.grabUniqueId(), story);
     }
 
     public StoryObject getViewStory() {
@@ -63,11 +63,11 @@ public class StorySingleton {
 
     // return story to view form list of stories loaded
     public int getViewStoryIndex() {
-        return this.viewStory;
+        return this.mKeys.indexOf(viewKey);
     }
 
     public boolean containsStory(StoryObject story) {
-        return this.storyMap.containsKey(story.grabKey());
+        return this.storyMap.containsKey(story.grabUniqueId());
     }
 
     public Map<String, StoryObject> getStoryMap() {

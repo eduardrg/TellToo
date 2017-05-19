@@ -96,7 +96,7 @@ public class UploadFragment extends Fragment {
                 StoryObject parent = story.getParent();
                 // Add this story as a child of its parent in Firebase Database
                 if (parent != null) {
-                    dbStoriesRef.child(parent.grabKey()).child("children")
+                    dbStoriesRef.child(parent.grabUniqueId()).child("children")
                             .child(key).setValue(true);
                 }
 
