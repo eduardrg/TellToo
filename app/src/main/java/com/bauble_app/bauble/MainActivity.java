@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
                     if (snap.hasChild("author")) {
                         author = snap.child("author").getValue(String.class);
                     }
-                    long plays = 0L;
+                    long plays = 0L; // previously not set to data
                     if (snap.hasChild("plays")) {
                         snap.child("plays")
                                 .getValue(Long.class);
