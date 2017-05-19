@@ -38,7 +38,7 @@ public class CreateFragment extends Fragment {
     private FirebaseAuth mAuth;
     private FirebaseDatabase mDatabase;
     private String FDBTag = "FDB";
-    private int mReplyStoryIndex = -1;
+    private String mReplyStoryKey;
 
     public CreateFragment() {
         // Required empty public constructor
@@ -79,14 +79,14 @@ public class CreateFragment extends Fragment {
         // Insert the fragment that handles showing the story being replied
         // to if this is going to be a reply
         if (getArguments() != null) {
-            mReplyStoryIndex = getArguments().getInt("replyStoryIndex", -1);
+            mReplyStoryKey = getArguments().getString("replyStoryKey", null);
         }
-        if (mReplyStoryIndex > 0) {
+        if (mReplyStoryKey != null) {
             CustomText replyTitle = (CustomText) v.findViewById(R.id
                     .create_reply_title);
             replyTitle.setVisibility(View.VISIBLE);
             Bundle bundle = new Bundle();
-            bundle.putInt("replyStoryIndex", mReplyStoryIndex);
+            bundle.putString("replyStoryKey", mReplyStoryKey);
             Fragment replyFrag = new ReplyFragment();
             replyFrag.setArguments(bundle);
             mChildFragManager.beginTransaction().replace(R.id
@@ -108,7 +108,7 @@ public class CreateFragment extends Fragment {
     }
 
     public StoryObject getReplyParent() {
-        return mStorySingleton.getStory(mReplyStoryIndex);
+        return mStorySingleton.getStory(mReplyStoryKey);
     }
 
     public String getTitle() {

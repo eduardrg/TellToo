@@ -75,8 +75,7 @@ public class ViewFragment extends Fragment {
             public void onClick(View v) {
                 System.out.println("replybtn1");
                 Bundle bundle = new Bundle();
-                bundle.putInt("replyStoryIndex", mStorySingleton.getViewIndex
-                        ());
+                bundle.putString("replyStoryKey", mStorySingleton.getViewKey());
                 // set Fragmentclass Arguments
                 CreateFragment createFrag = new CreateFragment();
                 createFrag.setArguments(bundle);
@@ -100,7 +99,7 @@ public class ViewFragment extends Fragment {
         FirebaseStorage storage = FirebaseStorage.getInstance();
         // Reference to an image file in Firebase Storage
         StorageReference storageReference = storage.getReferenceFromUrl("gs://bauble-90a48.appspot.com");
-        String imagePath = story.grabKey();
+        String imagePath = story.grabUniqueId();
         StorageReference pathReference = storageReference.child("thumbnails/" + imagePath + ".png");
         // StorageReference audioPathReference = storageReference.child("teststories/" + imagePath + ".mp3");
         // TODO: also uniform file type For Tech Demo
@@ -177,6 +176,7 @@ public class ViewFragment extends Fragment {
         if (story.getChildren().size() > 0) {
             for (String childName: story.getChildren()) {
                 final String uniqueIdentifyer = childName;
+
                 ImageView child = new ImageView(getContext());
                 child.setLayoutParams(new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -185,14 +185,7 @@ public class ViewFragment extends Fragment {
                 child.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        for (int i = 0;  i < StorySingleton.getInstance().storyList.size(); i++) {
-                            StoryObject story = StorySingleton.getInstance().storyList.get(i);
-                            if ((story.getAuthor() + story.getTitle().replace(" ","")).equals(uniqueIdentifyer)) {
-                                StorySingleton.getInstance().setViewStory(i);
-                            }
-                        }
-                        //StorySingleton.getInstance().setViewStory(2); // hardcoded 2
-
+                        StorySingleton.getInstance().setViewKey(uniqueIdentifyer);
                         // Placeholder for transition to view
                         // ViewFragment.this.fragManager = getActivity().getSupportFragmentManager();
 
@@ -210,8 +203,8 @@ public class ViewFragment extends Fragment {
                     }
                 });
                 childrenContainer.addView(child);
-                StorageReference childPath = storageReference.child("thumbnails/" + childName + ".png");
-                Log.e("ViewFragment", "thumbnails/" + childName + ".png");
+                StorageReference childPath = storageReference.child("thumbnails/" + uniqueIdentifyer + ".png");
+                Log.e("ViewFragment", "thumbnails/" + uniqueIdentifyer + ".png");
                 // Load the image using Glide
                 Glide.with(getContext() /* context */)
                         .using(new FirebaseImageLoader())

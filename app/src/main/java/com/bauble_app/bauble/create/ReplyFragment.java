@@ -23,7 +23,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 
 public class ReplyFragment extends Fragment {
-    private int mReplyStoryIndex;
+    private String mReplyStoryKey;
     private StorageReference mStorageReference;
 
     public ReplyFragment() {
@@ -37,12 +37,14 @@ public class ReplyFragment extends Fragment {
         View v = inflater.inflate(R.layout.listitem_feed, container, false);
 
         mStorageReference = FirebaseStorage.getInstance().getReference();
-        mReplyStoryIndex = getArguments().getInt("replyStoryIndex", -1);
 
-        if (mReplyStoryIndex > 0) {
+        if (getArguments() != null) {
+            mReplyStoryKey = getArguments().getString("replyStoryKey", null);
+        }
+        if (mReplyStoryKey != null) {
             // Load the parent story's data into the ReplyFragment layout
             StoryObject so = StorySingleton.getInstance().getStory
-                    (mReplyStoryIndex);
+                    (mReplyStoryKey);
             TextView title = (TextView) v.findViewById(R.id.feed_listitem_title);
             String titleString = so.getTitle();
             title.setText(titleString);

@@ -48,7 +48,8 @@ public class FeedFragment extends Fragment {
         // Get ListView object from xml
         listView = (ListView) v.findViewById(R.id.feed_list);
 
-        adapter = new FeedAdapter(getContext(), StorySingleton.getInstance().storyList);
+        adapter = new FeedAdapter(getContext(), StorySingleton.getInstance()
+                .getStoryMap(), StorySingleton.getInstance().getKeys());
 
         // Assign adapter to ListView
         listView.setAdapter(adapter);
