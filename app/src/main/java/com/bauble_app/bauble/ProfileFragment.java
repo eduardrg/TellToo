@@ -34,7 +34,7 @@ public class ProfileFragment extends Fragment {
     private FirebaseAuth mAuth;
     private FirebaseDatabase database;
     public ListView listView;
-    public FeedAdapter adapter;
+    public ProfileAdapter adapter;
     public ProgressBar progressBar;
 
     public ProfileFragment() {
@@ -62,6 +62,7 @@ public class ProfileFragment extends Fragment {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         String name = dataSnapshot.getValue().toString();
+                        StorySingleton.getInstance().setUserName(name);
                         ((TextView) v.findViewById(R.id.profile_username))
                                 .setText(name);
 
@@ -73,22 +74,26 @@ public class ProfileFragment extends Fragment {
                         listView = (ListView) v.findViewById(R.id.profile_list);
 
                         // get's stories created by user
-                        Map<String, StoryObject> ownedStories = new
-                                LinkedHashMap<String, StoryObject>();
-                        List<String> ownedStoriesKeys = new ArrayList<String>();
+                        // Map May Not be Necessary with Story singleton
+//                        Map<String, StoryObject> ownedStories = new
+//                                LinkedHashMap<String, StoryObject>();
+//                        List<String> ownedStoriesKeys = new ArrayList<String>();
+
                         for (String key : StorySingleton.getInstance()
                                 .getStoryMap().keySet()) {
                             StoryObject story = StorySingleton.getInstance()
                                     .getStoryMap()
                                     .get(key);
-                            if (story.getAuthor().equals(name)) {
-                                ownedStories.put(key, story);
-                                ownedStoriesKeys.add(key);
+                            if (!StorySingleton.getInstance().getOwnedStoriesMap().keySet().contains(key) &&
+                                    story.getAuthor().equals(name)) {
+//                                ownedStories.put(key, story);
+                                StorySingleton.getInstance().addOwnedKey(key);
+                                // Add story to owned array for profile fragment
+                                StorySingleton.getInstance().addOwnedStory(key, story);
                             }
                         }
 
-                        adapter = new FeedAdapter(getContext(), ownedStories,
-                                ownedStoriesKeys);
+                        adapter = new ProfileAdapter(getContext(), StorySingleton.getInstance().getOwnedKeys());
 
                         // Assign adapter to ListView
                         listView.setAdapter(adapter);

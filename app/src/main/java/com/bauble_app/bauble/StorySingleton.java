@@ -8,8 +8,11 @@ import java.util.*;
 public class StorySingleton {
     private static final StorySingleton ourInstance = new StorySingleton();
     private Map<String, StoryObject> storyMap; // story key to story object
-    private ArrayList<String> mKeys;
+    private Map<String, StoryObject> userOwnedStories; // local collection for demo purposes
+    private List<String> userOwnedKeys;
+    private List<String> mKeys;
     private String viewKey;
+    private String userName;
 
     public static StorySingleton getInstance() {
         return ourInstance;
@@ -17,8 +20,18 @@ public class StorySingleton {
 
     private StorySingleton() {
         storyMap = new LinkedHashMap<String, StoryObject>();
+        userOwnedStories = new LinkedHashMap<String, StoryObject>();
+        userOwnedKeys = new  ArrayList<String>();
         mKeys = new ArrayList<String>();
         viewKey = "";
+    }
+
+    public void addOwnedStory(String key, StoryObject story) {
+        this.userOwnedStories.put(key, story);
+    }
+
+    public void addOwnedKey(String key) {
+        this.userOwnedKeys.add(key);
     }
 
     public void addStory(StoryObject story) {
@@ -31,6 +44,24 @@ public class StorySingleton {
             return this.storyMap.get(this.viewKey);
         }
         return null;
+    }
+
+    public String getUserName() {
+        return this.userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    // TODO: Invesitigate whether this object is still needed
+    // owned stories now caculated with user keys
+    public Map<String, StoryObject> getOwnedStoriesMap() {
+        return this.userOwnedStories;
+    }
+
+    public List<String> getOwnedKeys() {
+        return this.userOwnedKeys;
     }
 
     public StoryObject getStory(int index) {
@@ -74,7 +105,7 @@ public class StorySingleton {
         return storyMap;
     }
 
-    public ArrayList<String> getKeys() {
+    public List<String> getKeys() {
         return this.mKeys;
     }
 }
