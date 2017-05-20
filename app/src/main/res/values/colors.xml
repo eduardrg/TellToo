@@ -24,4 +24,9 @@
     <!--Cherry Accent-->
     <color name="colorCherryAccent">#FE4B4B</color>
     <color name="colorWhite">#FFFFFF</color>
+
+    <!--light gray-->
+    <color name="light_grey">#cccccc</color>
+    <!--lighter gray-->
+    <color name="dim_grey">#d6d6d6</color>
 </resources>

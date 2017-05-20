@@ -2,17 +2,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.bauble_app.bauble.FeedFragment">
-
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+    tools:context="com.bauble_app.bauble.FeedFragment"
+    android:background="@color/dim_grey">
+    
     <ListView
         android:id="@+id/feed_list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:dividerHeight="5dp"
+        android:divider="@color/dim_grey"
+        android:layout_margin="5dp">
     </ListView>
 
 </FrameLayout>
