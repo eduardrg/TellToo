@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/ListView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/listview_gradient"
     android:padding="@dimen/listitem_feed_padding"
-    android:layout_marginBottom="@dimen/listitem_feed_margin"
-    android:background="@color/colorFeedListItem">
+    >
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/feed_listitem_picture"
