@@ -31,7 +31,7 @@ public class StoryObject implements Comparable<StoryObject>{
     private String title;
     private StoryObject parent;
     private String parentString; // hacky alt for parent
-    private String key;
+    private String key; // not used?
 
     private String uniqueId; // used to store the id of story as on Firebase
 

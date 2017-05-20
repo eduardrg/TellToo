@@ -309,11 +309,14 @@ public class ViewFragment extends Fragment {
             }
         });
 
-        // Add Button Click funtionality
+        // Save Button Click Functionality
         ImageButton save = (ImageButton) v.findViewById(R.id.view_btn_save);
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String key = StorySingleton.getInstance().getViewKey();
+                // StorySingleton.getInstance().getOwnedStoriesMap().put(key, story);
+                StorySingleton.getInstance().getOwnedKeys().add(0, key);
                 Toast.makeText(getActivity().getApplicationContext(), story.getTitle() +
                         " added to your collection", Toast.LENGTH_SHORT).show();
             }
