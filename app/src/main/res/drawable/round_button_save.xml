@@ -7,6 +7,12 @@
                     <solid android:color="@color/colorBrand"/>
                 </shape>
             </item>
+            <item
+                android:drawable="@drawable/ic_image_book"
+                android:bottom="8dp"
+                android:left="8dp"
+                android:right="8dp"
+                android:top="8dp"/>
         </layer-list>
     </item>
     <item android:state_pressed="true">
@@ -16,6 +22,12 @@
                     <solid android:color="@color/colorBrandHighlight"/>
                 </shape>
             </item>
+            <item
+                android:drawable="@drawable/ic_image_book"
+                android:bottom="8dp"
+                android:left="8dp"
+                android:right="8dp"
+                android:top="8dp"/>
         </layer-list>
     </item>
 </selector>
