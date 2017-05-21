@@ -120,8 +120,7 @@
                         android:id="@+id/view_btn_save"
                         android:layout_width="60dp"
                         android:layout_height="60dp"
-                        android:background="@drawable/round_button"
-                        android:src="@drawable/ic_action_btn_save"
+                        android:background="@drawable/round_button_save"
                         android:adjustViewBounds="true"
                         android:tint="@color/colorBrandHighlight"
                         android:scaleType="fitCenter"/>
@@ -168,8 +167,7 @@
                         android:id="@+id/view_reply_btn"
                         android:layout_width="60dp"
                         android:layout_height="60dp"
-                        android:background="@drawable/round_button"
-                        android:src="@drawable/ic_action_btn_record"
+                        android:background="@drawable/round_button_record"
                         android:adjustViewBounds="true"
                         android:scaleType="fitCenter"/>
                     <TextView

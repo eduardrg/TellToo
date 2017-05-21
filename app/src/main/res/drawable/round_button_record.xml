@@ -7,6 +7,12 @@
                     <solid android:color="@color/colorBrand"/>
                 </shape>
             </item>
+            <item
+                android:drawable="@drawable/ic_image_mic"
+                android:bottom="5dp"
+                android:left="5dp"
+                android:right="5dp"
+                android:top="5dp"/>
         </layer-list>
     </item>
     <item android:state_pressed="true">
@@ -16,6 +22,12 @@
                     <solid android:color="@color/colorBrandHighlight"/>
                 </shape>
             </item>
+            <item
+                android:drawable="@drawable/ic_image_mic"
+                android:bottom="5dp"
+                android:left="5dp"
+                android:right="5dp"
+                android:top="5dp"/>
         </layer-list>
     </item>
 </selector>
