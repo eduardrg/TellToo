@@ -42,6 +42,10 @@ public class CreateFragment extends Fragment {
     private String FDBTag = "FDB";
     private String mReplyStoryKey;
 
+    private String[] mTags;
+    private String mAccess;
+    private String mExpiration;
+
     public CreateFragment() {
         // Required empty public constructor
     }
@@ -155,5 +159,29 @@ public class CreateFragment extends Fragment {
 
     public void setNextListener(View.OnClickListener listener) {
         this.mNextButton.setOnClickListener(listener);
+    }
+
+    public String[] getmTags() {
+        return mTags;
+    }
+
+    public void setmTags(String[] mTags) {
+        this.mTags = mTags;
+    }
+
+    public String getmAccess() {
+        return mAccess;
+    }
+
+    public void setmAccess(String mAccess) {
+        this.mAccess = mAccess;
+    }
+
+    public String getmExpiration() {
+        return mExpiration;
+    }
+
+    public void setmExpiration(String mExpiration) {
+        this.mExpiration = mExpiration;
     }
 }

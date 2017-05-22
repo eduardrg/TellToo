@@ -8,6 +8,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.util.TypedValue;
@@ -22,16 +23,28 @@ import com.bauble_app.bauble.R;
 import com.bauble_app.bauble.StoryObject;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.jesusm.holocircleseekbar.lib.HoloCircleSeekBar;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+import java.util.Map;
 
 
 /**
@@ -40,13 +53,15 @@ import java.io.IOException;
 public class UploadFragment extends Fragment {
     private String mThumbnailStoragePath;
     private String mRecordingStoragePath;
-    private PlayButton mPlayButton;
     private MediaPlayer mPlayer;
     private CreateFragment mCreateFrag;
+    private HoloCircleSeekBar mPicker;
 
     // Firebase stuff
     private StorageReference mStorage;
     private FirebaseDatabase mDatabase;
+    private DateFormat mDateFormat;
+    private Calendar mCalendar;
 
     // Create a StoryObject for upload to Firebase Database
     // The cover and audio params are the paths of the cover image and audio
@@ -58,12 +73,35 @@ public class UploadFragment extends Fragment {
                 , mThumbnailStoragePath,
                 mCreateFrag.getTitle());
         so.setParent(mCreateFrag.getReplyParent());
+        so.setTags(mCreateFrag.getmTags());
+        so.setAccess(mCreateFrag.getmAccess());
+        so.setExpiration(mCreateFrag.getmExpiration());
+        String created = so.getCreated();
+        String expiration = so.getExpiration();
+        try {
+            mCalendar.setTime(mDateFormat.parse(created));
+            mCalendar.add(Calendar.DATE, mPicker.getValue());  // set to expire
+            // mPicker.getValue (# of days) after created date
+            expiration = mDateFormat.format(mCalendar.getTime());
+        } catch (ParseException e) {
+            // do nothing
+        }
+
+        so.setExpiration(expiration);
         return so;
     }
 
 
     public UploadFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
+                Locale.US);
+        mCalendar = Calendar.getInstance();
     }
 
     @Override
@@ -74,9 +112,11 @@ public class UploadFragment extends Fragment {
         mStorage = FirebaseStorage.getInstance().getReference();
         mDatabase = FirebaseDatabase.getInstance();
         mCreateFrag = (CreateFragment) getParentFragment();
-        appendButtons(v);
-        Button upload = (Button) v.findViewById(R.id.edit_upload_btn);
-        upload.setOnClickListener(new View.OnClickListener() {
+        mPicker = (HoloCircleSeekBar) v.findViewById(R.id.picker);
+        Button nextBtn = (Button) mCreateFrag.getView().findViewById(R.id
+                .create_next_btn);
+        nextBtn.setText("Submit");
+        nextBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View btn) {
                 // Upload the audio file and thumbnail files to FirebaseStorage
                     Uri audioFile = Uri.fromFile(new File(mCreateFrag
@@ -98,6 +138,39 @@ public class UploadFragment extends Fragment {
                 if (parent != null) {
                     dbStoriesRef.child(parent.grabUniqueId()).child("children")
                             .child(key).setValue(true);
+                }
+
+                // Add any new tags that this story possesses to the master
+                // list of tags
+                DatabaseReference dbTagsRef = mDatabase.getReference().child
+                        ("tags");
+                Map<String, Boolean> tags = story.getTags();
+                if (tags != null) {
+                    for (String tag : tags.keySet()) {
+                        final DatabaseReference dbTagRef = dbTagsRef.child
+                                (tag);
+                        final String storyKey = key;
+                        // Increment the count of stories tagged with this tag
+                        dbTagRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                Long prevCount = 1L;
+                                if (dataSnapshot.hasChild("taggedCount")) {
+                                    prevCount = dataSnapshot.child
+                                            ("taggedCount").getValue(Long.class);
+                                    prevCount++;
+                                }
+                                dbTagRef.child("taggedCount").setValue
+                                        (prevCount);
+                                dbTagRef.child(storyKey).setValue(true);
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
                 }
 
                 StorageReference testStoriesRef = mStorage.child
@@ -167,82 +240,6 @@ public class UploadFragment extends Fragment {
         });
 
         return v;
-    }
-
-    private void appendButtons(View v) {
-        ViewGroup layout = (ViewGroup) v.findViewById(R.id
-                .edit_root_viewgroup);
-
-        // Initialize buttons
-        mPlayButton = new PlayButton(getActivity());
-
-        // We want the buttons to be 60dp x 60dp but LayoutParams takes pixel
-        // arguments
-        int dp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                60,
-                getResources().getDisplayMetrics());
-
-        RelativeLayout.LayoutParams mPlayButtonParams = new RelativeLayout
-                .LayoutParams(dp, dp);
-
-        mPlayButtonParams.addRule(RelativeLayout.BELOW, R.id.edit_upload_btn);
-        mPlayButtonParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
-
-        mPlayButton.setLayoutParams(mPlayButtonParams);
-
-        layout.addView(mPlayButton);
-    }
-
-    private void onPlay(boolean start) {
-        if (start) {
-            startPlaying();
-        } else {
-            stopPlaying();
-        }
-    }
-
-    private void startPlaying() {
-        mPlayer = new MediaPlayer();
-        try {
-            mPlayer.setDataSource(((CreateFragment) getParentFragment())
-                    .getRecordingPath());
-            mPlayer.prepare();
-            mPlayer.start();
-        } catch (IOException e) {
-            Log.e("MP", e.getMessage());
-        }
-    }
-
-    private void stopPlaying() {
-        mPlayer.release();
-        mPlayer = null;
-    }
-
-    // Button that plays or stops the mAudio being played in CreateFragment
-    public class PlayButton extends android.support.v7.widget
-            .AppCompatImageButton {
-        boolean mStartPlaying = true;
-
-        // Listener for the play button that plays or stops the mAudio when
-        // the button is tapped
-        OnClickListener clicker = new OnClickListener() {
-            public void onClick(View v) {
-                onPlay(mStartPlaying);
-                if (mStartPlaying) {
-                    setImageResource(R.drawable.ic_action_btn_stop);
-                } else {
-                    setImageResource(R.drawable.ic_action_btn_play);
-                }
-                mStartPlaying = !mStartPlaying;
-            }
-        };
-
-        // Constructor
-        public PlayButton(Context context) {
-            super(context);
-            setImageResource(R.drawable.ic_action_btn_play);
-            setOnClickListener(clicker);
-        }
     }
 
 }

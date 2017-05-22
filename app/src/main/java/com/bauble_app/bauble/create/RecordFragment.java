@@ -3,6 +3,7 @@ package com.bauble_app.bauble.create;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Build;
 import android.os.Bundle;
@@ -55,6 +56,8 @@ public class RecordFragment extends Fragment {
     private boolean permissionToRecordAccepted = false;
     private String [] permissions = {Manifest.permission.RECORD_AUDIO};
     private CreateFragment mCreateFrag;
+    private MediaPlayer mPlayer;
+    private PlayButton mPlayButton;
 
 
     // Handles the event of the user allowing/denying permission to record.
@@ -314,6 +317,83 @@ public class RecordFragment extends Fragment {
         if (recorder != null) {
             recorder.release();
             recorder = null;
+        }
+    }
+
+    private void appendPlayButtons(View v) {
+        ViewGroup layout = (ViewGroup) v.findViewById(R.id
+                .edit_root_viewgroup);
+
+        // Initialize buttons
+        mPlayButton = new PlayButton(getActivity());
+
+        // We want the buttons to be 60dp x 60dp but LayoutParams takes pixel
+        // arguments
+        int dp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                60,
+                getResources().getDisplayMetrics());
+
+        RelativeLayout.LayoutParams mPlayButtonParams = new RelativeLayout
+                .LayoutParams(dp, dp);
+
+        // mPlayButtonParams.addRule(RelativeLayout.BELOW, R.id
+        // .edit_upload_btn);
+        mPlayButtonParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
+
+        mPlayButton.setLayoutParams(mPlayButtonParams);
+
+        layout.addView(mPlayButton);
+    }
+
+    private void onPlay(boolean start) {
+        if (start) {
+            startPlaying();
+        } else {
+            stopPlaying();
+        }
+    }
+
+    private void startPlaying() {
+        mPlayer = new MediaPlayer();
+        try {
+            mPlayer.setDataSource(((CreateFragment) getParentFragment())
+                    .getRecordingPath());
+            mPlayer.prepare();
+            mPlayer.start();
+        } catch (IOException e) {
+            Log.e("MP", e.getMessage());
+        }
+    }
+
+    private void stopPlaying() {
+        mPlayer.release();
+        mPlayer = null;
+    }
+
+    // Button that plays or stops the mAudio being played in CreateFragment
+    public class PlayButton extends android.support.v7.widget
+            .AppCompatImageButton {
+        boolean mStartPlaying = true;
+
+        // Listener for the play button that plays or stops the mAudio when
+        // the button is tapped
+        OnClickListener clicker = new OnClickListener() {
+            public void onClick(View v) {
+                onPlay(mStartPlaying);
+                if (mStartPlaying) {
+                    setImageResource(R.drawable.ic_action_btn_stop);
+                } else {
+                    setImageResource(R.drawable.ic_action_btn_play);
+                }
+                mStartPlaying = !mStartPlaying;
+            }
+        };
+
+        // Constructor
+        public PlayButton(Context context) {
+            super(context);
+            setImageResource(R.drawable.ic_action_btn_play);
+            setOnClickListener(clicker);
         }
     }
 }

@@ -2,7 +2,8 @@
             android:layout_width="match_parent"
             xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"
-            tools:context="com.bauble_app.bauble.create.CreateFragment">
+            tools:context="com.bauble_app.bauble.create.CreateFragment"
+    android:layout_marginBottom="20dp">
         <RelativeLayout
             android:id="@+id/record_root_viewgroup"
             android:layout_height="wrap_content"
