@@ -6,8 +6,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * Created by ChrisLi on 4/20/17.
@@ -31,6 +33,7 @@ public class StoryObject implements Comparable<StoryObject>{
     private String title;
     private StoryObject parent;
     private String key;
+    private String[] tags;
 
     private String uniqueId; // used to store the id of story as on Firebase
 
@@ -299,4 +302,15 @@ public class StoryObject implements Comparable<StoryObject>{
         this.uniqueId = uniqueId;
     }
 
+    public Map<String, Boolean> getTags() {
+        Map<String, Boolean> tagMap = new HashMap<String, Boolean>();
+        for (String tag : tags) {
+            tagMap.put(tag, true);
+        }
+        return tagMap;
+    }
+
+    public void setTags(String[] tags) {
+        this.tags = tags;
+    }
 }
