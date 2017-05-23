@@ -39,6 +39,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -317,6 +318,69 @@ public class ViewFragment extends Fragment {
                 Toast.makeText(getActivity().getApplicationContext(), story.getTitle() +
                         " added to your collection", Toast.LENGTH_SHORT).show();
             }
+        });
+
+        // Set Swipe Action Recognizer, current on waveforms
+        waveforms.setOnTouchListener(new OnSwipeTouchListener(getActivity()) {
+            public void onSwipeTop() {
+                Toast.makeText(getActivity(), "top", Toast.LENGTH_SHORT).show();
+            }
+            public void onSwipeRight() { // get child before, the one that is on the left
+                Toast.makeText(getActivity(), "right", Toast.LENGTH_SHORT).show();
+                if (story.getParentString() != null) {
+                    String parentIdentifier = story.getParentString();
+                    String uniqueIdentifier = story.grabUniqueId();
+                    List<String> childList = StorySingleton.getInstance().getStory(parentIdentifier).getChildren();
+                    int newStoryIndex = -1;
+                    for (int i = 0; i < childList.size(); i++) {
+                        if (uniqueIdentifier.equals(childList.get(i))) {
+                            newStoryIndex = i;
+                        }
+                    }
+                    if (newStoryIndex > 0 && newStoryIndex < childList.size()) {
+                        StorySingleton.getInstance().setViewKey(childList.get(newStoryIndex - 1));
+                        mPlayer.stop();
+                        FragmentTransaction ft = mFragManager.beginTransaction();
+                        ft.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right)
+                                .replace(R.id.content, new ViewFragment())
+                                // TODO: even though add to back stack, need to find way to load correct story when back pressed
+                                .addToBackStack("tag")
+                                .commit();
+                    }
+                    // StorySingleton.getInstance().setViewKey(uniqueIdentifier);
+
+                }
+            }
+            public void onSwipeLeft() {
+                Toast.makeText(getActivity(), "left", Toast.LENGTH_SHORT).show();
+                if (story.getParentString() != null) {
+                    String parentIdentifier = story.getParentString();
+                    String uniqueIdentifier = story.grabUniqueId();
+                    List<String> childList = StorySingleton.getInstance().getStory(parentIdentifier).getChildren();
+                    int newStoryIndex = -1;
+                    for (int i = 0; i < childList.size(); i++) {
+                        if (uniqueIdentifier.equals(childList.get(i))) {
+                            newStoryIndex = i;
+                        }
+                    }
+                    if (newStoryIndex >= 0 && newStoryIndex < childList.size() - 1) {
+                        StorySingleton.getInstance().setViewKey(childList.get(newStoryIndex + 1));
+                        mPlayer.stop();
+                        FragmentTransaction ft = mFragManager.beginTransaction();
+                        ft.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left)
+                                .replace(R.id.content, new ViewFragment())
+                                // TODO: even though add to back stack, need to find way to load correct story when back pressed
+                                .addToBackStack("tag")
+                                .commit();
+                    }
+                    // StorySingleton.getInstance().setViewKey(uniqueIdentifier);
+
+                }
+            }
+            public void onSwipeBottom() {
+                Toast.makeText(getActivity(), "bottom", Toast.LENGTH_SHORT).show();
+            }
+
         });
 
         // Inflate the layout for this fragment
