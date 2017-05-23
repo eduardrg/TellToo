@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -36,6 +37,7 @@ public class StoryObject implements Comparable<StoryObject>{
     private String[] tags;
 
     private String uniqueId; // used to store the id of story as on Firebase
+    private List childrenObjects;
 
 
     // Constructor that sets all attributes to 0 or null
@@ -184,6 +186,15 @@ public class StoryObject implements Comparable<StoryObject>{
 
     public void addChildStory(String storyRef) {
         this.children.add(storyRef);
+    }
+
+    public void addChildStoryObject(StoryObject so) {
+        if (this.childrenObjects == null) {
+            this.childrenObjects = new LinkedList<String>();
+        }
+        if (!this.childrenObjects.contains(so)) {
+            this.childrenObjects.add(so);
+        }
     }
 
     public String toString() {

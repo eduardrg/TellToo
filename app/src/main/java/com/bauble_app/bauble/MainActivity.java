@@ -78,6 +78,8 @@ public class MainActivity extends AppCompatActivity {
                         for (DataSnapshot child : snap.child("children").getChildren()) {
                             if (child.getValue(Boolean.class)) {
                                 story.addChildStory(child.getKey());
+                                story.addChildStoryObject(snap.child(child
+                                        .getKey()).getValue(StoryObject.class));
                             }
                         }
                         Log.i("MainNavActivity", story.getChildren().toString());
