@@ -116,6 +116,19 @@ public class CreateFragment extends Fragment {
         return v;
     }
 
+    // Toggle whether the button to proceed to the next step is clickable
+    // This is used to prevent the user from advancing if they have not
+    // completed a necessary step (i.e., recording a story)
+    /*
+    void toggleNextVisible(boolean enable) {
+        if (enable) {
+            mNextButton.setVisibility(View.VISIBLE);
+        } else {
+            mNextButton.setVisibility(View.INVISIBLE);
+        }
+    }
+    */
+
     public StoryObject getReplyParent() {
         return mStorySingleton.getStory(mReplyStoryKey);
     }

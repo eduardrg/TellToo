@@ -15,7 +15,6 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.RelativeLayout;
 
 import com.bauble_app.bauble.R;
@@ -48,12 +47,10 @@ public class RecordFragment extends Fragment {
     private MediaRecorder recorder;
     private int recordCount;
 
-    private Button mNextButton;
     private boolean mSupportsPause;
 
     // Requesting permission to RECORD_AUDIO
     private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
-    private boolean permissionToRecordAccepted = false;
     private String [] permissions = {Manifest.permission.RECORD_AUDIO};
     private CreateFragment mCreateFrag;
     private MediaPlayer mPlayer;
@@ -69,15 +66,10 @@ public class RecordFragment extends Fragment {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
                     Log.d("tag", "permission granted");
-                    permissionToRecordAccepted = true;
                     break;
                 } else {
                     Log.d("tag", "in permission denied");
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
                 }
                 return;
             }
@@ -107,10 +99,8 @@ public class RecordFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_create_tools, container,
                 false);
         mCreateFrag = (CreateFragment) getParentFragment();
-
         // Append the record buttons to the layout
         appendButtons(v);
-
         return v;
     }
 
@@ -123,6 +113,7 @@ public class RecordFragment extends Fragment {
                 } else {
                     if (recorder != null) {
                         recorder.stop();
+                        recorder.release();
                     }
                 }
                 mCreateFrag.setRecordingPath(mFilePath + mFileName +
@@ -165,6 +156,13 @@ public class RecordFragment extends Fragment {
 
     }
 
+    private boolean haveRecordPermission()
+    {
+        String permission = permissions[0];
+        int res = getContext().checkCallingOrSelfPermission(permission);
+        return (res == PackageManager.PERMISSION_GRANTED);
+    }
+
     // Button that starts or stops the audio recorder in CreateFragment
     public class RecordButton extends android.support.v7.widget
             .AppCompatImageButton {
@@ -174,7 +172,7 @@ public class RecordFragment extends Fragment {
         // the button is tapped
         OnClickListener clicker = new OnClickListener() {
             public void onClick(View v) {
-                if (permissionToRecordAccepted) {
+                if (haveRecordPermission()) {
                     Log.d("clicker", "permission accepted");
                     onRecord(mStartRecording);
                     if (mStartRecording) {
@@ -247,6 +245,8 @@ public class RecordFragment extends Fragment {
             recorder.reset();
         }
     }
+
+
 
     // Uses the isoparser-1.1.22 library to concatenate MP4 files
     //
