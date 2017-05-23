@@ -2,6 +2,7 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/ListView"
+    android:id="@+id/feed_listitem"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/listview_gradient"
@@ -27,13 +28,15 @@
             android:text="Title"
             android:textAlignment="center"
             android:textSize="@dimen/section_title_textsize"
-            android:textStyle="bold"/>
+            android:textStyle="bold"
+            android:textColor="@color/DARKGRAY"/>
         <TextView
             android:id="@+id/feed_listitem_author"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="author"
-            android:textAlignment="center" />
+            android:textAlignment="center"
+            android:textColor="@color/DARKGRAY"/>
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -44,7 +47,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="time"
-                android:layout_margin="@dimen/listitem_feed_stat_margin"/>
+                android:layout_margin="@dimen/listitem_feed_stat_margin"
+                android:textColor="@color/DARKGRAY"/>
             <ImageView
                 android:layout_width="15dp"
                 android:layout_height="15dp"
@@ -56,7 +60,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="chains"
-                android:layout_margin="@dimen/listitem_feed_stat_margin" />
+                android:layout_margin="@dimen/listitem_feed_stat_margin"
+                android:textColor="@color/DARKGRAY"/>
             <ImageView
                 android:layout_width="15dp"
                 android:layout_height="15dp"
@@ -68,7 +73,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="expire"
-                android:layout_margin="@dimen/listitem_feed_stat_margin"/>
+                android:layout_margin="@dimen/listitem_feed_stat_margin"
+                android:textColor="@color/DARKGRAY"/>
             <ImageView
                 android:layout_width="15dp"
                 android:layout_height="15dp"
@@ -80,7 +86,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="plays"
-                android:layout_margin="@dimen/listitem_feed_stat_margin"/>
+                android:layout_margin="@dimen/listitem_feed_stat_margin"
+                android:textColor="@color/DARKGRAY"/>
         </LinearLayout>
     </LinearLayout>
 

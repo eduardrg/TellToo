@@ -82,7 +82,7 @@ public class ProfileAdapter extends BaseAdapter {
         String authorString = story.getAuthor();
         author.setText(authorString);
 
-        String profileOwner = StorySingleton.getInstance().getUserName();
+        String profileOwner = StorySingleton.getInstance().getUserName(); // Set color
         if (authorString.equals(profileOwner)) {
             vi.findViewById(R.id.profile_listitem).setBackgroundColor(Color.rgb(255, 255, 255));
         } else {

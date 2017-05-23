@@ -4,14 +4,14 @@
     android:layout_height="match_parent"
     tools:context="com.bauble_app.bauble.FeedFragment"
     android:background="@color/dim_grey">
-    
+
     <ListView
         android:id="@+id/feed_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:dividerHeight="5dp"
+        android:dividerHeight="7dp"
         android:divider="@color/dim_grey"
-        android:layout_margin="5dp">
+        android:layout_margin="4dp">
     </ListView>
 
 </FrameLayout>

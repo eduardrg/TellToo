@@ -1,12 +1,20 @@
 package com.bauble_app.bauble;
 
 import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.os.CountDownTimer;
+import android.support.annotation.IntRange;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -102,26 +110,37 @@ public class FeedAdapter extends BaseAdapter {
         }
         Long timeTill = calculateExpire(date, currentDate); // seconds till expire
         if (timeTill > 0) {
-            final int countDownInterval = 1000;
 
-            countDownTimer = new CountDownTimer(timeTill * 1000, countDownInterval) { // 5 second timer
-                @Override
-                public void onTick(long millisUntilFinished) {
-                    expire.setText("" + millisUntilFinished / countDownInterval); // to get seconds
-                }
+            expire.setText("" + timeTill / 60 + "m");
+//            final int countDownInterval = 1000;
 
-                @Override
-                public void onFinish() {
-
-                    expire.setText("expired");
-                }
-            };
-            countDownTimer.start();
+            // Countdown timer
+//            countDownTimer = new CountDownTimer(timeTill * 1000, countDownInterval) { // 5 second timer
+//                @Override
+//                public void onTick(long millisUntilFinished) {
+//                    expire.setText("" + millisUntilFinished / countDownInterval); // to get seconds
+//                }
+//
+//                @Override
+//                public void onFinish() {
+//
+//                    expire.setText("expired");
+//                }
+//            };
+//            countDownTimer.start();
         } else {
             expire.setText("expired");
         }
         TextView plays = (TextView) vi.findViewById(R.id.feed_listitem_plays);
         plays.setText(story.getPlays().toString());
+
+        if (expire.getText().equals("expired")) {
+            vi.findViewById(R.id.feed_listitem).setBackgroundResource(R.drawable.listview_expired);
+            expire.setTextColor(Color.RED);
+        } else {
+            vi.findViewById(R.id.feed_listitem).setBackgroundResource(R.drawable.listview_gradient);
+            expire.setTextColor(Color.DKGRAY);
+        }
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
         // Reference to an image file in Firebase Storage
