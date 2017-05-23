@@ -13,7 +13,10 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
 import android.widget.BaseAdapter;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -98,20 +101,29 @@ public class FeedAdapter extends BaseAdapter {
         chains.setText(story.getChains().toString());
         final TextView expire = (TextView) vi.findViewById(R.id.feed_listitem_expire);
         expire.setText(story.getExpireDate());
+
         final String expireDate = story.getExpireDate();
+        final String createDate = story.getCreated();
         // Experimental countdown timer
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
+        Date cDate = null;
         Date date = null;
         Date currentDate = new Date();
         try {
+            cDate = format.parse(createDate);
             date = format.parse(expireDate);
         } catch (ParseException e) {
             e.printStackTrace();
         }
         Long timeTill = calculateExpire(date, currentDate); // seconds till expire
+        Long totalTime = calculateExpire(date, cDate);
+
+        // To set Progress Bar
+        ProgressBar countDown = (ProgressBar) vi.findViewById(R.id.feed_progressBarToday);
         if (timeTill > 0) {
 
             expire.setText("" + timeTill / 60 + "m");
+            countDown.setProgress((int) (timeTill.doubleValue() / totalTime.intValue() * 48));
 //            final int countDownInterval = 1000;
 
             // Countdown timer
@@ -130,6 +142,7 @@ public class FeedAdapter extends BaseAdapter {
 //            countDownTimer.start();
         } else {
             expire.setText("expired");
+            countDown.setProgress(0);
         }
         TextView plays = (TextView) vi.findViewById(R.id.feed_listitem_plays);
         plays.setText(story.getPlays().toString());
@@ -141,6 +154,13 @@ public class FeedAdapter extends BaseAdapter {
             vi.findViewById(R.id.feed_listitem).setBackgroundResource(R.drawable.listview_gradient);
             expire.setTextColor(Color.DKGRAY);
         }
+
+        // Expire Progress Bar Animation Turns 90 degrees clockwise
+//        ProgressBar pb = (ProgressBar) vi.findViewById(R.id.progressBarToday);
+//
+//        Animation an = new RotateAnimation(0.0f, 90.0f, 250f, 273f);
+//        an.setFillAfter(true);
+//        pb.startAnimation(an);
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
         // Reference to an image file in Firebase Storage

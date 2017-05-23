@@ -140,7 +140,7 @@ public class StoryObject implements Comparable<StoryObject>{
     }
 
     // TODO: still needed or just for testing?
-    // Constructor for setting a story with just
+    // Constructor for setting a story with just a title
     public StoryObject(String title) {
         this();
         setTitle(title);
@@ -163,7 +163,7 @@ public class StoryObject implements Comparable<StoryObject>{
         return this.created;
     }
 
-    public StoryObject(String title, String author, long duration, long chains, String expiration, long plays) {
+    public StoryObject(String title, String author, long duration, long chains, String expiration, String created, long plays) {
         this.title = title;
         this.author = author;
         this.duration = duration;
@@ -171,6 +171,7 @@ public class StoryObject implements Comparable<StoryObject>{
         this.expiration = expiration;
         this.plays = plays;
         this.children = new ArrayList<String>();
+        this.created = created;
     }
 
     public String getTitle() {
