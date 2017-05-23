@@ -70,9 +70,13 @@ public class MainActivity extends AppCompatActivity {
                     if (snap.hasChild("expiration")) {
                         expire = snap.child("expiration").getValue(String.class);
                     }
+                    String create = "";
+                    if (snap.hasChild("created")) {
+                        create = snap.child("created").getValue(String.class);
+                    }
 
                     // String title, int durration, int chains, String expireDate, int plays
-                    StoryObject story = new StoryObject(title, author, time, chains, expire, plays);
+                    StoryObject story = new StoryObject(title, author, time, chains, expire, create, plays);
                     story.setUniqueId(snap.getKey());
                     if (snap.child("children").getChildren() != null) {
                         for (DataSnapshot child : snap.child("children").getChildren()) {
