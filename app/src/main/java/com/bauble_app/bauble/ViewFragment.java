@@ -321,7 +321,8 @@ public class ViewFragment extends Fragment {
         });
 
         // Set Swipe Action Recognizer, current on waveforms
-        waveforms.setOnTouchListener(new OnSwipeTouchListener(getActivity()) {
+        LinearLayout wholeView = (LinearLayout) v.findViewById(R.id.view_whole_view);
+        wholeView.setOnTouchListener(new OnSwipeTouchListener(getActivity()) {
             public void onSwipeTop() {
                 Toast.makeText(getActivity(), "top", Toast.LENGTH_SHORT).show();
             }
