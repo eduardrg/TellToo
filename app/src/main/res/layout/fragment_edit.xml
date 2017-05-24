@@ -3,15 +3,56 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.bauble_app.bauble.create.UploadFragment"
-    android:id="@+id/edit_root_viewgroup">
+    android:id="@+id/edit_root_viewgroup"
+    android:layout_marginTop="20dp"
+    android:layout_marginLeft="40dp"
+    android:layout_marginRight="40dp">
 
-    <Button
-        android:id="@+id/edit_upload_btn"
+    <com.bauble_app.bauble.CustomText
+        android:id="@+id/upload_page_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Upload"
-        android:layout_marginTop="50dp"
+        android:text="Availability"
+        android:layout_marginBottom="25dp"
+        android:layout_centerHorizontal="true"
+        android:textAlignment="center"/>
+
+    <com.bauble_app.bauble.CustomText
+        android:id="@+id/upload_page_desc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Stories are precious but fleeting. How long should your story be available to listen to?"
+        android:layout_below="@id/upload_page_title"
+        android:layout_marginBottom="25dp"
+        android:textAlignment="textStart"
+        android:gravity="start"
         android:layout_centerHorizontal="true"/>
+
+    <com.bauble_app.bauble.CustomText
+        android:id="@+id/upload_expiration_picker_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Days"
+        android:layout_centerHorizontal="true"
+        android:textAlignment="center"
+        android:layout_below="@id/upload_page_desc"/>
+
+    <com.jesusm.holocircleseekbar.lib.HoloCircleSeekBar
+        android:id="@+id/picker"
+        android:layout_centerHorizontal="true"
+        android:layout_width="285dp"
+        android:layout_height="290dp"
+        app:init_position="7"
+        app:max="90"
+        app:pointer_color="#0174DF"
+        app:pointer_halo_color="#88252525"
+        app:pointer_size="34dp"
+        app:text_color="#FF0000"
+        app:text_size="65sp"
+        app:wheel_active_color="#00BFFF"
+        app:wheel_unactive_color="#FFCCCCCC"
+        android:layout_below="@id/upload_expiration_picker_title"/>
 
 </RelativeLayout>

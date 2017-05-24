@@ -39,7 +39,10 @@ public class CustomText extends android.support.v7.widget.AppCompatTextView {
         String typefaceName = "Roboto-Regular";
 
         // Depending on what the id contains, change styles
-        if (idText.contains("title")){
+        if (idText.contains("title2")) {
+            typefaceName = "Roboto-Bold";
+            textSize = 13;
+        } else if (idText.contains("title")) {
             typefaceName = "Roboto-Bold";
             textSize = 17;
         }

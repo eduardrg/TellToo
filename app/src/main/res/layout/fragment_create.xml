@@ -2,7 +2,8 @@
             android:layout_width="match_parent"
             xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"
-            tools:context="com.bauble_app.bauble.create.CreateFragment">
+            tools:context="com.bauble_app.bauble.create.CreateFragment"
+    android:layout_marginBottom="20dp">
         <RelativeLayout
             android:id="@+id/record_root_viewgroup"
             android:layout_height="wrap_content"
@@ -36,6 +37,18 @@
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_below="@id/create_set_meta"/>
+
+                <com.bauble_app.bauble.CustomButton
+                    android:id="@+id/create_next_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:layout_alignParentBottom="true"
+                    android:text="Next"
+                    android:background="@drawable/btn_add_title"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@id/create_tools"/>
 
         </RelativeLayout>
 </ScrollView>

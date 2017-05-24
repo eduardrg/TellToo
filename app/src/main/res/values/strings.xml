@@ -47,5 +47,7 @@
     <string name="sign_up_name_hint">Pick a name</string>
     <string name="sign_up_pass_hint">Enter a password</string>
     <string name="auth_choice_page_desc">You need an account to do that.</string>
+    <string name="tag_page_title">Tags</string>
+    <string name="tag_page_desc">Tag the content of your story so the community can find it!</string>
 
 </resources>

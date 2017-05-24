@@ -3,6 +3,7 @@ package com.bauble_app.bauble.create;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Build;
 import android.os.Bundle;
@@ -14,7 +15,6 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.RelativeLayout;
 
 import com.bauble_app.bauble.R;
@@ -33,7 +33,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import static android.widget.RelativeLayout.ALIGN_PARENT_BOTTOM;
 import static android.widget.RelativeLayout.BELOW;
 
 /**
@@ -48,14 +47,14 @@ public class RecordFragment extends Fragment {
     private MediaRecorder recorder;
     private int recordCount;
 
-    private Button mNextButton;
     private boolean mSupportsPause;
 
     // Requesting permission to RECORD_AUDIO
     private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
-    private boolean permissionToRecordAccepted = false;
     private String [] permissions = {Manifest.permission.RECORD_AUDIO};
     private CreateFragment mCreateFrag;
+    private MediaPlayer mPlayer;
+    private PlayButton mPlayButton;
 
 
     // Handles the event of the user allowing/denying permission to record.
@@ -67,15 +66,10 @@ public class RecordFragment extends Fragment {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
                     Log.d("tag", "permission granted");
-                    permissionToRecordAccepted = true;
                     break;
                 } else {
                     Log.d("tag", "in permission denied");
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
                 }
                 return;
             }
@@ -105,32 +99,38 @@ public class RecordFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_create_tools, container,
                 false);
         mCreateFrag = (CreateFragment) getParentFragment();
+        // Append the record buttons to the layout
+        appendButtons(v);
+        return v;
+    }
 
-        // Add a listener for the 'next' button to show the UploadFragment for
-        // reviewing/editing the audio
-        mNextButton = (Button) v.findViewById(R.id.create_next_btn);
-        mNextButton.setOnClickListener(new View.OnClickListener() {
+    View.OnClickListener getNextListener() {
+        View.OnClickListener listener = new View.OnClickListener() {
+            @Override
             public void onClick(View btn) {
                 if (!mSupportsPause) {
                     processFiles();
                 } else {
                     if (recorder != null) {
                         recorder.stop();
+                        recorder.release();
                     }
                 }
                 mCreateFrag.setRecordingPath(mFilePath + mFileName +
                         mFileExtension);
+                Fragment tagFrag = new TagFragment();
+                getFragmentManager().beginTransaction().replace(R.id
+                        .create_tools, tagFrag).commit();
+                /*
                 Fragment editFrag = new UploadFragment();
                 getFragmentManager().beginTransaction().replace(R.id
                         .create_tools, editFrag).commit();
+                        */
             }
-        });
-
-        // Append the record buttons to the layout
-        appendButtons(v);
-
-        return v;
+        };
+        return listener;
     }
+
     private void appendButtons(View v) {
         ViewGroup layout = (ViewGroup) v;
 
@@ -152,14 +152,15 @@ public class RecordFragment extends Fragment {
 
         mRecordButton.setLayoutParams(mRecordButtonParams);
 
-        RelativeLayout.LayoutParams mNextButtonParams = (RelativeLayout
-                .LayoutParams) mNextButton.getLayoutParams();
-
         layout.addView(mRecordButton);
 
-        mNextButtonParams.addRule(ALIGN_PARENT_BOTTOM, 0);
-        mNextButtonParams.addRule(BELOW, R.id.create_record_btn);
-        mNextButton.setLayoutParams(mNextButtonParams);
+    }
+
+    private boolean haveRecordPermission()
+    {
+        String permission = permissions[0];
+        int res = getContext().checkCallingOrSelfPermission(permission);
+        return (res == PackageManager.PERMISSION_GRANTED);
     }
 
     // Button that starts or stops the audio recorder in CreateFragment
@@ -171,7 +172,7 @@ public class RecordFragment extends Fragment {
         // the button is tapped
         OnClickListener clicker = new OnClickListener() {
             public void onClick(View v) {
-                if (permissionToRecordAccepted) {
+                if (haveRecordPermission()) {
                     Log.d("clicker", "permission accepted");
                     onRecord(mStartRecording);
                     if (mStartRecording) {
@@ -245,6 +246,8 @@ public class RecordFragment extends Fragment {
         }
     }
 
+
+
     // Uses the isoparser-1.1.22 library to concatenate MP4 files
     //
     private void processFiles() {
@@ -314,6 +317,83 @@ public class RecordFragment extends Fragment {
         if (recorder != null) {
             recorder.release();
             recorder = null;
+        }
+    }
+
+    private void appendPlayButtons(View v) {
+        ViewGroup layout = (ViewGroup) v.findViewById(R.id
+                .edit_root_viewgroup);
+
+        // Initialize buttons
+        mPlayButton = new PlayButton(getActivity());
+
+        // We want the buttons to be 60dp x 60dp but LayoutParams takes pixel
+        // arguments
+        int dp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                60,
+                getResources().getDisplayMetrics());
+
+        RelativeLayout.LayoutParams mPlayButtonParams = new RelativeLayout
+                .LayoutParams(dp, dp);
+
+        // mPlayButtonParams.addRule(RelativeLayout.BELOW, R.id
+        // .edit_upload_btn);
+        mPlayButtonParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
+
+        mPlayButton.setLayoutParams(mPlayButtonParams);
+
+        layout.addView(mPlayButton);
+    }
+
+    private void onPlay(boolean start) {
+        if (start) {
+            startPlaying();
+        } else {
+            stopPlaying();
+        }
+    }
+
+    private void startPlaying() {
+        mPlayer = new MediaPlayer();
+        try {
+            mPlayer.setDataSource(((CreateFragment) getParentFragment())
+                    .getRecordingPath());
+            mPlayer.prepare();
+            mPlayer.start();
+        } catch (IOException e) {
+            Log.e("MP", e.getMessage());
+        }
+    }
+
+    private void stopPlaying() {
+        mPlayer.release();
+        mPlayer = null;
+    }
+
+    // Button that plays or stops the mAudio being played in CreateFragment
+    public class PlayButton extends android.support.v7.widget
+            .AppCompatImageButton {
+        boolean mStartPlaying = true;
+
+        // Listener for the play button that plays or stops the mAudio when
+        // the button is tapped
+        OnClickListener clicker = new OnClickListener() {
+            public void onClick(View v) {
+                onPlay(mStartPlaying);
+                if (mStartPlaying) {
+                    setImageResource(R.drawable.ic_action_btn_stop);
+                } else {
+                    setImageResource(R.drawable.ic_action_btn_play);
+                }
+                mStartPlaying = !mStartPlaying;
+            }
+        };
+
+        // Constructor
+        public PlayButton(Context context) {
+            super(context);
+            setImageResource(R.drawable.ic_action_btn_play);
+            setOnClickListener(clicker);
         }
     }
 }

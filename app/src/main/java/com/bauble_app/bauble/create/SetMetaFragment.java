@@ -21,6 +21,7 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 
 import com.bauble_app.bauble.R;
+import com.bauble_app.bauble.Utils;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
@@ -178,10 +179,13 @@ public class SetMetaFragment extends Fragment {
         File imageFile = imagesFiles.get(0);
         // Crop the image to required dimensions (a circle between 100x100
         // and 500x500 pixels in size)
+        int dp100 = Utils.getDp(100, getResources());
+        int dp500 = Utils.getDp(500, getResources());
+
         CropImage.activity(Uri.fromFile(imageFile)).setCropShape(CropImageView
                 .CropShape
-                .OVAL).setMinCropResultSize(100, 100).setMaxCropResultSize
-                (500,500).setFixAspectRatio
+                .OVAL).setMinCropResultSize(dp100, dp100).setMaxCropResultSize
+                (dp500, dp500).setFixAspectRatio
                 (true)
                 .start(getContext(), this);
     }

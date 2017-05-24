@@ -62,6 +62,7 @@ public class ViewFragment extends Fragment {
     private FragmentManager mFragManager;
     private MediaPlayer mPlayer;
     private StorySingleton mStorySingleton;
+
     private de.hdodenhof.circleimageview.CircleImageView storyImage;
 
 
@@ -102,6 +103,11 @@ public class ViewFragment extends Fragment {
                 System.out.println("replybtn2");
             }
         });
+
+        // Hide waveforms initially until loading complete
+        waveforms = (ImageView) v.findViewById(R.id.view_waveforms);
+        waveforms.setVisibility(View.GONE);
+        loading = (ProgressBar) v.findViewById(R.id.view_loading);
 
         CircleImageView thumbnail = (CircleImageView) v.findViewById(R.id.view_thumbnail);
 
