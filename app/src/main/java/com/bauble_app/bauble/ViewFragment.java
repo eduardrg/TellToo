@@ -2,6 +2,7 @@ package com.bauble_app.bauble;
 
 
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -38,6 +39,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -64,6 +66,11 @@ public class ViewFragment extends Fragment {
     private StorySingleton mStorySingleton;
 
     private de.hdodenhof.circleimageview.CircleImageView storyImage;
+    private de.hdodenhof.circleimageview.CircleImageView leftStoryImage;
+    private de.hdodenhof.circleimageview.CircleImageView rightStoryImage;
+
+    private TextView leftStoryLabel;
+    private TextView rightStoryLabel;
 
 
     public ViewFragment() {
@@ -82,10 +89,12 @@ public class ViewFragment extends Fragment {
         waveforms.setVisibility(View.GONE);
         loading = (ProgressBar) v.findViewById(R.id.view_loading);
 
+        // set frag manager and final story object
         mFragManager = getActivity().getSupportFragmentManager();
         mStorySingleton = StorySingleton.getInstance();
         final StoryObject story = mStorySingleton.getViewStory();
 
+        // set up reply button
         mReplyButton = (ImageButton) v.findViewById(R.id.view_reply_btn);
         mReplyButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,7 +118,18 @@ public class ViewFragment extends Fragment {
         waveforms.setVisibility(View.GONE);
         loading = (ProgressBar) v.findViewById(R.id.view_loading);
 
-        CircleImageView thumbnail = (CircleImageView) v.findViewById(R.id.view_thumbnail);
+        // Circle Image Views
+        storyImage = (CircleImageView) v.findViewById(R.id.view_thumbnail);
+        leftStoryImage = (CircleImageView) v.findViewById(R.id.view_thumbnail_left);
+        rightStoryImage = (CircleImageView) v.findViewById(R.id.view_thumbnail_right);
+
+        // Circle Image Labels
+        leftStoryLabel = (TextView) v.findViewById(R.id.view_thumbnail_left_label);
+        rightStoryLabel = (TextView) v.findViewById(R.id.view_thumbnail_right_label);
+
+        // Get Neighbor Lists
+        List<String> leftSibs = getLeftNeighbors(story.getParentString(), story.grabUniqueId());
+        List<String> rightSibs = getRightNeighbors(story.getParentString(), story.grabUniqueId());
 
         // update database
         int storyNumber = StorySingleton.getInstance().getViewStoryIndex();
@@ -118,17 +138,52 @@ public class ViewFragment extends Fragment {
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mDatabase.child("stories").child(story.grabUniqueId()).child("plays").setValue(storyPlays);
 
+        // get and set images & audio
         FirebaseStorage storage = FirebaseStorage.getInstance();
         // Reference to an image file in Firebase Storage
         StorageReference storageReference = storage.getReferenceFromUrl("gs://bauble-90a48.appspot.com");
         String imagePath = story.grabUniqueId();
         StorageReference pathReference = storageReference.child("thumbnails/" + imagePath + ".png");
-        // StorageReference audioPathReference = storageReference.child("teststories/" + imagePath + ".mp3");
         // TODO: also uniform file type For Tech Demo
         StorageReference audioPathReference = storageReference.child
                 ("teststories/" + imagePath + ".m4a");
 
-        TextView title = (TextView) v.findViewById(R.id.view_title);
+        // Load the image using Glide
+        Glide.with(getContext() /* context */)
+                .using(new FirebaseImageLoader())
+                .load(pathReference)
+                .into(storyImage);
+
+        // set sib pictures if not null
+        if (leftSibs != null && leftSibs.size() > 0) {
+            leftStoryLabel.setText("" + leftSibs.size());
+            Log.i("ViewFragment", "Left: " + leftSibs.toString());
+            StorageReference leftPathReference = storageReference.child("thumbnails/" +
+                    leftSibs.get(leftSibs.size() - 1) + ".png");
+            Glide.with(getContext() /* context */)
+                    .using(new FirebaseImageLoader())
+                    .load(leftPathReference)
+                    .into(leftStoryImage);
+        } else {
+            leftStoryLabel.setText("0");
+            leftStoryLabel.setTextColor(Color.LTGRAY);
+        }
+
+        if (rightSibs != null && rightSibs.size() > 0) {
+            Log.i("ViewFragment", "Right: " + rightSibs.toString());
+            StorageReference leftPathReference = storageReference.child("thumbnails/" +
+                    rightSibs.get(0) + ".png");
+            Glide.with(getContext() /* context */)
+                    .using(new FirebaseImageLoader())
+                    .load(leftPathReference)
+                    .into(rightStoryImage);
+            rightStoryLabel.setText("" + rightSibs.size());
+        } else {
+            rightStoryLabel.setText("0");
+            rightStoryLabel.setTextColor(Color.LTGRAY);
+        }
+
+                    TextView title = (TextView) v.findViewById(R.id.view_title);
         title.setText(story.getTitle());
         TextView author = (TextView) v.findViewById(R.id.view_author);
         author.setText("by " + story.getAuthor());
@@ -139,6 +194,7 @@ public class ViewFragment extends Fragment {
         final TextView expire = (TextView) v.findViewById(R.id.view_expire);
         expire.setText(story.getExpireDate());
         final String expireDate = story.getExpireDate();
+
         // Experimental countdown timer
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
         Date date = null;
@@ -190,7 +246,7 @@ public class ViewFragment extends Fragment {
         }
 
         // Set on click for parent
-        storyImage = (de.hdodenhof.circleimageview.CircleImageView) v.findViewById(R.id.view_thumbnail);
+        // storyImage = (de.hdodenhof.circleimageview.CircleImageView) v.findViewById(R.id.view_thumbnail);
         storyImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -260,12 +316,6 @@ public class ViewFragment extends Fragment {
         }
 //        mPlayer.start();
 
-        // Load the image using Glide
-        Glide.with(getContext() /* context */)
-                .using(new FirebaseImageLoader())
-                .load(pathReference)
-                .into(thumbnail);
-
         // Load and play audio
         // TODO: Insure the phone has space to store TEN_MEGABYTE otherwise crash
         final long TEN_MEGABYTE = 1024 * 1024 * 10;
@@ -329,7 +379,7 @@ public class ViewFragment extends Fragment {
             }
         });
 
-        // Set Swipe Action Recognizer, current on waveforms
+        // Set Swipe Action Recognizer
         LinearLayout wholeView = (LinearLayout) v.findViewById(R.id.view_whole_view);
         wholeView.setOnTouchListener(new OnSwipeTouchListener(getActivity()) {
             public void onSwipeTop() {
@@ -337,6 +387,7 @@ public class ViewFragment extends Fragment {
             }
             public void onSwipeRight() { // get child before, the one that is on the left
                 Toast.makeText(getActivity(), "right", Toast.LENGTH_SHORT).show();
+                vanishSibs();
                 if (story.getParentString() != null) {
                     String parentIdentifier = story.getParentString();
                     String uniqueIdentifier = story.grabUniqueId();
@@ -363,6 +414,7 @@ public class ViewFragment extends Fragment {
             }
             public void onSwipeLeft() {
                 Toast.makeText(getActivity(), "left", Toast.LENGTH_SHORT).show();
+                vanishSibs();
                 if (story.getParentString() != null) {
                     String parentIdentifier = story.getParentString();
                     String uniqueIdentifier = story.grabUniqueId();
@@ -418,4 +470,50 @@ public class ViewFragment extends Fragment {
         Long diffHours = diff / (60 * 60 * 1000);
         return diffSeconds;
     }
+
+    // takes in a parent key and the key of the current story and returns a list of it's right
+    // siblings
+    // returns null if the parent key is null or there are not siblings to the right
+    private List<String> getRightNeighbors(String parentKey, String currentKey) {
+        if (parentKey != null) {
+            List<String> childList = StorySingleton.getInstance().getStory(parentKey).getChildren();
+            int newStoryIndex = -1;
+            for (int i = 0; i < childList.size(); i++) {
+                if (currentKey.equals(childList.get(i))) {
+                    newStoryIndex = i;
+                }
+            }
+            if (newStoryIndex >= 0 && newStoryIndex < childList.size()) {
+                return childList.subList(newStoryIndex + 1, childList.size());
+            }
+        }
+        return null;
+    }
+
+    // takes in a parent key and the key of the current story and returns a list of it's right
+    // siblings
+    // returns null if the parent key is null or there are not siblings to the right
+    private List<String> getLeftNeighbors(String parentKey, String currentKey) {
+        if (parentKey != null) {
+            List<String> childList = StorySingleton.getInstance().getStory(parentKey).getChildren();
+            int newStoryIndex = -1;
+            for (int i = 0; i < childList.size(); i++) {
+                if (currentKey.equals(childList.get(i))) {
+                    newStoryIndex = i;
+                }
+            }
+            if (newStoryIndex > 0 && newStoryIndex < childList.size()) {
+                return childList.subList(0, newStoryIndex);
+            }
+        }
+        return null;
+    }
+
+    private void vanishSibs() {
+        leftStoryImage.setVisibility(View.GONE);
+        rightStoryImage.setVisibility(View.GONE);
+        leftStoryLabel.setVisibility(View.GONE);
+        rightStoryLabel.setVisibility(View.GONE);
+    }
+
 }

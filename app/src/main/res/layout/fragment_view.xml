@@ -12,11 +12,61 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/view_thumbnail"
-                android:layout_width="180dp"
-                android:layout_height="180dp"
-                android:layout_gravity="center_horizontal"/>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_gravity="center_horizontal">
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/view_thumbnail_left"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_centerInParent="true"
+                        android:alpha="0.2"/>
+                    <TextView
+                        android:id="@+id/view_thumbnail_left_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:text="1"
+                        android:textStyle="bold"
+                        android:textSize="28dp"
+                        android:textColor="@color/DARKGRAY"/>
+                </RelativeLayout>
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/view_thumbnail"
+                    android:layout_width="180dp"
+                    android:layout_height="180dp"
+                    android:layout_gravity="center_horizontal"/>
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/view_thumbnail_right"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_centerInParent="true"
+                        android:alpha="0.2"/>
+                    <TextView
+                        android:id="@+id/view_thumbnail_right_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:text="1"
+                        android:textStyle="bold"
+                        android:textSize="28dp"
+                        android:textColor="@color/DARKGRAY"/>
+                </RelativeLayout>
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -33,6 +83,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/create_btn_save_txt"
+                        android:textAlignment="center"/>
                     <ImageButton
                         android:id="@+id/view_btn_save"
                         android:layout_width="60dp"
@@ -41,11 +96,6 @@
                         android:adjustViewBounds="true"
                         android:tint="@color/colorBrandHighlight"
                         android:scaleType="fitCenter"/>
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/create_btn_save_txt"
-                        android:textAlignment="center"/>
                 </LinearLayout>
 
                 <Space
@@ -57,6 +107,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/create_btn_chain_txt"
+                        android:textAlignment="center"/>
                     <ImageButton
                         android:layout_width="60dp"
                         android:layout_height="60dp"
@@ -64,11 +119,6 @@
                         android:src="@drawable/ic_action_btn_chain"
                         android:adjustViewBounds="true"
                         android:scaleType="fitCenter"/>
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/create_btn_chain_txt"
-                        android:textAlignment="center"/>
                 </LinearLayout>
 
                 <Space
@@ -80,6 +130,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/create_btn_reply_txt"
+                        android:textAlignment="center"/>
                     <ImageButton
                         android:id="@+id/view_reply_btn"
                         android:layout_width="60dp"
@@ -87,11 +142,6 @@
                         android:background="@drawable/round_button_record"
                         android:adjustViewBounds="true"
                         android:scaleType="fitCenter"/>
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/create_btn_reply_txt"
-                        android:textAlignment="center"/>
                 </LinearLayout>
 
                 <Space
@@ -129,8 +179,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="60dp"
                 android:layout_gravity="center"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="15dp" />
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="0dp" />
                 <!--android:visibility="gone"/>-->
 
             <ImageView
