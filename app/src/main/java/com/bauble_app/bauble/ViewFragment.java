@@ -3,6 +3,7 @@ package com.bauble_app.bauble;
 
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -48,6 +49,8 @@ import java.util.List;
 import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import hani.momanii.supernova_emoji_library.Actions.EmojIconActions;
+import hani.momanii.supernova_emoji_library.Helper.EmojiconEditText;
 
 import static com.facebook.FacebookSdk.getCacheDir;
 
@@ -78,7 +81,6 @@ public class ViewFragment extends Fragment {
     private OnSuccessListener audioLoading;
     private StorageReference audioPathReference;
 
-
     public ViewFragment() {
         // Required empty public constructor
     }
@@ -93,6 +95,21 @@ public class ViewFragment extends Fragment {
         // Initialize media player
         mPlayer = new MediaPlayer();
         mPlayer.pause();
+
+        // Emoji stuff
+        // emoji_1f600 - emoji_1f637
+        List<String> emojiSource = new ArrayList<String>();
+        for (int i = 600; i <= 637; i++) {
+            emojiSource.add("emoji_1f" + i);
+        }
+        LinearLayout emojiChain = (LinearLayout) v.findViewById(R.id.view_emoji_chain);
+        for (String code : emojiSource) {
+            ImageView emoji = new ImageView(getContext());
+            emoji.setLayoutParams(new LinearLayout.LayoutParams(100, 100));
+            emoji.setPadding(4, 4, 4, 4);
+            emoji.setImageResource(getResources().getIdentifier(code, "drawable", "com.bauble_app.bauble"));
+            emojiChain.addView(emoji);
+        }
 
         // Hide waveforms initially until loading complete
         waveforms = (ImageView) v.findViewById(R.id.view_waveforms);
