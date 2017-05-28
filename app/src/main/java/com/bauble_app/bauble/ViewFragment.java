@@ -214,7 +214,7 @@ public class ViewFragment extends Fragment {
         title.setText(story.getTitle());
         TextView author = (TextView) v.findViewById(R.id.view_author);
         author.setText("by " + story.getAuthor());
-        TextView time = (TextView) v.findViewById(R.id.view_length);
+        final TextView time = (TextView) v.findViewById(R.id.view_length);
         time.setText("00:" + story.getDuration());
         TextView chains = (TextView) v.findViewById(R.id.view_chains);
         chains.setText(story.getChains().toString());
@@ -376,6 +376,27 @@ public class ViewFragment extends Fragment {
 
                         mPlayer.prepare();
                         mPlayer.start();
+                        int duration = mPlayer.getDuration();
+                        String parsedDuration = "";
+                        if (duration / 60 / 60 / 1000 > 0) {
+                            parsedDuration = parsedDuration + (duration / 1000 / 60 / 60)  + ":";
+                            duration = duration % (60 * 60 * 1000);
+                            if (duration / (60 * 1000) < 10) {
+                                parsedDuration = parsedDuration + "0";
+                            }
+                        }
+                        if (duration / 60 / 1000 > 0) {
+                            parsedDuration = parsedDuration + (duration / 1000 / 60) + ":";
+                            duration = duration % (60 * 1000);
+                            if (duration / 1000 < 10) {
+                                parsedDuration = parsedDuration + "0";
+                            }
+                        }
+                        if (duration / 1000 >= 0) {
+                            parsedDuration = parsedDuration + (duration / 1000);
+                        }
+                        //+ (duration / 1000 / 60 % 60) + ":" + (duration / 1000 % 60) + ":" + (duration % 1000);
+                        time.setText(parsedDuration);
                     }
 
                     waveforms.setVisibility(View.VISIBLE);
