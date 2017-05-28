@@ -27,8 +27,11 @@ import com.bumptech.glide.Glide;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -72,6 +75,9 @@ public class ViewFragment extends Fragment {
     private TextView leftStoryLabel;
     private TextView rightStoryLabel;
 
+    private OnSuccessListener audioLoading;
+    private StorageReference audioPathReference;
+
 
     public ViewFragment() {
         // Required empty public constructor
@@ -83,6 +89,10 @@ public class ViewFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_view, container,
                 false);
+
+        // Initialize media player
+        mPlayer = new MediaPlayer();
+        mPlayer.pause();
 
         // Hide waveforms initially until loading complete
         waveforms = (ImageView) v.findViewById(R.id.view_waveforms);
@@ -145,7 +155,7 @@ public class ViewFragment extends Fragment {
         String imagePath = story.grabUniqueId();
         StorageReference pathReference = storageReference.child("thumbnails/" + imagePath + ".png");
         // TODO: also uniform file type For Tech Demo
-        StorageReference audioPathReference = storageReference.child
+        audioPathReference = storageReference.child
                 ("teststories/" + imagePath + ".m4a");
 
         // Load the image using Glide
@@ -154,7 +164,7 @@ public class ViewFragment extends Fragment {
                 .load(pathReference)
                 .into(storyImage);
 
-        // set sib pictures if not null
+        // set sib pictures if not null and set sibling counters
         if (leftSibs != null && leftSibs.size() > 0) {
             leftStoryLabel.setText("" + leftSibs.size());
             Log.i("ViewFragment", "Left: " + leftSibs.toString());
@@ -183,7 +193,7 @@ public class ViewFragment extends Fragment {
             rightStoryLabel.setTextColor(Color.LTGRAY);
         }
 
-                    TextView title = (TextView) v.findViewById(R.id.view_title);
+        TextView title = (TextView) v.findViewById(R.id.view_title);
         title.setText(story.getTitle());
         TextView author = (TextView) v.findViewById(R.id.view_author);
         author.setText("by " + story.getAuthor());
@@ -253,7 +263,6 @@ public class ViewFragment extends Fragment {
                 if (story.getParentString() != null) {
                     String uniqueIdentifier = story.getParentString(); // could be null
                     StorySingleton.getInstance().setViewKey(uniqueIdentifier);
-                    mPlayer.stop();
                     FragmentTransaction ft = mFragManager.beginTransaction();
                     ft.setCustomAnimations(R.anim.enter_from_top, R.anim.exit_to_bottom)
                             .replace(R.id.content, new ViewFragment())
@@ -285,7 +294,7 @@ public class ViewFragment extends Fragment {
                         // ViewFragment.this.fragManager = getActivity().getSupportFragmentManager();
 
                         // Stop sound before transaction
-                        mPlayer.stop();
+                        stopMediaPlayer();
                         FragmentTransaction ft = mFragManager.beginTransaction();
                         ft.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_top)
                             .replace(R.id.content, new ViewFragment())
@@ -309,17 +318,16 @@ public class ViewFragment extends Fragment {
         }
 
         // Initializes MediaPlayer
-        mPlayer = MediaPlayer.create(getContext(), R.raw.law_of_the_jungle);
-        if (mPlayer.isPlaying()) {
-            mPlayer.stop();
-            mPlayer.reset();
-        }
-//        mPlayer.start();
+//        mPlayer = MediaPlayer.create(getContext(), R.raw.law_of_the_jungle);
+//        if (mPlayer.isPlaying()) {
+//            mPlayer.stop();
+//            mPlayer.reset();
+//        }
 
         // Load and play audio
         // TODO: Insure the phone has space to store TEN_MEGABYTE otherwise crash
         final long TEN_MEGABYTE = 1024 * 1024 * 10;
-        audioPathReference.getBytes(TEN_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+        audioLoading = new OnSuccessListener<byte[]>() {
             @Override
             public void onSuccess(byte[] bytes) {
                 try {
@@ -337,7 +345,7 @@ public class ViewFragment extends Fragment {
 
 
                     // resetting mediaplayer instance to evade problems
-                    mPlayer.reset();
+                    // mPlayer.reset();
 
                     // In case you run into issues with threading consider new instance like:
                     // MediaPlayer mediaPlayer = new MediaPlayer();
@@ -346,20 +354,23 @@ public class ViewFragment extends Fragment {
                     // "Prepare failed.: status=0x1"
                     // so using file descriptor instead
                     FileInputStream fis = new FileInputStream(tempM4a);
-                    mPlayer.setDataSource(fis.getFD());
+                    if (mPlayer != null) {
+                        mPlayer.setDataSource(fis.getFD());
 
-                    mPlayer.prepare();
-                    mPlayer.start();
+                        mPlayer.prepare();
+                        mPlayer.start();
+                    }
 
                     waveforms.setVisibility(View.VISIBLE);
                     loading.setVisibility(View.GONE);
 
-                } catch(IOException ex) {
-                    System.out.println (ex.toString());
+                } catch (IOException ex) {
+                    System.out.println(ex.toString());
                     System.out.println("Could not find file ");
                 }
             }
-        }).addOnFailureListener(new OnFailureListener() {
+        };
+        audioPathReference.getBytes(TEN_MEGABYTE).addOnSuccessListener(audioLoading).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
                 // Handle any errors
@@ -400,7 +411,6 @@ public class ViewFragment extends Fragment {
                     }
                     if (newStoryIndex > 0 && newStoryIndex < childList.size()) {
                         StorySingleton.getInstance().setViewKey(childList.get(newStoryIndex - 1));
-                        mPlayer.stop();
                         FragmentTransaction ft = mFragManager.beginTransaction();
                         ft.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right)
                                 .replace(R.id.content, new ViewFragment())
@@ -427,7 +437,6 @@ public class ViewFragment extends Fragment {
                     }
                     if (newStoryIndex >= 0 && newStoryIndex < childList.size() - 1) {
                         StorySingleton.getInstance().setViewKey(childList.get(newStoryIndex + 1));
-                        mPlayer.stop();
                         FragmentTransaction ft = mFragManager.beginTransaction();
                         ft.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left)
                                 .replace(R.id.content, new ViewFragment())
@@ -441,6 +450,16 @@ public class ViewFragment extends Fragment {
             }
             public void onSwipeBottom() {
                 Toast.makeText(getActivity(), "bottom", Toast.LENGTH_SHORT).show();
+                if (story.getParentString() != null) {
+                    String uniqueIdentifier = story.getParentString(); // could be null
+                    StorySingleton.getInstance().setViewKey(uniqueIdentifier);
+                    FragmentTransaction ft = mFragManager.beginTransaction();
+                    ft.setCustomAnimations(R.anim.enter_from_top, R.anim.exit_to_bottom)
+                            .replace(R.id.content, new ViewFragment())
+                            // TODO: even though add to back stack, need to find way to load correct story when back pressed
+                            .addToBackStack("tag")
+                            .commit();
+                }
             }
 
         });
@@ -452,13 +471,13 @@ public class ViewFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        mPlayer.stop();
+        stopMediaPlayer();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mPlayer.stop();
+        stopMediaPlayer();
     }
 
     // Returns seconds remaining
@@ -509,11 +528,26 @@ public class ViewFragment extends Fragment {
         return null;
     }
 
+    // Hides all of the UI for viewing siblings
     private void vanishSibs() {
         leftStoryImage.setVisibility(View.GONE);
         rightStoryImage.setVisibility(View.GONE);
         leftStoryLabel.setVisibility(View.GONE);
         rightStoryLabel.setVisibility(View.GONE);
+    }
+
+    // Stops Media Player
+    private void stopMediaPlayer() {
+        // TODO: Find out if this block of code does anything
+        List<FileDownloadTask> tasks = audioPathReference.getActiveDownloadTasks();
+        for (FileDownloadTask task : tasks) {
+            task.removeOnSuccessListener(audioLoading);
+        }
+        if (mPlayer != null) {
+            mPlayer.stop();
+            mPlayer.release();
+            mPlayer = null;
+        }
     }
 
 }
