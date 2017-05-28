@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Handler;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -16,6 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -44,6 +46,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -155,8 +158,8 @@ public class ViewFragment extends Fragment {
         rightStoryLabel = (TextView) v.findViewById(R.id.view_thumbnail_right_label);
 
         // Get Neighbor Lists
-        List<String> leftSibs = getLeftNeighbors(story.getParentString(), story.grabUniqueId());
-        List<String> rightSibs = getRightNeighbors(story.getParentString(), story.grabUniqueId());
+        final List<String> leftSibs = getLeftNeighbors(story.getParentString(), story.grabUniqueId());
+        final List<String> rightSibs = getRightNeighbors(story.getParentString(), story.grabUniqueId());
 
         // update database
         int storyNumber = StorySingleton.getInstance().getViewStoryIndex();
@@ -168,7 +171,7 @@ public class ViewFragment extends Fragment {
         // get and set images & audio
         FirebaseStorage storage = FirebaseStorage.getInstance();
         // Reference to an image file in Firebase Storage
-        StorageReference storageReference = storage.getReferenceFromUrl("gs://bauble-90a48.appspot.com");
+        final StorageReference storageReference = storage.getReferenceFromUrl("gs://bauble-90a48.appspot.com");
         String imagePath = story.grabUniqueId();
         StorageReference pathReference = storageReference.child("thumbnails/" + imagePath + ".png");
         // TODO: also uniform file type For Tech Demo
@@ -185,26 +188,63 @@ public class ViewFragment extends Fragment {
         if (leftSibs != null && leftSibs.size() > 0) {
             leftStoryLabel.setText("" + leftSibs.size());
             Log.i("ViewFragment", "Left: " + leftSibs.toString());
-            StorageReference leftPathReference = storageReference.child("thumbnails/" +
-                    leftSibs.get(leftSibs.size() - 1) + ".png");
-            Glide.with(getContext() /* context */)
-                    .using(new FirebaseImageLoader())
-                    .load(leftPathReference)
-                    .into(leftStoryImage);
+            // Loop to animate sibs
+            final Handler handler = new Handler();
+            for (int i = 0; i < leftSibs.size(); i++) {
+                final int index = i;
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        //Do something after 100ms
+                        StorageReference leftPathReference = storageReference.child("thumbnails/" +
+                                leftSibs.get(index) + ".png");
+                        Glide.with(getContext() /* context */)
+                                .using(new FirebaseImageLoader())
+                                .load(leftPathReference)
+                                .into(leftStoryImage);
+                    }
+                }, i * 500); //i * 1/2 second
+            }
+
+//            StorageReference leftPathReference = storageReference.child("thumbnails/" +
+//                    leftSibs.get(leftSibs.size() - 1) + ".png");
+//            Glide.with(getContext() /* context */)
+//                    .using(new FirebaseImageLoader())
+//                    .load(leftPathReference)
+//                    .into(leftStoryImage);
         } else {
             leftStoryLabel.setText("0");
             leftStoryLabel.setTextColor(Color.LTGRAY);
         }
 
         if (rightSibs != null && rightSibs.size() > 0) {
-            Log.i("ViewFragment", "Right: " + rightSibs.toString());
-            StorageReference leftPathReference = storageReference.child("thumbnails/" +
-                    rightSibs.get(0) + ".png");
-            Glide.with(getContext() /* context */)
-                    .using(new FirebaseImageLoader())
-                    .load(leftPathReference)
-                    .into(rightStoryImage);
             rightStoryLabel.setText("" + rightSibs.size());
+            Log.i("ViewFragment", "Right: " + rightSibs.toString());
+
+            // Loop to animate sibs
+            final Handler handler = new Handler();
+            for (int i = 0; i < rightSibs.size(); i++) {
+                final int index = i;
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        //Do something after 100ms
+                        StorageReference rightPathReference = storageReference.child("thumbnails/" +
+                                rightSibs.get(rightSibs.size() - 1 - index) + ".png");
+                        Glide.with(getContext() /* context */)
+                                .using(new FirebaseImageLoader())
+                                .load(rightPathReference)
+                                .into(rightStoryImage);
+                    }
+                }, i * 500); //i * 1/2 second
+            }
+
+//            StorageReference leftPathReference = storageReference.child("thumbnails/" +
+//                    rightSibs.get(0) + ".png");
+//            Glide.with(getContext() /* context */)
+//                    .using(new FirebaseImageLoader())
+//                    .load(leftPathReference)
+//                    .into(rightStoryImage);
         } else {
             rightStoryLabel.setText("0");
             rightStoryLabel.setTextColor(Color.LTGRAY);
@@ -299,10 +339,7 @@ public class ViewFragment extends Fragment {
                 final String uniqueIdentifyer = childName;
 
                 ImageView child = new ImageView(getContext());
-                child.setLayoutParams(new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.WRAP_CONTENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT,
-                        1f));
+                child.setLayoutParams(new LinearLayout.LayoutParams(200, 200));
                 child.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -343,11 +380,15 @@ public class ViewFragment extends Fragment {
 
         // Load and play audio
         // TODO: Insure the phone has space to store TEN_MEGABYTE otherwise crash
-        final long TEN_MEGABYTE = 1024 * 1024 * 10;
+        final long TEN_MEGABYTE = 1024 * 1024 * 20; // changed to 20 mb
         audioLoading = new OnSuccessListener<byte[]>() {
             @Override
             public void onSuccess(byte[] bytes) {
                 try {
+                    Log.e("ViewFragement", "" + bytes.length + " " + bytes.length / 8);
+                    //Log.e("ViewFragement", Arrays.toString(bytes));
+
+
                     // Data for ".mp3" is returned, use this as needed
                     // create temp file that will hold byte array
                     // File tempMp3 = File.createTempFile("tempStory", "mp3", getCacheDir());

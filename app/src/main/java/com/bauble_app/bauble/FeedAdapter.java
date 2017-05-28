@@ -187,10 +187,14 @@ public class FeedAdapter extends BaseAdapter {
     // Returns seconds remaining
     private Long calculateExpire(Date expire, Date current) {
         // Get msec from each, and subtract.
-        Long diff = expire.getTime() - current.getTime();
-        Long diffSeconds = diff / 1000;
-        Long diffMinutes = diff / (60 * 1000);
-        Long diffHours = diff / (60 * 60 * 1000);
-        return diffSeconds;
+        if (expire != null && current != null) {
+            Long diff = expire.getTime() - current.getTime();
+            Long diffSeconds = diff / 1000;
+            Long diffMinutes = diff / (60 * 1000);
+            Long diffHours = diff / (60 * 60 * 1000);
+            return diffSeconds;
+        } else {
+            return 0L;
+        }
     }
 }
