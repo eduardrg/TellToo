@@ -1,7 +1,7 @@
 package com.bauble_app.bauble.create;
 
 
-import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
@@ -10,28 +10,24 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.bauble_app.bauble.MyDBHelper;
 import com.bauble_app.bauble.R;
 import com.bauble_app.bauble.StoryObject;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.jesusm.holocircleseekbar.lib.HoloCircleSeekBar;
 
 import java.io.File;
@@ -42,9 +38,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Locale;
-import java.util.Map;
 
 
 /**
@@ -62,6 +56,8 @@ public class UploadFragment extends Fragment {
     private FirebaseDatabase mDatabase;
     private DateFormat mDateFormat;
     private Calendar mCalendar;
+    private MyDBHelper mDB;
+    private Gson mGson;
 
     // Create a StoryObject for upload to Firebase Database
     // The cover and audio params are the paths of the cover image and audio
@@ -72,6 +68,7 @@ public class UploadFragment extends Fragment {
                         .getAuthor()
                 , mThumbnailStoragePath,
                 mCreateFrag.getTitle());
+        so.setUniqueId(String.valueOf(so.hashCode()));
         so.setParent(mCreateFrag.getReplyParent());
         so.setTags(mCreateFrag.getmTags());
         so.setAccess(mCreateFrag.getmAccess());
@@ -102,6 +99,8 @@ public class UploadFragment extends Fragment {
         mDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
                 Locale.US);
         mCalendar = Calendar.getInstance();
+        mDB = new MyDBHelper(getContext());
+        mGson = new Gson();
     }
 
     @Override
@@ -127,7 +126,50 @@ public class UploadFragment extends Fragment {
                     Bitmap thumbBitmap = BitmapFactory.decodeFile(imageFile
                             .getPath());
 
-                // Save the other story data to FirebaseDatabase
+                // Make a StoryObject from the data stored in CreateFrag
+                StoryObject story = makeStoryObject();
+                String key = story.grabUniqueId();
+
+                // If this is a reply, update the parent to mark the reply as
+                // a child
+                // This will only update the last found "parent" row in the
+                // DB if there are duplicates in the cursor!
+                StoryObject parent = story.getParent();
+                if (parent != null) {
+                    Cursor cursor = mDB.selectRecordWithKey(parent.grabUniqueId());
+                    JsonObject parentAsJSON = null;
+                    try {
+                        while (cursor.moveToNext()) {
+                            // The parent should already exist; grab it as a
+                            // string from the DB
+                            String parentAsString = cursor.getString
+                                    (cursor.getColumnIndex(MyDBHelper
+                                            .STORY_OBJ));
+                            // Create a JSON object from the string so we can
+                            // manipulate it with jsonobject methods
+                            parentAsJSON = new
+                                    JsonParser().parse(parentAsString).getAsJsonObject();
+                            // Get the nested "children" map of the parent
+                            JsonObject childrenOfParentJSON =
+                                    parentAsJSON.getAsJsonObject
+                                            ("children");
+                            // Add a property named by the reply's uniqueId
+                            // and equal to True
+                            childrenOfParentJSON.addProperty(key,
+                                    true);
+                            // Update the parent object by replacing its
+                            // nested children map
+                            parentAsJSON.add("children", childrenOfParentJSON);
+                        }
+                    } finally {
+                        mDB.updateRecord(parentAsJSON);
+                        cursor.close();
+                    }
+
+                }
+                // Add this story to the list of stories
+                mDB.createRecord(story);
+/*
                 StoryObject story = makeStoryObject();
                 DatabaseReference dbStoriesRef = mDatabase.getReference().child
                         ("stories");
@@ -172,7 +214,7 @@ public class UploadFragment extends Fragment {
                         });
                     }
                 }
-
+*/
                 StorageReference testStoriesRef = mStorage.child
                         ("teststories/" + key +
                                 ".m4a");
@@ -203,16 +245,11 @@ public class UploadFragment extends Fragment {
                                 @Override
                                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                                     String path = taskSnapshot.getStorage().toString();
-                                    Toast.makeText(getContext(), path,
-                                            Toast.LENGTH_LONG).show();
                                 }
                             })
                             .addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception exception) {
-                                    Toast.makeText(getContext(), "audio " +
-                                            "upload failed", Toast
-                                            .LENGTH_LONG).show();
                                 }
                             });
 
@@ -222,19 +259,12 @@ public class UploadFragment extends Fragment {
                                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                                     String path = taskSnapshot.getStorage()
                                             .toString();
-                                    Toast.makeText(getContext(), path, Toast
-                                            .LENGTH_LONG).show();
                                 }
                             }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception exception) {
-                            Toast.makeText(getContext(), "image upload failed",
-                                    Toast
-                                    .LENGTH_LONG).show();
                         }
                     });
-
-
 
             }
         });

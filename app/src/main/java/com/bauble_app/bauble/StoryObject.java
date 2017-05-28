@@ -39,7 +39,6 @@ public class StoryObject implements Comparable<StoryObject>{
 
     private String uniqueId; // used to store the id of story as on Firebase
 
-
     // Constructor that sets all attributes to 0 or null
     // Required for writing to Firebase Database
     public StoryObject() {
