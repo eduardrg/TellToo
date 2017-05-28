@@ -314,21 +314,21 @@ public class ViewFragment extends Fragment {
 
         // Set on click for parent
         // storyImage = (de.hdodenhof.circleimageview.CircleImageView) v.findViewById(R.id.view_thumbnail);
-        storyImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (story.getParentString() != null) {
-                    String uniqueIdentifier = story.getParentString(); // could be null
-                    StorySingleton.getInstance().setViewKey(uniqueIdentifier);
-                    FragmentTransaction ft = mFragManager.beginTransaction();
-                    ft.setCustomAnimations(R.anim.enter_from_top, R.anim.exit_to_bottom)
-                            .replace(R.id.content, new ViewFragment())
-                            // TODO: even though add to back stack, need to find way to load correct story when back pressed
-                            .addToBackStack("tag")
-                            .commit();
-                }
-            }
-        });
+//        storyImage.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (story.getParentString() != null) {
+//                    String uniqueIdentifier = story.getParentString(); // could be null
+//                    StorySingleton.getInstance().setViewKey(uniqueIdentifier);
+//                    FragmentTransaction ft = mFragManager.beginTransaction();
+//                    ft.setCustomAnimations(R.anim.enter_from_top, R.anim.exit_to_bottom)
+//                            .replace(R.id.content, new ViewFragment())
+//                            // TODO: even though add to back stack, need to find way to load correct story when back pressed
+//                            .addToBackStack("tag")
+//                            .commit();
+//                }
+//            }
+//        });
 
         TextView plays = (TextView) v.findViewById(R.id.view_plays);
         plays.setText(story.getPlays().toString());
@@ -477,7 +477,6 @@ public class ViewFragment extends Fragment {
             }
             public void onSwipeRight() { // get child before, the one that is on the left
                 Toast.makeText(getActivity(), "right", Toast.LENGTH_SHORT).show();
-                vanishSibs();
                 if (story.getParentString() != null) {
                     String parentIdentifier = story.getParentString();
                     String uniqueIdentifier = story.grabUniqueId();
@@ -489,6 +488,7 @@ public class ViewFragment extends Fragment {
                         }
                     }
                     if (newStoryIndex > 0 && newStoryIndex < childList.size()) {
+                        vanishSibs();
                         StorySingleton.getInstance().setViewKey(childList.get(newStoryIndex - 1));
                         FragmentTransaction ft = mFragManager.beginTransaction();
                         ft.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right)
@@ -503,7 +503,6 @@ public class ViewFragment extends Fragment {
             }
             public void onSwipeLeft() {
                 Toast.makeText(getActivity(), "left", Toast.LENGTH_SHORT).show();
-                vanishSibs();
                 if (story.getParentString() != null) {
                     String parentIdentifier = story.getParentString();
                     String uniqueIdentifier = story.grabUniqueId();
@@ -515,6 +514,7 @@ public class ViewFragment extends Fragment {
                         }
                     }
                     if (newStoryIndex >= 0 && newStoryIndex < childList.size() - 1) {
+                        vanishSibs();
                         StorySingleton.getInstance().setViewKey(childList.get(newStoryIndex + 1));
                         FragmentTransaction ft = mFragManager.beginTransaction();
                         ft.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left)

@@ -13,6 +13,124 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <ProgressBar
+                android:id="@+id/view_loading"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="0dp"
+                android:indeterminate="true"
+                android:indeterminateDrawable="@drawable/progress"
+                android:background="@color/colorGrayAccent"/>
+            <!--android:visibility="gone"/>-->
+
+
+            <ImageView
+                android:id="@+id/view_waveforms"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:src="@drawable/wave_forms"
+                android:adjustViewBounds="true"
+                android:scaleType="centerCrop"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="0dp"/>
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="0dp"
+                android:layout_marginRight="0dp">
+                <LinearLayout
+                    android:id="@+id/view_emoji_chain"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="5dp">
+                    <!--<ImageView-->
+                    <!--android:id="@+id/emoji_btn"-->
+                    <!--android:layout_width="40dp"-->
+                    <!--android:layout_height="40dp"-->
+                    <!--android:layout_alignParentBottom="true"-->
+                    <!--android:layout_alignParentLeft="true"-->
+                    <!--android:padding="4dp"-->
+                    <!--android:src="@drawable/emoji_nature_focus"-->
+                    <!--/>-->
+                </LinearLayout>
+            </HorizontalScrollView>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_gravity="center">
+                <TextView
+                    android:id="@+id/view_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="pupi pls"
+                    android:textAlignment="center"
+                    android:textSize="@dimen/section_title_textsize"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:id="@+id/view_author"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="by eduard-the-g"
+                    android:layout_marginLeft="10dp"
+                    android:textAlignment="center"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_gravity="center">
+                <TextView
+                    android:id="@+id/view_length"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="time"
+                    android:layout_margin="@dimen/listitem_feed_stat_margin"/>
+                <ImageView
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:src="@drawable/ic_stat_chains"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="9dp" />
+                <TextView
+                    android:id="@+id/view_chains"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="chains"
+                    android:layout_margin="@dimen/listitem_feed_stat_margin"/>
+                <ImageView
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:src="@drawable/ic_stat_time"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="9dp"/>
+                <TextView
+                    android:id="@+id/view_expire"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="expire"
+                    android:layout_margin="@dimen/listitem_feed_stat_margin"/>
+                <ImageView
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:src="@drawable/ic_stat_plays"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="9dp"/>
+                <TextView
+                    android:id="@+id/view_plays"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="plays"
+                    android:layout_margin="@dimen/listitem_feed_stat_margin"/>
+            </LinearLayout>
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -68,6 +186,37 @@
                         android:textColor="@color/DARKGRAY"/>
                 </RelativeLayout>
             </LinearLayout>
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="0dp"
+                android:layout_marginRight="0dp"
+                android:background="@color/colorFeedListItem">
+                <LinearLayout
+                    android:id="@+id/view_container_childern"
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp"
+                    android:orientation="horizontal"
+                    android:padding="5dp">
+                    <!--<ImageView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:src="@drawable/place_holder_img"-->
+                    <!--android:layout_weight="1"/>-->
+                    <!--<ImageView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:src="@drawable/place_holder_img"-->
+                    <!--android:layout_weight="1"/>-->
+                    <!--<ImageView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:src="@drawable/place_holder_img"-->
+                    <!--android:layout_weight="1"/>-->
+
+                </LinearLayout>
+            </HorizontalScrollView>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -151,150 +300,6 @@
                     android:layout_weight="1"/>
 
             </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_gravity="center">
-                <TextView
-                    android:id="@+id/view_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="pupi pls"
-                    android:textAlignment="center"
-                    android:textSize="@dimen/section_title_textsize"
-                    android:textStyle="bold"/>
-
-                <TextView
-                    android:id="@+id/view_author"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="by eduard-the-g"
-                    android:layout_marginLeft="10dp"
-                    android:textAlignment="center"/>
-            </LinearLayout>
-
-            <ProgressBar
-                android:id="@+id/view_loading"
-                android:layout_width="wrap_content"
-                android:layout_height="60dp"
-                android:layout_gravity="center"
-                android:layout_marginTop="0dp"
-                android:layout_marginBottom="0dp" />
-                <!--android:visibility="gone"/>-->
-            <HorizontalScrollView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="0dp"
-                android:layout_marginRight="0dp">
-                <LinearLayout
-                    android:id="@+id/view_emoji_chain"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="5dp">
-                    <!--<ImageView-->
-                        <!--android:id="@+id/emoji_btn"-->
-                        <!--android:layout_width="40dp"-->
-                        <!--android:layout_height="40dp"-->
-                        <!--android:layout_alignParentBottom="true"-->
-                        <!--android:layout_alignParentLeft="true"-->
-                        <!--android:padding="4dp"-->
-                        <!--android:src="@drawable/emoji_nature_focus"-->
-                        <!--/>-->
-                </LinearLayout>
-            </HorizontalScrollView>
-
-
-            <ImageView
-                android:id="@+id/view_waveforms"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:src="@drawable/wave_forms"
-                android:adjustViewBounds="true"
-                android:scaleType="centerCrop"
-                android:layout_marginTop="0dp"
-                android:layout_marginBottom="0dp"/>
-
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_gravity="center">
-                <TextView
-                    android:id="@+id/view_length"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="time"
-                    android:layout_margin="@dimen/listitem_feed_stat_margin"/>
-                <ImageView
-                    android:layout_width="15dp"
-                    android:layout_height="15dp"
-                    android:src="@drawable/ic_stat_chains"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="9dp" />
-                <TextView
-                    android:id="@+id/view_chains"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="chains"
-                    android:layout_margin="@dimen/listitem_feed_stat_margin"/>
-                <ImageView
-                    android:layout_width="15dp"
-                    android:layout_height="15dp"
-                    android:src="@drawable/ic_stat_time"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="9dp"/>
-                <TextView
-                    android:id="@+id/view_expire"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="expire"
-                    android:layout_margin="@dimen/listitem_feed_stat_margin"/>
-                <ImageView
-                    android:layout_width="15dp"
-                    android:layout_height="15dp"
-                    android:src="@drawable/ic_stat_plays"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="9dp"/>
-                <TextView
-                    android:id="@+id/view_plays"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="plays"
-                    android:layout_margin="@dimen/listitem_feed_stat_margin"/>
-            </LinearLayout>
-
-            <HorizontalScrollView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <LinearLayout
-                    android:id="@+id/view_container_childern"
-                    android:layout_width="match_parent"
-                    android:layout_height="80dp"
-                    android:orientation="horizontal"
-                    android:background="@color/colorFeedListItem"
-                    android:padding="5dp">
-                    <!--<ImageView-->
-                        <!--android:layout_width="wrap_content"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:src="@drawable/place_holder_img"-->
-                        <!--android:layout_weight="1"/>-->
-                    <!--<ImageView-->
-                        <!--android:layout_width="wrap_content"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:src="@drawable/place_holder_img"-->
-                        <!--android:layout_weight="1"/>-->
-                    <!--<ImageView-->
-                        <!--android:layout_width="wrap_content"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:src="@drawable/place_holder_img"-->
-                        <!--android:layout_weight="1"/>-->
-
-                </LinearLayout>
-            </HorizontalScrollView>
         </LinearLayout>
     </ScrollView>
 
