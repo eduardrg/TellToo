@@ -33,8 +33,8 @@ public class ExploreFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_explore, container, false);
-        StoryNode sn = new StoryNode(getContext(), mStorySingleton.getStory(0));
-        ((ViewGroup) v).addView(sn);
+//        StoryNode sn = new StoryNode(getContext(), mStorySingleton.getStory(0));
+//        ((ViewGroup) v).addView(sn);
         return v;
     }
 

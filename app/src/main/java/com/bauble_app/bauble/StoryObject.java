@@ -311,7 +311,7 @@ public class StoryObject implements Comparable<StoryObject>{
         }
         this.uniqueId = uniqueId;
     }
-    
+
     public Map<String, Boolean> getTags() {
         Map<String, Boolean> tagMap = new HashMap<String, Boolean>();
         for (String tag : tags) {
