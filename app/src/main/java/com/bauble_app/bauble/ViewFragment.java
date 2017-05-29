@@ -200,7 +200,7 @@ public class ViewFragment extends Fragment {
         // Reference to an image file in Firebase Storage
         final StorageReference storageReference = storage.getReferenceFromUrl("gs://bauble-90a48.appspot.com");
         String imagePath = story.grabUniqueId();
-        StorageReference pathReference = storageReference.child("thumbnails/" + imagePath + ".png");
+        final StorageReference pathReference = storageReference.child("thumbnails/" + imagePath + ".png");
         // TODO: also uniform file type For Tech Demo
         audioPathReference = storageReference.child
                 ("teststories/" + imagePath + ".m4a");
@@ -496,8 +496,27 @@ public class ViewFragment extends Fragment {
                 String key = StorySingleton.getInstance().getViewKey();
                 // StorySingleton.getInstance().getOwnedStoriesMap().put(key, story);
                 StorySingleton.getInstance().getOwnedKeys().add(0, key);
-                Toast.makeText(getActivity().getApplicationContext(), story.getTitle() +
-                        " added to your collection", Toast.LENGTH_SHORT).show();
+
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                View layout = inflater.inflate(R.layout.toast_collect,
+                        (ViewGroup) v.findViewById(R.id.toast_layout_root));
+
+                ImageView image = (ImageView) layout.findViewById(R.id.toast_save_image);
+                Drawable drawable = storyImage.getDrawable();
+                image.setImageDrawable(drawable);
+                TextView text = (TextView) layout.findViewById(R.id.toast_save_text);
+                text.setText(story.getTitle() + " added to your collection");
+
+                Toast toast = new Toast(getContext().getApplicationContext());
+                //toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+                toast.setGravity(Gravity.BOTTOM, 0, 200);
+                toast.setDuration(Toast.LENGTH_SHORT);
+                toast.setView(layout);
+                toast.show();
+
+
+//                Toast.makeText(getActivity().getApplicationContext(), story.getTitle() +
+//                        " added to your collection", Toast.LENGTH_SHORT).show();
             }
         });
 

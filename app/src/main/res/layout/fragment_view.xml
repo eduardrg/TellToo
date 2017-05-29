@@ -20,7 +20,7 @@
                 android:layout_height="60dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="0dp"
-                android:layout_marginBottom="20dp"
+                android:layout_marginBottom="0dp"
                 android:indeterminate="true"
                 android:indeterminateDrawable="@drawable/progress"
                 android:background="@color/colorGrayAccent"/>
@@ -30,7 +30,7 @@
             <RelativeLayout
                 android:id="@+id/view_waveforms_layout"
                 android:layout_width="match_parent"
-                android:layout_height="80dp">
+                android:layout_height="60dp">
                 <ImageView
                     android:id="@+id/view_waveforms"
                     android:layout_width="match_parent"
@@ -53,7 +53,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:padding="5dp">
+                        android:paddingLeft="5dp"
+                        android:layout_gravity="bottom">
                         <!--<ImageView-->
                         <!--android:id="@+id/emoji_btn"-->
                         <!--android:layout_width="40dp"-->
@@ -103,6 +104,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="time"
+                    android:textColor="@color/DARKGRAY"
                     android:layout_margin="@dimen/listitem_feed_stat_margin"/>
                 <ImageView
                     android:layout_width="15dp"
@@ -115,6 +117,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="chains"
+                    android:textColor="@color/DARKGRAY"
                     android:layout_margin="@dimen/listitem_feed_stat_margin"/>
                 <ImageView
                     android:layout_width="15dp"
@@ -127,6 +130,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="expire"
+                    android:textColor="@color/DARKGRAY"
                     android:layout_margin="@dimen/listitem_feed_stat_margin"/>
                 <ImageView
                     android:layout_width="15dp"
@@ -139,6 +143,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="plays"
+                    android:textColor="@color/DARKGRAY"
                     android:layout_margin="@dimen/listitem_feed_stat_margin"/>
             </LinearLayout>
 
@@ -147,7 +152,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="0dp"
                 android:layout_marginTop="10dp">
                 <RelativeLayout
                     android:layout_width="wrap_content"
@@ -200,6 +205,12 @@
                 </RelativeLayout>
             </LinearLayout>
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Story Replies"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="15dp"/>
             <HorizontalScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -207,36 +218,40 @@
                 android:layout_marginRight="0dp"
                 android:background="@drawable/top_bot_lines">
                 <LinearLayout
-                    android:id="@+id/view_container_childern"
                     android:layout_width="match_parent"
-                    android:layout_height="80dp"
-                    android:orientation="horizontal"
-                    android:padding="5dp">
-                    <TextView
-                        android:id="@+id/view_container_empty"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:text="No replies yet..."
-                        android:textColor="@color/light_grey"
-                        android:textSize="30dp"
-                        android:layout_marginLeft="10dp"/>
-                    <!--<ImageView-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:src="@drawable/place_holder_img"-->
-                    <!--android:layout_weight="1"/>-->
-                    <!--<ImageView-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:src="@drawable/place_holder_img"-->
-                    <!--android:layout_weight="1"/>-->
-                    <!--<ImageView-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:src="@drawable/place_holder_img"-->
-                    <!--android:layout_weight="1"/>-->
-
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <LinearLayout
+                        android:id="@+id/view_container_childern"
+                        android:layout_width="match_parent"
+                        android:layout_height="80dp"
+                        android:orientation="horizontal"
+                        android:padding="5dp">
+                        <TextView
+                            android:id="@+id/view_container_empty"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:text="No replies yet..."
+                            android:textColor="@color/light_grey"
+                            android:textSize="24dp"
+                            android:layout_marginLeft="10dp"/>
+                        <!--<ImageView-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:src="@drawable/place_holder_img"-->
+                        <!--android:layout_weight="1"/>-->
+                        <!--<ImageView-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:src="@drawable/place_holder_img"-->
+                        <!--android:layout_weight="1"/>-->
+                        <!--<ImageView-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:src="@drawable/place_holder_img"-->
+                        <!--android:layout_weight="1"/>-->
+                    </LinearLayout>
                 </LinearLayout>
             </HorizontalScrollView>
 
@@ -259,6 +274,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/create_btn_save_txt"
+                        android:textColor="@color/DARKGRAY"
                         android:textAlignment="center"/>
                     <ImageButton
                         android:id="@+id/view_btn_save"
@@ -283,6 +299,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/create_btn_chain_txt"
+                        android:textColor="@color/DARKGRAY"
                         android:textAlignment="center"/>
                     <ImageButton
                         android:id="@+id/view_btn_react"
@@ -306,6 +323,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/create_btn_reply_txt"
+                        android:textColor="@color/DARKGRAY"
                         android:textAlignment="center"/>
                     <ImageButton
                         android:id="@+id/view_reply_btn"
