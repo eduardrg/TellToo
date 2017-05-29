@@ -18,7 +18,7 @@
 
     <!--Strings for create page-->
     <string name="create_btn_save_txt">Save</string>
-    <string name="create_btn_chain_txt">Chain</string>
+    <string name="create_btn_chain_txt">React</string>
     <string name="create_btn_reply_txt">Reply</string>
 
     <!-- TODO: Remove or change this placeholder text -->
