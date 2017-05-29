@@ -30,6 +30,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -74,7 +75,7 @@ public class ViewFragment extends Fragment {
     private DatabaseReference mDatabase; // Do I have to have this field any time
     private CountDownTimer countDownTimer; // So I can count down
 
-    private ImageView waveforms;
+    private RelativeLayout waveforms;
     private ProgressBar loading;
 
     private ImageButton mReplyButton;
@@ -125,7 +126,7 @@ public class ViewFragment extends Fragment {
 //        }
 
         // Hide waveforms initially until loading complete
-        waveforms = (ImageView) v.findViewById(R.id.view_waveforms);
+        waveforms = (RelativeLayout) v.findViewById(R.id.view_waveforms_layout);
         waveforms.setVisibility(View.GONE);
         loading = (ProgressBar) v.findViewById(R.id.view_loading);
 
@@ -163,7 +164,7 @@ public class ViewFragment extends Fragment {
         });
 
         // Hide waveforms initially until loading complete
-        waveforms = (ImageView) v.findViewById(R.id.view_waveforms);
+        waveforms = (RelativeLayout) v.findViewById(R.id.view_waveforms_layout);
         waveforms.setVisibility(View.GONE);
         loading = (ProgressBar) v.findViewById(R.id.view_loading);
 
@@ -677,6 +678,7 @@ public class ViewFragment extends Fragment {
         emojis.add((ImageView) dialog.findViewById(R.id.emoji_btn5));
         emojis.add((ImageView) dialog.findViewById(R.id.emoji_btn6));
 
+        // TODO: add emoji data to singleton so it persists
         for (ImageView imageView : emojis) {
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
