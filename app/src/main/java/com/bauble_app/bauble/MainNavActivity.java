@@ -25,6 +25,9 @@ public class MainNavActivity extends AppCompatActivity {
     public static final String THUMB_ROOT_DIR = Environment
             .getExternalStoragePublicDirectory
             (Environment.DIRECTORY_PICTURES) + "/saved_images";
+    public static final String STORY_ROOT_DIR = Environment
+            .getExternalStoragePublicDirectory
+                    (Environment.DIRECTORY_MUSIC) + "/saved_stories";
 
     private TextView mTextMessage;
     private FragmentManager mFragManager;

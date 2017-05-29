@@ -130,8 +130,8 @@ public class MyDBHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
 
     // Database creation sql statement
-    private static final String DATABASE_CREATE = "" +
-            "DROP TABLE IF EXISTS stories" +
+    private static final String DATABASE_DROP = "DROP TABLE IF EXISTS stories;";
+    private static final String DATABASE_CREATE =
             "CREATE TABLE IF NOT EXISTS stories (" +
             "_id integer PRIMARY KEY ASC," +
             "uniqueId varchar(128) NULL," +
@@ -146,11 +146,14 @@ public class MyDBHelper extends SQLiteOpenHelper {
     }
 
     public void resetDB() {
+        writeableDB.execSQL(DATABASE_DROP);
         writeableDB.execSQL(DATABASE_CREATE);
     }
+
     // Method is called during creation of the readableDB
     @Override
     public void onCreate(SQLiteDatabase database) {
+        database.execSQL(DATABASE_DROP);
         database.execSQL(DATABASE_CREATE);
     }
 

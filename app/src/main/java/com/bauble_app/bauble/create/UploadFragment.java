@@ -7,7 +7,6 @@ import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -15,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.bauble_app.bauble.MainNavActivity;
 import com.bauble_app.bauble.MyDBHelper;
 import com.bauble_app.bauble.R;
 import com.bauble_app.bauble.StoryObject;
@@ -110,8 +110,6 @@ public class UploadFragment extends Fragment {
         nextBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View btn) {
                 // Upload the audio file and thumbnail files to FirebaseStorage
-                    Uri audioFile = Uri.fromFile(new File(mCreateFrag
-                            .getRecordingPath()));
                     Uri imageFile = Uri.fromFile(new File(mCreateFrag
                         .getThumbnailPath()));
 
@@ -135,17 +133,6 @@ public class UploadFragment extends Fragment {
                 // Add this story to the list of stories
                 mDB.createRecord(story);
 /*
-                StoryObject story = makeStoryObject();
-                DatabaseReference dbStoriesRef = mDatabase.getReference().child
-                        ("stories");
-                String key = dbStoriesRef.push().getKey();
-                dbStoriesRef.child(key).setValue(story);
-                StoryObject parent = story.getParent();
-                // Add this story as a child of its parent in Firebase Database
-                if (parent != null) {
-                    dbStoriesRef.child(parent.grabUniqueId()).child("children")
-                            .child(key).setValue(true);
-                }
 
                 // Add any new tags that this story possesses to the master
                 // list of tags
@@ -180,15 +167,8 @@ public class UploadFragment extends Fragment {
                     }
                 }
 */
-                StorageReference testStoriesRef = mStorage.child
-                        ("teststories/" + key +
-                                ".m4a");
-                StorageReference thumbnailsRef = mStorage.child
-                        ("thumbnails/" + key + ".jpg");
 
-                String thumbRoot = Environment.getExternalStoragePublicDirectory
-                        (Environment.DIRECTORY_PICTURES).toString();
-                File myDir = new File(thumbRoot + "/saved_images");
+                File myDir = new File(MainNavActivity.THUMB_ROOT_DIR);
                 myDir.mkdirs();
                 String fname = key + ".png";
                 File file = new File(myDir, fname);
@@ -204,33 +184,21 @@ public class UploadFragment extends Fragment {
                     e.printStackTrace();
                 }
 
-                /*
-                    testStoriesRef.putFile(audioFile)
-                            .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                @Override
-                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                    String path = taskSnapshot.getStorage().toString();
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception exception) {
-                                }
-                            });
+                File from = new File(mCreateFrag
+                        .getRecordingPath());
+                File temp = new File(MainNavActivity.STORY_ROOT_DIR);
+                temp.mkdirs();
+                String audioFileName = key + ".m4a";
 
-                    thumbnailsRef.putFile(imageFile).addOnSuccessListener(new
-                            OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                @Override
-                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                    String path = taskSnapshot.getStorage()
-                                            .toString();
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                        }
-                    });
-                */
+                File to = new File(temp, audioFileName);
+                if (to.exists())
+                    to.delete();
+                try {
+                    from.renameTo(to);
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
 

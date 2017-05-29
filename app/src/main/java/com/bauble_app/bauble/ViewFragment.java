@@ -37,7 +37,6 @@ import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -48,8 +47,6 @@ import java.util.List;
 import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-
-import static com.facebook.FacebookSdk.getCacheDir;
 
 
 /**
@@ -226,6 +223,7 @@ public class ViewFragment extends Fragment {
 //                    .using(new FirebaseImageLoader())
 //                    .load(leftPathReference)
 //                    .into(leftStoryImage);
+
         } else {
             leftStoryLabel.setText("0");
             leftStoryLabel.setTextColor(Color.LTGRAY);
@@ -395,8 +393,10 @@ public class ViewFragment extends Fragment {
 
         // Load and play audio
         // TODO: Insure the phone has space to store TEN_MEGABYTE otherwise crash
+
         final long TEN_MEGABYTE = 1024 * 1024 * 20; // changed to 20 mb
         audioLoading = new OnSuccessListener<byte[]>() {
+
             @Override
             public void onSuccess(byte[] bytes) {
                 try {
@@ -408,15 +408,8 @@ public class ViewFragment extends Fragment {
                     // create temp file that will hold byte array
                     // File tempMp3 = File.createTempFile("tempStory", "mp3", getCacheDir());
                     // TODO: make the files all mp4 or all mp3, For Tech Demo
-                    File tempM4a = File.createTempFile("tempStory", "m4a",
-                            getCacheDir());
 
-                    tempM4a.deleteOnExit();
-                    FileOutputStream fos = new FileOutputStream(tempM4a);
-                    fos.write(bytes);
-                    fos.close();
-
-
+                    File tempM4a = new File(MainNavActivity.STORY_ROOT_DIR, story.grabUniqueId() + ".m4a");
                     // resetting mediaplayer instance to evade problems
                     // mPlayer.reset();
 
@@ -435,7 +428,7 @@ public class ViewFragment extends Fragment {
                         int duration = mPlayer.getDuration();
                         String parsedDuration = "";
                         if (duration / 60 / 60 / 1000 > 0) {
-                            parsedDuration = parsedDuration + (duration / 1000 / 60 / 60)  + ":";
+                            parsedDuration = parsedDuration + (duration / 1000 / 60 / 60) + ":";
                             duration = duration % (60 * 60 * 1000);
                             if (duration / (60 * 1000) < 10) {
                                 parsedDuration = parsedDuration + "0";
@@ -454,25 +447,14 @@ public class ViewFragment extends Fragment {
                         //+ (duration / 1000 / 60 % 60) + ":" + (duration / 1000 % 60) + ":" + (duration % 1000);
                         time.setText(parsedDuration);
                     }
-
                     waveforms.setVisibility(View.VISIBLE);
                     loading.setVisibility(View.GONE);
-
                 } catch (IOException ex) {
                     System.out.println(ex.toString());
                     System.out.println("Could not find file ");
                 }
             }
         };
-
-        /*
-        audioPathReference.getBytes(TEN_MEGABYTE).addOnSuccessListener(audioLoading).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                // Handle any errors
-            }
-        });
-        */
 
         // Save Button Click Functionality
         ImageButton save = (ImageButton) v.findViewById(R.id.view_btn_save);
