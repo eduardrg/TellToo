@@ -60,7 +60,7 @@ public class UploadFragment extends Fragment {
                         .getAuthor()
                 , mThumbnailStoragePath,
                 mCreateFrag.getTitle());
-        so.setUniqueId(String.valueOf(so.hashCode()));
+        so.setUniqueId("" + so.hashCode());
         so.setParent(mCreateFrag.getReplyParent());
         so.setTags(mCreateFrag.getmTags());
         so.setAccess(mCreateFrag.getmAccess());

@@ -64,6 +64,7 @@ public class ViewFragment extends Fragment {
     private FragmentManager mFragManager;
     private MediaPlayer mPlayer;
     private StorySingleton mStorySingleton;
+    private StoryObject mStory;
 
     private de.hdodenhof.circleimageview.CircleImageView storyImage;
     private de.hdodenhof.circleimageview.CircleImageView leftStoryImage;
@@ -117,10 +118,10 @@ public class ViewFragment extends Fragment {
         waveforms.setVisibility(View.GONE);
         loading = (ProgressBar) v.findViewById(R.id.view_loading);
 
-        // set frag manager and final story object
+        // set frag manager and final mStory object
         mFragManager = getActivity().getSupportFragmentManager();
         mStorySingleton = StorySingleton.getInstance();
-        final StoryObject story = mStorySingleton.getViewStory();
+        mStory = mStorySingleton.getViewStory();
 
         // set up reply button
         mReplyButton = (ImageButton) v.findViewById(R.id.view_reply_btn);
@@ -155,7 +156,7 @@ public class ViewFragment extends Fragment {
         waveforms.setVisibility(View.GONE);
         loading = (ProgressBar) v.findViewById(R.id.view_loading);
 
-        // Circle Image Views
+        // Story thumbnail CircleImageViews
         storyImage = (CircleImageView) v.findViewById(R.id.view_thumbnail);
         leftStoryImage = (CircleImageView) v.findViewById(R.id.view_thumbnail_left);
         rightStoryImage = (CircleImageView) v.findViewById(R.id.view_thumbnail_right);
@@ -167,9 +168,9 @@ public class ViewFragment extends Fragment {
         // Get Neighbor Lists
         final List<String> leftSibs;
         final List<String> rightSibs;
-        if (story != null) {
-            leftSibs = getLeftNeighbors(story.getParentString(), story.grabUniqueId());
-            rightSibs = getRightNeighbors(story.getParentString(), story.grabUniqueId());
+        if (mStory != null) {
+            leftSibs = getLeftNeighbors(mStory.getParentString(), mStory.grabUniqueId());
+            rightSibs = getRightNeighbors(mStory.getParentString(), mStory.grabUniqueId());
         } else {
             leftSibs = null;
             rightSibs = null;
@@ -177,13 +178,13 @@ public class ViewFragment extends Fragment {
 
         // update database
         int storyNumber = StorySingleton.getInstance().getViewStoryIndex();
-        Long storyPlays = story.getPlays() + 1;
-        story.setPlays(storyPlays);
+        Long storyPlays = mStory.getPlays() + 1;
+        mStory.setPlays(storyPlays);
 
-        mDB.incrementPlays(story.grabUniqueId());
+        mDB.incrementPlays(mStory.grabUniqueId());
 
         // get and set images & audio
-        String imageFileName = story.grabUniqueId() + ".png";
+        String imageFileName = mStory.grabUniqueId() + ".png";
         File imageFile = new File(MainNavActivity.THUMB_ROOT_DIR,
                 imageFileName);
 
@@ -264,16 +265,16 @@ public class ViewFragment extends Fragment {
         }
 
         TextView title = (TextView) v.findViewById(R.id.view_title);
-        title.setText(story.getTitle());
+        title.setText(mStory.getTitle());
         TextView author = (TextView) v.findViewById(R.id.view_author);
-        author.setText("by " + story.getAuthor());
+        author.setText("by " + mStory.getAuthor());
         final TextView time = (TextView) v.findViewById(R.id.view_length);
-        time.setText("00:" + story.getDuration());
+        time.setText("00:" + mStory.getDuration());
         TextView chains = (TextView) v.findViewById(R.id.view_chains);
-        chains.setText(story.getChains().toString());
+        chains.setText(mStory.getChains().toString());
         final TextView expire = (TextView) v.findViewById(R.id.view_expire);
-        expire.setText(story.getExpireDate());
-        final String expireDate = story.getExpireDate();
+        expire.setText(mStory.getExpireDate());
+        final String expireDate = mStory.getExpireDate();
 
         // Experimental countdown timer
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
@@ -344,13 +345,13 @@ public class ViewFragment extends Fragment {
 //        });
 
         TextView plays = (TextView) v.findViewById(R.id.view_plays);
-        plays.setText(story.getPlays().toString());
+        plays.setText(mStory.getPlays().toString());
 
         LinearLayout childrenContainer = (LinearLayout) v.findViewById(R.id.view_container_childern);
-        if (story.getChildren().size() > 0) {
+        if (mStory.getChildren().size() > 0 {
             TextView emptyLabel = (TextView) v.findViewById(R.id.view_container_empty);
             emptyLabel.setVisibility(View.GONE);
-            for (String childName: story.getChildren()) {
+            for (String childName: mStory.getChildren()) {
                 Log.e("ViewFragment", "Child Name:" + childName);
                 final String uniqueIdentifyer = childName;
 
@@ -370,7 +371,7 @@ public class ViewFragment extends Fragment {
                         FragmentTransaction ft = mFragManager.beginTransaction();
                         ft.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_top)
                             .replace(R.id.content, new ViewFragment())
-                            // TODO: even though add to back stack, need to find way to load correct story when back pressed
+                            // TODO: even though add to back stack, need to find way to load correct mStory when back pressed
                             .addToBackStack("tag")
                             .commit();
 //                        fragManager.beginTransaction()
@@ -393,7 +394,6 @@ public class ViewFragment extends Fragment {
 
         // Load and play audio
         // TODO: Insure the phone has space to store TEN_MEGABYTE otherwise crash
-
         final long TEN_MEGABYTE = 1024 * 1024 * 20; // changed to 20 mb
         audioLoading = new OnSuccessListener<byte[]>() {
 
@@ -409,7 +409,8 @@ public class ViewFragment extends Fragment {
                     // File tempMp3 = File.createTempFile("tempStory", "mp3", getCacheDir());
                     // TODO: make the files all mp4 or all mp3, For Tech Demo
 
-                    File tempM4a = new File(MainNavActivity.STORY_ROOT_DIR, story.grabUniqueId() + ".m4a");
+                    File tempM4a = new File(MainNavActivity.STORY_ROOT_DIR,
+                            mStory.grabUniqueId() + ".m4a");
                     // resetting mediaplayer instance to evade problems
                     // mPlayer.reset();
 
@@ -462,9 +463,9 @@ public class ViewFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 String key = StorySingleton.getInstance().getViewKey();
-                // StorySingleton.getInstance().getOwnedStoriesMap().put(key, story);
+                // StorySingleton.getInstance().getOwnedStoriesMap().put(key, mStory);
                 StorySingleton.getInstance().getOwnedKeys().add(0, key);
-                Toast.makeText(getActivity().getApplicationContext(), story.getTitle() +
+                Toast.makeText(getActivity().getApplicationContext(), mStory.getTitle() +
                         " added to your collection", Toast.LENGTH_SHORT).show();
             }
         });
@@ -477,9 +478,9 @@ public class ViewFragment extends Fragment {
             }
             public void onSwipeRight() { // get child before, the one that is on the left
                 Toast.makeText(getActivity(), "right", Toast.LENGTH_SHORT).show();
-                if (story.getParentString() != null) {
-                    String parentIdentifier = story.getParentString();
-                    String uniqueIdentifier = story.grabUniqueId();
+                if (mStory.getParentString() != null) {
+                    String parentIdentifier = mStory.getParentString();
+                    String uniqueIdentifier = mStory.grabUniqueId();
                     List<String> childList = StorySingleton.getInstance().getStory(parentIdentifier).getChildren();
                     int newStoryIndex = -1;
                     for (int i = 0; i < childList.size(); i++) {
@@ -493,7 +494,7 @@ public class ViewFragment extends Fragment {
                         FragmentTransaction ft = mFragManager.beginTransaction();
                         ft.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right)
                                 .replace(R.id.content, new ViewFragment())
-                                // TODO: even though add to back stack, need to find way to load correct story when back pressed
+                                // TODO: even though add to back stack, need to find way to load correct mStory when back pressed
                                 .addToBackStack("tag")
                                 .commit();
                     }
@@ -503,9 +504,9 @@ public class ViewFragment extends Fragment {
             }
             public void onSwipeLeft() {
                 Toast.makeText(getActivity(), "left", Toast.LENGTH_SHORT).show();
-                if (story.getParentString() != null) {
-                    String parentIdentifier = story.getParentString();
-                    String uniqueIdentifier = story.grabUniqueId();
+                if (mStory.getParentString() != null) {
+                    String parentIdentifier = mStory.getParentString();
+                    String uniqueIdentifier = mStory.grabUniqueId();
                     List<String> childList = StorySingleton.getInstance().getStory(parentIdentifier).getChildren();
                     int newStoryIndex = -1;
                     for (int i = 0; i < childList.size(); i++) {
@@ -519,7 +520,7 @@ public class ViewFragment extends Fragment {
                         FragmentTransaction ft = mFragManager.beginTransaction();
                         ft.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left)
                                 .replace(R.id.content, new ViewFragment())
-                                // TODO: even though add to back stack, need to find way to load correct story when back pressed
+                                // TODO: even though add to back stack, need to find way to load correct mStory when back pressed
                                 .addToBackStack("tag")
                                 .commit();
                     }
@@ -529,13 +530,13 @@ public class ViewFragment extends Fragment {
             }
             public void onSwipeBottom() {
                 Toast.makeText(getActivity(), "bottom", Toast.LENGTH_SHORT).show();
-                if (story.getParentString() != null) {
-                    String uniqueIdentifier = story.getParentString(); // could be null
+                if (mStory.getParentString() != null) {
+                    String uniqueIdentifier = mStory.getParentString(); // could be null
                     StorySingleton.getInstance().setViewKey(uniqueIdentifier);
                     FragmentTransaction ft = mFragManager.beginTransaction();
                     ft.setCustomAnimations(R.anim.enter_from_top, R.anim.exit_to_bottom)
                             .replace(R.id.content, new ViewFragment())
-                            // TODO: even though add to back stack, need to find way to load correct story when back pressed
+                            // TODO: even though add to back stack, need to find way to load correct mStory when back pressed
                             .addToBackStack("tag")
                             .commit();
                 }
@@ -569,7 +570,7 @@ public class ViewFragment extends Fragment {
         return diffSeconds;
     }
 
-    // takes in a parent key and the key of the current story and returns a list of it's right
+    // takes in a parent key and the key of the current mStory and returns a list of it's right
     // siblings
     // returns null if the parent key is null or there are not siblings to the right
     private List<String> getRightNeighbors(String parentKey, String currentKey) {
@@ -588,7 +589,7 @@ public class ViewFragment extends Fragment {
         return null;
     }
 
-    // takes in a parent key and the key of the current story and returns a list of it's right
+    // takes in a parent key and the key of the current mStory and returns a list of it's right
     // siblings
     // returns null if the parent key is null or there are not siblings to the right
     private List<String> getLeftNeighbors(String parentKey, String currentKey) {
