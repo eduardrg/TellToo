@@ -1,7 +1,6 @@
 package com.bauble_app.bauble.create;
 
 
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
@@ -18,10 +17,12 @@ import com.bauble_app.bauble.MainNavActivity;
 import com.bauble_app.bauble.MyDBHelper;
 import com.bauble_app.bauble.R;
 import com.bauble_app.bauble.StoryObject;
+import com.bauble_app.bauble.StorySingleton;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.jesusm.holocircleseekbar.lib.HoloCircleSeekBar;
 
 import java.io.File;
@@ -51,17 +52,25 @@ public class UploadFragment extends Fragment {
     private MyDBHelper mDB;
     private Gson mGson;
 
+    private StorySingleton mStorySingleton;
+    private StoryObject mParent;
+
     // Create a StoryObject for upload to Firebase Database
     // The cover and audio params are the paths of the cover image and audio
     // file in Firebase Storage, respectively. These are only available after
     // we upload, so they are not stored in the CreateFragment parent.
     private StoryObject makeStoryObject() {
+        Gson gsonDebug = new GsonBuilder().setPrettyPrinting().create();
+
         StoryObject so = new StoryObject(mRecordingStoragePath, mCreateFrag
                         .getAuthor()
                 , mThumbnailStoragePath,
                 mCreateFrag.getTitle());
         so.setUniqueId("" + so.hashCode());
-        so.setParent(mCreateFrag.getReplyParent());
+        if (mParent != null) {
+            so.setParent(mParent);
+            so.setParentString(mParent.grabUniqueId());
+        }
         so.setTags(mCreateFrag.getmTags());
         so.setAccess(mCreateFrag.getmAccess());
         so.setExpiration(mCreateFrag.getmExpiration());
@@ -77,6 +86,16 @@ public class UploadFragment extends Fragment {
         }
 
         so.setExpiration(expiration);
+
+        if (mParent != null) {
+            mParent.addChildStory(so.grabUniqueId());
+            String replyDebug = gsonDebug.toJson(mParent, StoryObject.class);
+            System.out.println(replyDebug);
+        }
+
+        String soDebug = gsonDebug.toJson(so, StoryObject.class);
+        System.out.println(soDebug);
+
         return so;
     }
 
@@ -93,6 +112,7 @@ public class UploadFragment extends Fragment {
         mCalendar = Calendar.getInstance();
         mDB = new MyDBHelper(getContext());
         mGson = new Gson();
+        mStorySingleton = StorySingleton.getInstance();
     }
 
     @Override
@@ -124,14 +144,15 @@ public class UploadFragment extends Fragment {
                 // a child
                 // This will only update the last found "parent" row in the
                 // DB if there are duplicates in the cursor!
-                StoryObject parent = story.getParent();
-                if (parent != null) {
-                    Cursor cursor = mDB.selectRecordWithKey(parent.grabUniqueId());
-                    parent.addChildStory(key);
-                    mDB.updateRecord(parent);
+
+                if (mParent != null) {
+                    mDB.updateRecord(mParent);
+                    mStorySingleton.putStory(mParent);
                 }
+
                 // Add this story to the list of stories
                 mDB.createRecord(story);
+                mStorySingleton.addStory(story);
 /*
 
                 // Add any new tags that this story possesses to the master

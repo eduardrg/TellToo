@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -31,7 +32,6 @@ import android.widget.Toast;
 
 import com.bauble_app.bauble.create.CreateFragment;
 import com.bumptech.glide.Glide;
-import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.StorageReference;
 
@@ -348,7 +348,7 @@ public class ViewFragment extends Fragment {
         plays.setText(mStory.getPlays().toString());
 
         LinearLayout childrenContainer = (LinearLayout) v.findViewById(R.id.view_container_childern);
-        if (mStory.getChildren().size() > 0 {
+        if (mStory.getChildren().size() > 0) {
             TextView emptyLabel = (TextView) v.findViewById(R.id.view_container_empty);
             emptyLabel.setVisibility(View.GONE);
             for (String childName: mStory.getChildren()) {
@@ -394,13 +394,27 @@ public class ViewFragment extends Fragment {
 
         // Load and play audio
         // TODO: Insure the phone has space to store TEN_MEGABYTE otherwise crash
-        final long TEN_MEGABYTE = 1024 * 1024 * 20; // changed to 20 mb
-        audioLoading = new OnSuccessListener<byte[]>() {
-
+        // Begin loading the audio, and remove the loading bar when it has
+        // been loaded
+        AsyncTask<Void, Void, String> playAudio = new AsyncTask<Void,Void,String>
+                () {
+            //Before the background task
             @Override
-            public void onSuccess(byte[] bytes) {
+            protected void onPreExecute() {
+                mPlayer.reset();
+            }
+
+            // The background task
+            @Override
+            protected String doInBackground(Void... arg0) {
+                //Do something...
+                //Thread.sleep(5000);
+                final long TEN_MEGABYTE = 1024 * 1024 * 20; // changed to 20 mb
+                String parsedDuration = null;
+                File tempM4a = null;
                 try {
-                    Log.e("ViewFragement", "" + bytes.length + " " + bytes.length / 8);
+                    // Log.e("ViewFragement", "" + bytes.length + " " + bytes.length /
+                    // 8);
                     //Log.e("ViewFragement", Arrays.toString(bytes));
 
 
@@ -409,10 +423,10 @@ public class ViewFragment extends Fragment {
                     // File tempMp3 = File.createTempFile("tempStory", "mp3", getCacheDir());
                     // TODO: make the files all mp4 or all mp3, For Tech Demo
 
-                    File tempM4a = new File(MainNavActivity.STORY_ROOT_DIR,
+                    tempM4a = new File(MainNavActivity.STORY_ROOT_DIR,
                             mStory.grabUniqueId() + ".m4a");
                     // resetting mediaplayer instance to evade problems
-                    // mPlayer.reset();
+                    //
 
                     // In case you run into issues with threading consider new instance like:
                     // MediaPlayer mediaPlayer = new MediaPlayer();
@@ -427,7 +441,7 @@ public class ViewFragment extends Fragment {
                         mPlayer.prepare();
                         mPlayer.start();
                         int duration = mPlayer.getDuration();
-                        String parsedDuration = "";
+                        parsedDuration = "";
                         if (duration / 60 / 60 / 1000 > 0) {
                             parsedDuration = parsedDuration + (duration / 1000 / 60 / 60) + ":";
                             duration = duration % (60 * 60 * 1000);
@@ -446,16 +460,29 @@ public class ViewFragment extends Fragment {
                             parsedDuration = parsedDuration + (duration / 1000);
                         }
                         //+ (duration / 1000 / 60 % 60) + ":" + (duration / 1000 % 60) + ":" + (duration % 1000);
-                        time.setText(parsedDuration);
+                        //
                     }
-                    waveforms.setVisibility(View.VISIBLE);
-                    loading.setVisibility(View.GONE);
+
                 } catch (IOException ex) {
-                    System.out.println(ex.toString());
-                    System.out.println("Could not find file ");
+                    Log.e("AudioFileError", "Could not open file " +
+                            tempM4a.getPath() + " for playback.", ex);
                 }
+
+                return parsedDuration;
             }
+
+            // The UI thread; update the UI after task is done
+            @Override
+            protected void onPostExecute(String result) {
+                // Set parsed duration
+                time.setText(result);
+                //dissmiss progress dialog
+                waveforms.setVisibility(View.VISIBLE);
+                loading.setVisibility(View.GONE);
+            }
+
         };
+        playAudio.execute((Void[])null);
 
         // Save Button Click Functionality
         ImageButton save = (ImageButton) v.findViewById(R.id.view_btn_save);
@@ -575,6 +602,7 @@ public class ViewFragment extends Fragment {
     // returns null if the parent key is null or there are not siblings to the right
     private List<String> getRightNeighbors(String parentKey, String currentKey) {
         if (parentKey != null) {
+            System.out.println("parentkey is not null");
             List<String> childList = StorySingleton.getInstance().getStory(parentKey).getChildren();
             int newStoryIndex = -1;
             for (int i = 0; i < childList.size(); i++) {
@@ -585,6 +613,8 @@ public class ViewFragment extends Fragment {
             if (newStoryIndex >= 0 && newStoryIndex < childList.size()) {
                 return childList.subList(newStoryIndex + 1, childList.size());
             }
+        } else {
+            System.out.println("parentkey is null");
         }
         return null;
     }
@@ -624,12 +654,12 @@ public class ViewFragment extends Fragment {
         for (FileDownloadTask task : tasks) {
             task.removeOnSuccessListener(audioLoading);
         }
+        */
         if (mPlayer != null) {
             mPlayer.stop();
             mPlayer.release();
             mPlayer = null;
         }
-        */
     }
 
     // Call to show custom dialog

@@ -80,6 +80,14 @@ public class StorySingleton {
         return null;
     }
 
+    public void putStory(StoryObject so) {
+        if (so != null) {
+            String key = so.grabUniqueId();
+            this.storyMap.put(key, so);
+            this.mKeys.add(key);
+        }
+    }
+
     public String getViewKey() {
         return this.viewKey;
     }
