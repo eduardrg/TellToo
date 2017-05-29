@@ -7,33 +7,25 @@ import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.bauble_app.bauble.MyDBHelper;
 import com.bauble_app.bauble.R;
 import com.bauble_app.bauble.StoryObject;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.jesusm.holocircleseekbar.lib.HoloCircleSeekBar;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -137,35 +129,8 @@ public class UploadFragment extends Fragment {
                 StoryObject parent = story.getParent();
                 if (parent != null) {
                     Cursor cursor = mDB.selectRecordWithKey(parent.grabUniqueId());
-                    JsonObject parentAsJSON = null;
-                    try {
-                        while (cursor.moveToNext()) {
-                            // The parent should already exist; grab it as a
-                            // string from the DB
-                            String parentAsString = cursor.getString
-                                    (cursor.getColumnIndex(MyDBHelper
-                                            .STORY_OBJ));
-                            // Create a JSON object from the string so we can
-                            // manipulate it with jsonobject methods
-                            parentAsJSON = new
-                                    JsonParser().parse(parentAsString).getAsJsonObject();
-                            // Get the nested "children" map of the parent
-                            JsonObject childrenOfParentJSON =
-                                    parentAsJSON.getAsJsonObject
-                                            ("children");
-                            // Add a property named by the reply's uniqueId
-                            // and equal to True
-                            childrenOfParentJSON.addProperty(key,
-                                    true);
-                            // Update the parent object by replacing its
-                            // nested children map
-                            parentAsJSON.add("children", childrenOfParentJSON);
-                        }
-                    } finally {
-                        mDB.updateRecord(parentAsJSON);
-                        cursor.close();
-                    }
-
+                    parent.addChildStory(key);
+                    mDB.updateRecord(parent);
                 }
                 // Add this story to the list of stories
                 mDB.createRecord(story);
@@ -220,26 +185,26 @@ public class UploadFragment extends Fragment {
                                 ".m4a");
                 StorageReference thumbnailsRef = mStorage.child
                         ("thumbnails/" + key + ".jpg");
-                
-                FileOutputStream out = null;
+
+                String thumbRoot = Environment.getExternalStoragePublicDirectory
+                        (Environment.DIRECTORY_PICTURES).toString();
+                File myDir = new File(thumbRoot + "/saved_images");
+                myDir.mkdirs();
+                String fname = key + ".png";
+                File file = new File(myDir, fname);
+                if (file.exists())
+                    file.delete();
                 try {
-                    File file = new File(getActivity()
-                            .getExternalCacheDir().getAbsolutePath() +
-                            "/thumbPng.png");
-                    out = new FileOutputStream(file);
+                    FileOutputStream out = new FileOutputStream(file);
                     thumbBitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+                    out.flush();
                     out.close();
-                    imageFile = Uri.fromFile(file);
-                    thumbnailsRef = mStorage.child
-                            ("thumbnails/" + key +
-                                    ".png");
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
+                }
+                catch (Exception e) {
                     e.printStackTrace();
                 }
 
-
+                /*
                     testStoriesRef.putFile(audioFile)
                             .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                                 @Override
@@ -265,7 +230,7 @@ public class UploadFragment extends Fragment {
                         public void onFailure(@NonNull Exception exception) {
                         }
                     });
-
+                */
             }
         });
 

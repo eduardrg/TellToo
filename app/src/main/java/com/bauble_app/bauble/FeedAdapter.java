@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.CountDownTimer;
+import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,10 +13,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.firebase.ui.storage.images.FirebaseImageLoader;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
+import java.io.File;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -153,21 +152,18 @@ public class FeedAdapter extends BaseAdapter {
 //        an.setFillAfter(true);
 //        pb.startAnimation(an);
 
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        // Reference to an image file in Firebase Storage
-        StorageReference storageReference = storage.getReferenceFromUrl("gs://bauble-90a48.appspot.com");
-        String imagePath = story.grabUniqueId();
-        StorageReference pathReference = storageReference.child("thumbnails/" + imagePath + ".png");
+        String thumbRoot = Environment.getExternalStoragePublicDirectory
+                (Environment.DIRECTORY_PICTURES) + "/saved_images";
+        String imageFileName = story.grabUniqueId() + ".png";
+
+        final File imageFile = new File(thumbRoot, imageFileName);
 
         // ImageView in your Activity
         CircleImageView circleImageView = (CircleImageView) vi.findViewById(R.id
                 .feed_listitem_picture);
 
         // Load the image using Glide
-        Glide.with(context /* context */)
-                .using(new FirebaseImageLoader())
-                .load(pathReference)
-                .into(circleImageView);
+        Glide.with(context).load(imageFile).into(circleImageView);
 
         // Set font
         title.setTypeface(tf);

@@ -7,14 +7,12 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
-import com.google.firebase.database.DatabaseReference;
 import com.google.gson.Gson;
 
 public class MainActivity extends AppCompatActivity {
 
     public static final boolean DEBUG = false; // set to true if want to debug
 
-    private DatabaseReference mDatabase; // for accessing JSON
     private FragmentManager fragManager;
     private MyDBHelper mDB;
     private Gson mGson;

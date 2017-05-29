@@ -3,7 +3,6 @@ package com.bauble_app.bauble;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -11,21 +10,17 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
-import android.provider.ContactsContract;
-import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -37,14 +32,7 @@ import android.widget.Toast;
 import com.bauble_app.bauble.create.CreateFragment;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FileDownloadTask;
-import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
@@ -55,14 +43,11 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import hani.momanii.supernova_emoji_library.Actions.EmojIconActions;
-import hani.momanii.supernova_emoji_library.Helper.EmojiconEditText;
 
 import static com.facebook.FacebookSdk.getCacheDir;
 
@@ -72,7 +57,6 @@ import static com.facebook.FacebookSdk.getCacheDir;
  */
 public class ViewFragment extends Fragment {
 
-    private DatabaseReference mDatabase; // Do I have to have this field any time
     private CountDownTimer countDownTimer; // So I can count down
 
     private RelativeLayout waveforms;
@@ -88,6 +72,7 @@ public class ViewFragment extends Fragment {
     private de.hdodenhof.circleimageview.CircleImageView leftStoryImage;
     private de.hdodenhof.circleimageview.CircleImageView rightStoryImage;
 
+    private MyDBHelper mDB;
     private TextView leftStoryLabel;
     private TextView rightStoryLabel;
 
@@ -99,6 +84,11 @@ public class ViewFragment extends Fragment {
         // Required empty public constructor
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mDB = new MyDBHelper(getContext());
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -192,23 +182,17 @@ public class ViewFragment extends Fragment {
         int storyNumber = StorySingleton.getInstance().getViewStoryIndex();
         Long storyPlays = story.getPlays() + 1;
         story.setPlays(storyPlays);
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase.child("stories").child(story.grabUniqueId()).child("plays").setValue(storyPlays);
+
+        mDB.incrementPlays(story.grabUniqueId());
 
         // get and set images & audio
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        // Reference to an image file in Firebase Storage
-        final StorageReference storageReference = storage.getReferenceFromUrl("gs://bauble-90a48.appspot.com");
-        String imagePath = story.grabUniqueId();
-        StorageReference pathReference = storageReference.child("thumbnails/" + imagePath + ".png");
-        // TODO: also uniform file type For Tech Demo
-        audioPathReference = storageReference.child
-                ("teststories/" + imagePath + ".m4a");
+        String imageFileName = story.grabUniqueId() + ".png";
+        File imageFile = new File(MainNavActivity.THUMB_ROOT_DIR,
+                imageFileName);
 
         // Load the image using Glide
         Glide.with(getContext() /* context */)
-                .using(new FirebaseImageLoader())
-                .load(pathReference)
+                .load(imageFile)
                 .into(storyImage);
 
         // set sib pictures if not null and set sibling counters
@@ -223,11 +207,14 @@ public class ViewFragment extends Fragment {
                     @Override
                     public void run() {
                         //Do something after 100ms
-                        StorageReference leftPathReference = storageReference.child("thumbnails/" +
-                                leftSibs.get(index) + ".png");
-                        Glide.with(getContext() /* context */)
-                                .using(new FirebaseImageLoader())
-                                .load(leftPathReference)
+                        String leftImageFileName = leftSibs.get(index) + ".png";
+                        File leftImageFile = new File(MainNavActivity
+                                .THUMB_ROOT_DIR,
+                                leftImageFileName);
+
+                        // Load the image using Glide
+                            Glide.with(getContext())
+                                .load(leftImageFile)
                                 .into(leftStoryImage);
                     }
                 }, (i + 1) * 333); //i * 1/3 second
@@ -256,11 +243,12 @@ public class ViewFragment extends Fragment {
                     @Override
                     public void run() {
                         //Do something after 100ms
-                        StorageReference rightPathReference = storageReference.child("thumbnails/" +
-                                rightSibs.get(rightSibs.size() - 1 - index) + ".png");
+                        String rightImageFileName = rightSibs.get(rightSibs
+                                .size() - 1 - index) + ".png";
+                        File rightImageFile = new File(MainNavActivity
+                                .THUMB_ROOT_DIR, rightImageFileName);
                         Glide.with(getContext() /* context */)
-                                .using(new FirebaseImageLoader())
-                                .load(rightPathReference)
+                                .load(rightImageFile)
                                 .into(rightStoryImage);
                     }
                 }, (i + 1) * 333); //i * 1/3 second
@@ -393,22 +381,17 @@ public class ViewFragment extends Fragment {
                     }
                 });
                 childrenContainer.addView(child);
-                StorageReference childPath = storageReference.child("thumbnails/" + uniqueIdentifyer + ".png");
-                Log.e("ViewFragment", "thumbnails/" + uniqueIdentifyer + ".png");
+
+                imageFileName = childName + ".png";
+
+                imageFile = new File(MainNavActivity.THUMB_ROOT_DIR,
+                        imageFileName);
+
                 // Load the image using Glide
-                Glide.with(getContext() /* context */)
-                        .using(new FirebaseImageLoader())
-                        .load(childPath)
-                        .into(child);
+                Glide.with(getContext()).load(imageFile).into(child);
+
             }
         }
-
-        // Initializes MediaPlayer
-//        mPlayer = MediaPlayer.create(getContext(), R.raw.law_of_the_jungle);
-//        if (mPlayer.isPlaying()) {
-//            mPlayer.stop();
-//            mPlayer.reset();
-//        }
 
         // Load and play audio
         // TODO: Insure the phone has space to store TEN_MEGABYTE otherwise crash
@@ -481,12 +464,15 @@ public class ViewFragment extends Fragment {
                 }
             }
         };
+
+        /*
         audioPathReference.getBytes(TEN_MEGABYTE).addOnSuccessListener(audioLoading).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
                 // Handle any errors
             }
         });
+        */
 
         // Save Button Click Functionality
         ImageButton save = (ImageButton) v.findViewById(R.id.view_btn_save);
@@ -650,6 +636,7 @@ public class ViewFragment extends Fragment {
     // Stops Media Player
     private void stopMediaPlayer() {
         // TODO: Find out if this block of code does anything
+        /*
         List<FileDownloadTask> tasks = audioPathReference.getActiveDownloadTasks();
         for (FileDownloadTask task : tasks) {
             task.removeOnSuccessListener(audioLoading);
@@ -659,6 +646,7 @@ public class ViewFragment extends Fragment {
             mPlayer.release();
             mPlayer = null;
         }
+        */
     }
 
     // Call to show custom dialog

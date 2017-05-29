@@ -8,7 +8,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 /**
  * Created by princ on 5/28/2017.
@@ -47,10 +49,27 @@ public class MyDBHelper extends SQLiteOpenHelper {
         String[] cols = new String[] {STORY_ID, STORY_KEY, STORY_OBJ};
         String whereCondition = STORY_KEY + " = " + storyKey;
         Cursor mCursor = readableDB.query(true, STORY_TABLE, cols, whereCondition, null, null, null, null, null);
-        if (mCursor != null) {
-            mCursor.moveToFirst();
+        return mCursor;
+    }
+
+    // Get a single story in its string representation by its key
+    public String selectSingleRecordAsString(String storyKey) {
+        Cursor cursor = selectRecordWithKey(storyKey);
+        String storyAsString = null;
+        try {
+            while (cursor.moveToNext()) {
+                storyAsString = cursor.getString(cursor.getColumnIndex(STORY_OBJ));
+            }
+        } finally {
+            cursor.close();
+            return storyAsString;
         }
-        return mCursor; // iterate to get each value.
+    }
+
+    // Get a single story in its JSON representation by its key
+    public JsonObject selectSingleRecordAsJSON(String storyKey) {
+        String storyAsString = selectSingleRecordAsString(storyKey);
+        return (new JsonParser()).parse(storyAsString).getAsJsonObject();
     }
 
     // Method for getting stories as JSON from the DB
@@ -80,13 +99,39 @@ public class MyDBHelper extends SQLiteOpenHelper {
         }
     }
 
+    // Method for updating an existing row, taking a StoryObject parameter to
+    // update its corresponding row
+    public void updateRecord(StoryObject so) {
+        if (so != null) {
+            String storyKey = so.grabUniqueId();
+            String storyAsString = mGson.toJson(so, StoryObject.class);
+            String whereCondition = STORY_KEY + " = " + storyKey;
+            ContentValues values = new ContentValues();
+            values.put(STORY_OBJ, storyAsString);
+            writeableDB.update(STORY_TABLE, values, whereCondition, null);
+        } else {
+            throw new IllegalArgumentException("Cannot call updateRecord" +
+                    "(StoryObject so) with a null StoryObject");
+        }
+    }
+
+    public void incrementPlays(String storyKey) {
+        JsonObject storyAsJson = selectSingleRecordAsJSON(storyKey);
+        Long storyPlays = storyAsJson.get("plays").getAsLong();
+        storyPlays++;
+        JsonElement storyPlaysAsJSON = (new JsonParser()).parse(storyPlays
+                .toString());
+        storyAsJson.add("plays", storyPlaysAsJSON);
+        updateRecord(storyAsJson);
+    }
+
     private static final String DATABASE_NAME = "TellTooDB";
 
     private static final int DATABASE_VERSION = 1;
 
     // Database creation sql statement
     private static final String DATABASE_CREATE = "" +
-            // "DROP TABLE IF EXISTS stories" +
+            "DROP TABLE IF EXISTS stories" +
             "CREATE TABLE IF NOT EXISTS stories (" +
             "_id integer PRIMARY KEY ASC," +
             "uniqueId varchar(128) NULL," +
@@ -100,6 +145,9 @@ public class MyDBHelper extends SQLiteOpenHelper {
         writeableDB = this.getWritableDatabase();
     }
 
+    public void resetDB() {
+        writeableDB.execSQL(DATABASE_CREATE);
+    }
     // Method is called during creation of the readableDB
     @Override
     public void onCreate(SQLiteDatabase database) {
