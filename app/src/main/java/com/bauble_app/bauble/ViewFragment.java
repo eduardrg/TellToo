@@ -342,6 +342,8 @@ public class ViewFragment extends Fragment {
 
         LinearLayout childrenContainer = (LinearLayout) v.findViewById(R.id.view_container_childern);
         if (story.getChildren().size() > 0) {
+            TextView emptyLabel = (TextView) v.findViewById(R.id.view_container_empty);
+            emptyLabel.setVisibility(View.GONE);
             for (String childName: story.getChildren()) {
                 Log.e("ViewFragment", "Child Name:" + childName);
                 final String uniqueIdentifyer = childName;

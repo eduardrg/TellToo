@@ -199,6 +199,15 @@
                     android:layout_height="80dp"
                     android:orientation="horizontal"
                     android:padding="5dp">
+                    <TextView
+                        android:id="@+id/view_container_empty"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="No replies yet..."
+                        android:textColor="@color/light_grey"
+                        android:textSize="30dp"
+                        android:layout_marginLeft="10dp"/>
                     <!--<ImageView-->
                     <!--android:layout_width="wrap_content"-->
                     <!--android:layout_height="wrap_content"-->
