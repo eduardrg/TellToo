@@ -8,4 +8,5 @@
     <dimen name="listitem_feed_margin">10dp</dimen>
     <dimen name="listitem_feed_stat_margin">1dp</dimen>
     <dimen name="edit_text_height">35dp</dimen>
+    <dimen name="explore_node_width">75dp</dimen>
 </resources>

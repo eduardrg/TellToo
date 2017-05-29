@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.bauble_app.bauble.auth.AuthChoiceFragment;
 import com.bauble_app.bauble.create.CreateFragment;
+import com.bauble_app.bauble.explore.ExploreFragment;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class MainNavActivity extends AppCompatActivity {

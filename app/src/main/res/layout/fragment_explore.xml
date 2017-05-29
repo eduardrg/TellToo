@@ -2,11 +2,56 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="match_parent">
+              android:layout_height="match_parent"
+              android:gravity="center|top"
+              xmlns:tools="http://schemas.android.com/tools"
+              tools:context="com.bauble_app.bauble.explore.ExploreFragment" >
 
-    <ImageView
-        android:id="@+id/imageView"
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:src="@drawable/ic_notifications_black_24dp"
+        android:id="@+id/explore_root"
+        android:layout_width="@dimen/explore_node_width"
+        android:layout_height="75dp"/>
+    <LinearLayout
+        android:id="@+id/explore_root_children"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/explore_placeholder"/>
+        android:layout_height="75dp"
+        android:gravity="center">
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:src="@drawable/ic_notifications_black_24dp"
+            android:id="@+id/explore_root_left"
+            android:layout_width="@dimen/explore_node_width"
+            android:layout_height="match_parent"/>
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:src="@drawable/ic_notifications_black_24dp"
+            android:id="@+id/explore_root_right"
+            android:layout_width="@dimen/explore_node_width"
+            android:layout_height="match_parent"/>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/explore_root_grandchildren"
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:gravity="center">
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:src="@drawable/ic_notifications_black_24dp"
+            android:id="@+id/explore_root_left_left"
+            android:layout_width="@dimen/explore_node_width"
+            android:layout_height="match_parent"/>
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:src="@drawable/ic_notifications_black_24dp"
+            android:id="@+id/explore_root_left_right"
+            android:layout_width="@dimen/explore_node_width"
+            android:layout_height="match_parent"/>
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:src="@drawable/ic_notifications_black_24dp"
+            android:id="@+id/explore_root_right_left"
+            android:layout_width="@dimen/explore_node_width"
+            android:layout_height="match_parent"/>
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:src="@drawable/ic_notifications_black_24dp"
+            android:id="@+id/explore_root_right_right"
+            android:layout_width="@dimen/explore_node_width"
+            android:layout_height="match_parent"/>
+    </LinearLayout>
 </LinearLayout>
