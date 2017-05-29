@@ -158,8 +158,15 @@ public class ViewFragment extends Fragment {
         rightStoryLabel = (TextView) v.findViewById(R.id.view_thumbnail_right_label);
 
         // Get Neighbor Lists
-        final List<String> leftSibs = getLeftNeighbors(story.getParentString(), story.grabUniqueId());
-        final List<String> rightSibs = getRightNeighbors(story.getParentString(), story.grabUniqueId());
+        final List<String> leftSibs;
+        final List<String> rightSibs;
+        if (story != null) {
+            leftSibs = getLeftNeighbors(story.getParentString(), story.grabUniqueId());
+            rightSibs = getRightNeighbors(story.getParentString(), story.grabUniqueId());
+        } else {
+            leftSibs = null;
+            rightSibs = null;
+        }
 
         // update database
         int storyNumber = StorySingleton.getInstance().getViewStoryIndex();
@@ -203,7 +210,7 @@ public class ViewFragment extends Fragment {
                                 .load(leftPathReference)
                                 .into(leftStoryImage);
                     }
-                }, i * 500); //i * 1/2 second
+                }, (i + 1) * 333); //i * 1/3 second
             }
 
 //            StorageReference leftPathReference = storageReference.child("thumbnails/" +
@@ -236,7 +243,7 @@ public class ViewFragment extends Fragment {
                                 .load(rightPathReference)
                                 .into(rightStoryImage);
                     }
-                }, i * 500); //i * 1/2 second
+                }, (i + 1) * 333); //i * 1/3 second
             }
 
 //            StorageReference leftPathReference = storageReference.child("thumbnails/" +
@@ -336,10 +343,13 @@ public class ViewFragment extends Fragment {
         LinearLayout childrenContainer = (LinearLayout) v.findViewById(R.id.view_container_childern);
         if (story.getChildren().size() > 0) {
             for (String childName: story.getChildren()) {
+                Log.e("ViewFragment", "Child Name:" + childName);
                 final String uniqueIdentifyer = childName;
 
-                ImageView child = new ImageView(getContext());
-                child.setLayoutParams(new LinearLayout.LayoutParams(200, 200));
+                de.hdodenhof.circleimageview.CircleImageView child = new de.hdodenhof.circleimageview.CircleImageView(getContext());
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(200, 200);
+                lp.setMargins(0, 0, 100, 0);
+                child.setLayoutParams(lp);
                 child.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

@@ -14,7 +14,7 @@ import com.google.firebase.database.ValueEventListener;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static final boolean DEBUG = false; // set to true if want to debug
+    public static final boolean DEBUG = true; // set to true if want to debug
 
     private DatabaseReference mDatabase; // for accessing JSON
     private FragmentManager fragManager;
@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
                             }
 
                         }
-                        Log.i("MainNavActivity", story.getChildren().toString());
+                        // Log.i("MainNavActivity", story.getChildren().toString());
                     }
 
                     // Set parent string
