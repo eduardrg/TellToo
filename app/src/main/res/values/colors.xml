@@ -32,4 +32,5 @@
     <color name="dim_grey">#f4f4f4</color>
     <!--Default Dark Gray-->
     <color name="DARKGRAY">#444444</color>
+    <drawable name="light_grey_color_drawable">@color/light_grey</drawable>
 </resources>

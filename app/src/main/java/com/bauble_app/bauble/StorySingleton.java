@@ -111,6 +111,10 @@ public class StorySingleton {
     }
 
     public void setViewKey(String key) {
+        if (key == null || !this.mKeys.contains(key)) {
+            throw new IllegalArgumentException("Story key \"" + key + "\" is " +
+                    "invalid");
+        }
         this.viewKey = key;
     }
 
