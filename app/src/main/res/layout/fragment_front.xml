@@ -74,13 +74,13 @@
 
             <ImageButton
                 android:id="@+id/view_reply_btn"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
                 android:adjustViewBounds="true"
                 android:background="@drawable/round_button_record"
                 android:scaleType="fitCenter"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="125dp"
+                android:layout_marginTop="150dp"
                 android:layout_below="@id/cause_elements"/>
 
         </RelativeLayout>

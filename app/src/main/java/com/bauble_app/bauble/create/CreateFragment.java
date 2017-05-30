@@ -57,24 +57,24 @@ public class CreateFragment extends Fragment {
         mDatabase = FirebaseDatabase.getInstance();
         mStorySingleton = StorySingleton.getInstance();
         mChildFragManager = getChildFragmentManager();
-        mAuthor = "Anonymous";
+        mAuthor = "CapstoneUser";
         mTitle = "Untitled";
         mThumbnailPath = "android.resource://"+ BuildConfig
                 .APPLICATION_ID+"‌​/" + R.drawable.place_holder_img;
-        String userId = mAuth.getCurrentUser().getUid();
-        DatabaseReference users = mDatabase.getReference("users");
-        users.child(userId).child("name").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                mAuthor = dataSnapshot.getValue().toString();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.e(FDBTag, "Failed to read user name: " + databaseError
-                        .getCode());
-            }
-        });
+//         String userId = mAuth.getCurrentUser().getUid();
+//         DatabaseReference users = mDatabase.getReference("users");
+//         users.child(userId).child("name").addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                mAuthor = dataSnapshot.getValue().toString();
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//                Log.e(FDBTag, "Failed to read user name: " + databaseError
+//                        .getCode());
+//            }
+//        });
     }
 
     @Override
