@@ -2,9 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/navigation_front"
-        android:icon="@drawable/ic_action_nav_front"
-        android:title="@string/title_front" />
+        android:id="@+id/navigation_messages"
+        android:icon="@drawable/ic_action_nav_messages"
+        android:title="@string/title_community" />
 
     <item
         android:id="@+id/navigation_explore"
@@ -20,9 +20,10 @@
         android:id="@+id/navigation_me"
         android:icon="@drawable/ic_action_nav_me"
         android:title="@string/title_me" />
+
     <item
-        android:id="@+id/navigation_messages"
-        android:icon="@drawable/ic_action_nav_messages"
-        android:title="@string/title_community" />
+        android:id="@+id/navigation_front"
+        android:icon="@drawable/ic_action_nav_front"
+        android:title="@string/title_front" />
 
 </menu>

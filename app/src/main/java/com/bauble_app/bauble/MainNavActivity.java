@@ -82,7 +82,7 @@ public class MainNavActivity extends AppCompatActivity {
 
         mFragManager = getSupportFragmentManager();
         mFragManager.beginTransaction()
-                .replace(R.id.content, new FeedFragment())
+                .replace(R.id.content, new FrontFragment())
                 .commit();
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
@@ -94,7 +94,7 @@ public class MainNavActivity extends AppCompatActivity {
         mNavigation = (BottomNavigationView) findViewById(R.id.navigation);
         mNavigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         mFragManager.beginTransaction()
-                .replace(R.id.content, new FeedFragment())
+                .replace(R.id.content, new FrontFragment())
                 .commit();
 
     }
@@ -108,7 +108,7 @@ public class MainNavActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.action_bar, menu);
 
-        MenuItem searchItem = menu.findItem(R.id.action_search);
+        // MenuItem searchItem = menu.findItem(R.id.action_search);
 
         // Prevent the search bar from collapsing
 //        searchItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
@@ -123,13 +123,13 @@ public class MainNavActivity extends AppCompatActivity {
 //            }
 //        });
 
-        SearchManager searchManager = (SearchManager) MainNavActivity.this.getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        // SearchManager searchManager = (SearchManager) MainNavActivity.this.getSystemService(Context.SEARCH_SERVICE);
+        // SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
 
         // Make searchview spans action bar
-        searchView.setIconifiedByDefault(false);
-        ActionBar.LayoutParams params = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT);
-        searchView.setLayoutParams(params);
+//        searchView.setIconifiedByDefault(false);
+//        ActionBar.LayoutParams params = new ActionBar.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.MATCH_PARENT);
+//        searchView.setLayoutParams(params);
         // searchItem.expandActionView(); // Start with search open
 
 
