@@ -333,6 +333,7 @@ public class RecordFragment extends Fragment {
 
                     return true;
                 }
+
                 // The UI thread; update the UI after task is done
                 @Override
                 protected void onPostExecute(Boolean result) {

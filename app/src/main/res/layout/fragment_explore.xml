@@ -22,6 +22,9 @@
             android:id="@+id/explore_root_left"
             android:layout_width="@dimen/explore_node_width"
             android:layout_height="match_parent"/>
+        <View
+            android:layout_width="37.5dp"
+            android:layout_height="match_parent" />
         <de.hdodenhof.circleimageview.CircleImageView
             android:src="@drawable/ic_notifications_black_24dp"
             android:id="@+id/explore_root_right"
