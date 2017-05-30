@@ -23,6 +23,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bauble_app.bauble.R;
 import com.bauble_app.bauble.Utils;
@@ -143,15 +144,21 @@ public class SetMetaFragment extends Fragment {
     private int attachCoverListener(View v) {
         v.setOnClickListener(new View.OnClickListener() {
             public void onClick(View btn) {
-                if (!(permissionToReadExternalAccepted &&
-                        permissionToWriteExternalAccepted)) {
-                    Log.d("tag", "in if");
-                    requestPermissions(permissions,
-                            MULTIPLE_PERMISSIONS_REQUEST);
+                RecordFragment recordFrag = mCreateFrag.getRecordFrag();
+                if (recordFrag != null && recordFrag.isRecording()) {
+                    Toast.makeText(getContext(), "Can't set cover while " +
+                            "recording", Toast.LENGTH_SHORT).show();
                 } else {
-                    Log.d("tag", "in else");
-                    EasyImage.openChooserWithGallery(getFragment(), "Pick a cover " +
-                            "image", 0);
+                    if (!(permissionToReadExternalAccepted &&
+                            permissionToWriteExternalAccepted)) {
+                        Log.d("tag", "in if");
+                        requestPermissions(permissions,
+                                MULTIPLE_PERMISSIONS_REQUEST);
+                    } else {
+                        Log.d("tag", "in else");
+                        EasyImage.openChooserWithGallery(getFragment(), "Pick a cover " +
+                                "image", 0);
+                    }
                 }
             }
         });

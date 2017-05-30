@@ -153,82 +153,75 @@ public class UploadFragment extends Fragment {
                     @SuppressWarnings("ResultOfMethodCallIgnored")
                     @Override
                     protected Boolean doInBackground(Void... params) {
+                        // Make a StoryObject from the data stored in CreateFrag
+                        StoryObject story;
                         try {
-                            // Make a StoryObject from the data stored in CreateFrag
-                            StoryObject story;
-                            try {
-                                story = makeStoryObject();
-                                mKey = story.grabUniqueId();
-                            } catch (Exception e) {
-                                Log.e("UploadFragment", "Failed to " +
-                                        "makeStoryObject():\n"
-                                        + e.getMessage());
-                                return false;
-                            }
-
-                            // Get story cover image
-                            try {
-                                Uri imageFile = Uri.fromFile(new File(mCreateFrag
-                                        .getThumbnailPath()));
-                                Bitmap thumbBitmap = BitmapFactory.decodeFile(imageFile
-                                        .getPath());
-
-                                File myDir = new File(MainNavActivity.THUMB_ROOT_DIR);
-                                myDir.mkdirs();
-                                String fname = mKey + ".png";
-                                File file = new File(myDir, fname);
-                                if (file.exists()) {
-                                    file.delete();
-                                }
-                                FileOutputStream out = new FileOutputStream(file);
-                                thumbBitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
-                                out.flush();
-                                out.close();
-                            } catch (IOException e) {
-                                Log.e("UploadFragment", "Error getting story's " +
-                                        "cover image:\n"
-                                        + e.getMessage());
-                                return false;
-                            }
-
-                            // Get story audio
-                            try {
-                                File from = new File(mCreateFrag
-                                        .getRecordingPath());
-                                File temp = new File(MainNavActivity.STORY_ROOT_DIR);
-                                temp.mkdirs();
-                                String audioFileName = mKey + ".m4a";
-
-                                File to = new File(temp, audioFileName);
-                                if (to.exists()) {
-                                    to.delete();
-                                }
-                                from.renameTo(to);
-                            } catch (Exception e) {
-                                Log.e("UploadFragment", "Error getting story's " +
-                                        "audio:\n"
-                                        + e.getMessage());
-                                return false;
-                            }
-
-                            // If this is a reply, update the parent to mark the reply as
-                            // a child
-                            // This will only update the last found "parent" row in the
-                            // DB if there are duplicates in the cursor
-                            if (mParent != null) {
-                                mDB.updateRecord(mParent);
-                                mStorySingleton.putStory(mParent);
-                            }
-
-                            // Add this story to the list of stories
-                            mDB.createRecord(story);
-                            mStorySingleton.addStory(story);
+                            story = makeStoryObject();
+                            mKey = story.grabUniqueId();
                         } catch (Exception e) {
-                            Log.e("UploadFragment", "Couldn't add story to " +
-                                    "database or singleton\n"
+                            Log.e("UploadFragment", "Failed to " +
+                                    "makeStoryObject():\n"
                                     + e.getMessage());
                             return false;
                         }
+
+                        // Get story cover image
+                        try {
+                            Uri imageFile = Uri.fromFile(new File(mCreateFrag
+                                    .getThumbnailPath()));
+                            Bitmap thumbBitmap = BitmapFactory.decodeFile(imageFile
+                                    .getPath());
+
+                            File myDir = new File(MainNavActivity.THUMB_ROOT_DIR);
+                            myDir.mkdirs();
+                            String fname = mKey + ".png";
+                            File file = new File(myDir, fname);
+                            if (file.exists()) {
+                                file.delete();
+                            }
+                            FileOutputStream out = new FileOutputStream(file);
+                            thumbBitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+                            out.flush();
+                            out.close();
+                        } catch (IOException e) {
+                            Log.e("UploadFragment", "Error getting story's " +
+                                    "cover image:\n"
+                                    + e.getMessage());
+                            return false;
+                        }
+
+                        // Get story audio
+                        try {
+                            File from = new File(mCreateFrag
+                                    .getRecordingPath());
+                            File temp = new File(MainNavActivity.STORY_ROOT_DIR);
+                            temp.mkdirs();
+                            String audioFileName = mKey + ".m4a";
+
+                            File to = new File(temp, audioFileName);
+                            if (to.exists()) {
+                                to.delete();
+                            }
+                            from.renameTo(to);
+                        } catch (Exception e) {
+                            Log.e("UploadFragment", "Error getting story's " +
+                                    "audio:\n"
+                                    + e.getMessage());
+                            return false;
+                        }
+
+                        // If this is a reply, update the parent to mark the reply as
+                        // a child
+                        // This will only update the last found "parent" row in the
+                        // DB if there are duplicates in the cursor
+                        if (mParent != null) {
+                            mDB.updateRecord(mParent);
+                            mStorySingleton.putStory(mParent);
+                        }
+
+                        // Add this story to the list of stories
+                        mDB.createRecord(story);
+                        mStorySingleton.addStory(story);
                         return true;
                     }
 

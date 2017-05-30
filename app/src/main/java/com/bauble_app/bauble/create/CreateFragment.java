@@ -45,9 +45,14 @@ public class CreateFragment extends Fragment {
     private String[] mTags;
     private String mAccess;
     private String mExpiration;
+    private RecordFragment mRecordFrag;
 
     public CreateFragment() {
         // Required empty public constructor
+    }
+
+    public RecordFragment getRecordFrag() {
+        return mRecordFrag;
     }
 
     @Override
@@ -108,11 +113,11 @@ public class CreateFragment extends Fragment {
                 .commit();
 
         // Insert the fragment that handles recording
-        RecordFragment recordFrag =  new RecordFragment();
+        mRecordFrag =  new RecordFragment();
         mChildFragManager.beginTransaction().replace(R.id
-                .create_tools, recordFrag).commit();
+                .create_tools, mRecordFrag).commit();
 
-        mNextButton.setOnClickListener(recordFrag.getNextListener());
+        mNextButton.setOnClickListener(mRecordFrag.getNextListener());
         return v;
     }
 

@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bauble_app.bauble.R;
 import com.coremedia.iso.boxes.Container;
@@ -58,6 +59,7 @@ public class RecordFragment extends Fragment {
     private TextView mLoadingText;
 
     private boolean mSupportsPause;
+    private boolean mIsRecording;
 
     // Requesting permission to RECORD_AUDIO
     private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
@@ -126,19 +128,22 @@ public class RecordFragment extends Fragment {
         View.OnClickListener listener = new View.OnClickListener() {
             @Override
             public void onClick(View btn) {
-                if (!mSupportsPause) {
-                    processFiles();
-                } else {
+                if (recordCount >= 1) {
                     if (recorder != null) {
-                        recorder.stop();
                         recorder.release();
                     }
+                    if (!mSupportsPause) {
+                        processFiles();
+                    }
+                    mIsRecording = false;
+                    mCreateFrag.setRecordingPath(mFilePath + mFileName +
+                            mFileExtension);
+                    Fragment tagFrag = new TagFragment();
+                    getFragmentManager().beginTransaction().replace(R.id
+                            .create_tools, tagFrag).commit();
+                } else {
+                    Toast.makeText(getContext(), "Record something to continue", Toast.LENGTH_SHORT).show();
                 }
-                mCreateFrag.setRecordingPath(mFilePath + mFileName +
-                        mFileExtension);
-                Fragment tagFrag = new TagFragment();
-                getFragmentManager().beginTransaction().replace(R.id
-                        .create_tools, tagFrag).commit();
             }
         };
         return listener;
@@ -174,6 +179,10 @@ public class RecordFragment extends Fragment {
         String permission = permissions[0];
         int res = getContext().checkCallingOrSelfPermission(permission);
         return (res == PackageManager.PERMISSION_GRANTED);
+    }
+
+    public boolean isRecording() {
+        return mIsRecording;
     }
 
     // Button that starts or stops the audio recorder in CreateFragment
@@ -248,10 +257,11 @@ public class RecordFragment extends Fragment {
         } else {
             recorder.resume();
         }
+        mIsRecording = true;
     }
 
     @SuppressLint("NewApi")
-    private void stopRecording() {
+    void stopRecording() {
         if (mSupportsPause) {
             recorder.pause();
         } else {
@@ -259,6 +269,7 @@ public class RecordFragment extends Fragment {
             recordCount++;
             recorder.reset();
         }
+        mIsRecording = false;
     }
 
     // Uses the isoparser-1.1.22 library to concatenate MP4 files
