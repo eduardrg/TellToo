@@ -2,6 +2,7 @@ package com.bauble_app.bauble.create;
 
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
@@ -16,9 +17,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.bauble_app.bauble.R;
 import com.bauble_app.bauble.Utils;
@@ -44,6 +48,7 @@ public class SetMetaFragment extends Fragment {
     private EditText mTitleInput;
     private TextInputLayout mTitleInputLayout;
     private Button mTitleInputDone;
+    private LinearLayout mTitleInputWrapper;
 
     private CreateFragment mCreateFrag;
     private FragmentManager mFragManager;
@@ -54,6 +59,7 @@ public class SetMetaFragment extends Fragment {
     private boolean permissionToWriteExternalAccepted = false;
     private String[] permissions = {Manifest.permission
             .READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+    private TextView mUserSetTitle;
 
     public SetMetaFragment() {
         // Required empty public constructor
@@ -77,6 +83,9 @@ public class SetMetaFragment extends Fragment {
         mTitleInputDone = (Button) v.findViewById(R.id.create_title_input_done);
         mAddTitle = (Button) v.findViewById(R.id.create_add_title);
         mCreateFrag = (CreateFragment) getParentFragment();
+        mTitleInputWrapper = (LinearLayout) v.findViewById(R.id
+                .create_set_title_wrapper);
+        mUserSetTitle = (TextView) v.findViewById(R.id.user_set_title);
 
         Button setCover = (Button) v.findViewById(R.id.create_set_cover_image);
         attachCoverListener(setCover);
@@ -84,10 +93,23 @@ public class SetMetaFragment extends Fragment {
         mTitleInputDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View btn) {
-                mCreateFrag.setTitle(mTitleInput
-                        .getText()
-                        .toString());
-
+                String titleString = mTitleInput.getText().toString();
+                mCreateFrag.setTitle(titleString);
+                mUserSetTitle.setText(titleString);
+                InputMethodManager imm = (InputMethodManager)
+                        getActivity().getSystemService(Context
+                                .INPUT_METHOD_SERVICE);
+                if (mTitleInputLayout.getVisibility() == View.VISIBLE) {
+                    mUserSetTitle.setVisibility(View.VISIBLE);
+                    mTitleInputLayout.setVisibility(View.GONE);
+                    getView().requestFocus();
+                    imm.hideSoftInputFromWindow(mTitleInput.getWindowToken(), 0);
+                } else {
+                    mUserSetTitle.setVisibility(View.GONE);
+                    mTitleInputLayout.setVisibility(View.VISIBLE);
+                    mTitleInput.requestFocus();
+                    imm.showSoftInput(mTitleInput, 0);
+                }
             }
         });
 
@@ -98,9 +120,7 @@ public class SetMetaFragment extends Fragment {
                         .GONE);
 
                 // Show EditText for entering a title
-                mTitleInputLayout.setVisibility(View.VISIBLE);
-                mTitleInputDone.setVisibility
-                        (View.VISIBLE);
+                mTitleInputWrapper.setVisibility(View.VISIBLE);
 
             }
         });
@@ -214,12 +234,12 @@ public class SetMetaFragment extends Fragment {
 
                 // Prepare the RelativeLayout rules for the View directly
                 // below the old "set cover" button
-                TextInputLayout setTitle = (TextInputLayout) getView().findViewById(R.id
-                        .create_title_input_layout);
                 Button addTitle = (Button) getView().findViewById(R.id
                         .create_add_title);
                 RelativeLayout.LayoutParams addTitleParams = (RelativeLayout
                         .LayoutParams) addTitle.getLayoutParams();
+                LinearLayout setTitle = (LinearLayout) getView().findViewById(R.id
+                        .create_set_title_wrapper);
                 RelativeLayout.LayoutParams setTitleParams = (RelativeLayout.LayoutParams) setTitle
                         .getLayoutParams();
 

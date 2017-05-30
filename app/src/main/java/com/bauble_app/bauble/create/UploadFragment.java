@@ -124,6 +124,7 @@ public class UploadFragment extends Fragment {
         mDatabase = FirebaseDatabase.getInstance();
         mCreateFrag = (CreateFragment) getParentFragment();
         mPicker = (HoloCircleSeekBar) v.findViewById(R.id.picker);
+        mParent = mCreateFrag.getReplyParent();
         Button nextBtn = (Button) mCreateFrag.getView().findViewById(R.id
                 .create_next_btn);
         nextBtn.setText("Submit");

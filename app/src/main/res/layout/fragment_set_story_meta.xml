@@ -4,7 +4,9 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.bauble_app.bauble.create.SetMetaFragment">
+    tools:context="com.bauble_app.bauble.create.SetMetaFragment"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
 
     <com.bauble_app.bauble.CustomButton
         android:id="@+id/create_set_cover_image"
@@ -40,35 +42,52 @@
         android:visibility="visible"
         />
 
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/create_set_title_wrapper"
+        android:layout_width="230dp"
         android:layout_height="wrap_content"
-        android:id="@+id/create_title_input_layout"
         android:layout_below="@id/create_set_cover_image"
-        android:layout_marginTop="15dp"
-        android:layout_alignLeft="@id/create_set_cover_image"
+        android:layout_centerHorizontal="true"
+        android:gravity="bottom"
         android:visibility="gone">
 
-        <EditText
-            android:id="@+id/create_title_input"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/edit_text_height"
-            android:ems="10"
-            android:inputType="text"
-            android:background="@drawable/edittext"
-            android:hint="Add a title"/>
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/create_title_input_layout"
+            android:layout_weight="4">
 
-    </android.support.design.widget.TextInputLayout>
+            <EditText
+                android:id="@+id/create_title_input"
+                android:layout_width="154dp"
+                android:layout_height="@dimen/edit_text_height"
+                android:ems="10"
+                android:inputType="text"
+                android:background="@drawable/edittext"
+                android:hint="Add a title"/>
 
-    <com.bauble_app.bauble.CustomButton
-        android:id="@+id/create_title_input_done"
-        android:text="Set"
-        android:layout_height="@dimen/edit_text_height"
-        android:layout_marginTop="15dp"
-        android:background="@drawable/btn_add_title"
-        android:layout_alignBottom="@id/create_title_input_layout"
-        android:layout_alignRight="@id/create_set_cover_image"
-        android:visibility="gone"
-        android:layout_width="wrap_content"/>
+        </android.support.design.widget.TextInputLayout>
 
+        <TextView
+            android:id="@+id/user_set_title"
+            android:layout_width="154dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:visibility="gone"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:paddingBottom="0dp"
+            android:layout_marginBottom="0dp"/>
+
+        <Button
+            android:id="@+id/create_title_input_done"
+            android:text="Set"
+            android:layout_height="35dp"
+            android:background="@color/colorPrimary"
+            android:textColor="@color/colorBrandHighlight"
+            android:textAllCaps="false"
+            android:layout_weight="1"
+            android:layout_gravity="bottom"
+            android:layout_width="76dp"/>
+    </LinearLayout>
 </RelativeLayout>
