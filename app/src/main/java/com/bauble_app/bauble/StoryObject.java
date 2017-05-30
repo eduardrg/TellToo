@@ -186,6 +186,7 @@ public class StoryObject implements Comparable<StoryObject>{
 
     public void addChildStory(String storyRef) {
         this.children.add(storyRef);
+        this.chains++;
     }
 
     public String toString() {
