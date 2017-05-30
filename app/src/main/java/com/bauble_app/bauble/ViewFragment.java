@@ -46,6 +46,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -56,6 +57,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ViewFragment extends Fragment {
 
     private CountDownTimer countDownTimer; // So I can count down
+    private CountDownTimer finalCountDownTimer;
 
     private RelativeLayout waveforms;
     private ProgressBar loading;
@@ -79,6 +81,8 @@ public class ViewFragment extends Fragment {
     private StorageReference audioPathReference;
     private LinearLayout emojiChain;
 
+    private LinearLayout wavebars;
+
     public ViewFragment() {
         // Required empty public constructor
     }
@@ -92,8 +96,85 @@ public class ViewFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_view, container,
+        final View v = inflater.inflate(R.layout.fragment_view, container,
                 false);
+
+        wavebars = (LinearLayout) v.findViewById(R.id.view_waveforms);
+
+        countDownTimer = new CountDownTimer(10 * 1000, 100) { // 10 second timer
+
+            private int[] data = null;
+
+            @Override
+            public void onTick(long millsUntilFinished) { //milliseconds?
+                Random r = new Random();
+                if (data == null) {
+                    data = new int[wavebars.getChildCount()];
+                    for (int i = 0; i < data.length; i++) {
+                        data[i] = r.nextInt(101);
+                    }
+                }
+                // Waveform setting Note: higher values mean lower bar
+                for (int i = 0; i < wavebars.getChildCount() - 1; i++) {
+                    ProgressBar bar = (ProgressBar) wavebars.getChildAt(i);
+                    int newVal = data[i + 1];
+                    if (data[i + 1] > 95) {
+                        newVal = newVal - r.nextInt(5);
+                    } else if (data[i + 1] < 5)  {
+                        newVal = newVal + r.nextInt(5);
+                    }else {
+                        newVal = newVal + (r.nextInt(10) - 5);
+                    }
+                    bar.setProgress(newVal);
+                    data[i] = newVal;
+                }
+                ProgressBar lastBar = (ProgressBar) wavebars.getChildAt(wavebars.getChildCount() - 1);
+                int lastVal = r.nextInt(101);
+                lastBar.setProgress(lastVal);
+                data[wavebars.getChildCount() - 1] = lastVal;
+            }
+
+            @Override
+            public void onFinish() {
+//                Random r = new Random();
+//                // Waveform setting
+//                for (int i = 0; i < wavebars.getChildCount(); i++) {
+//                    ProgressBar bar = (ProgressBar) wavebars.getChildAt(i);
+//                    bar.setProgress(r.nextInt(16) + 85);
+//                }
+
+                Log.e("ViewFragment", "First Countdown Done");
+
+                finalCountDownTimer = new CountDownTimer(2 * 1000, 100) { // 10 second timer
+
+                    @Override
+                    public void onTick(long millsUntilFinished) { //milliseconds?
+                        Random r = new Random();
+                        // Waveform setting Note: higher values mean lower bar
+                        for (int i = 0; i < wavebars.getChildCount() - 1; i++) {
+                            ProgressBar bar = (ProgressBar) wavebars.getChildAt(i);
+                            int newVal = data[i];
+                            if (data[i] < 95) {
+                                newVal = newVal + r.nextInt(15);
+                            }
+                            bar.setProgress(newVal);
+                            data[i] = newVal;
+                        }
+                        ProgressBar lastBar = (ProgressBar) wavebars.getChildAt(wavebars.getChildCount() - 1);
+                        int lastVal = r.nextInt(101);
+                        lastBar.setProgress(lastVal);
+                        data[wavebars.getChildCount() - 1] = lastVal;
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        Log.e("ViewFragment", "Finished Countdown");
+                    }
+                };
+                finalCountDownTimer.start();
+            }
+        };
+        countDownTimer.start();
 
         // Initialize media player
         mPlayer = new MediaPlayer();

@@ -339,6 +339,7 @@ public class RecordFragment extends Fragment {
                     handleLoadingViews(result);
                 }
             };
+            concatTask.execute((Void[]) null);
         }
     }
 
