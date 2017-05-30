@@ -39,6 +39,7 @@ public class ExploreFragment extends Fragment {
         mStorySingleton = StorySingleton.getInstance();
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
