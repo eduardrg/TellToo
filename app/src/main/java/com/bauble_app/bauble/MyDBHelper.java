@@ -77,10 +77,7 @@ public class MyDBHelper extends SQLiteOpenHelper {
         String[] cols = new String[] {STORY_ID, STORY_KEY, STORY_OBJ};
         Cursor mCursor = readableDB.query(true, STORY_TABLE, cols, null, null,
                 null, null, null, null);
-        if (mCursor != null) {
-            mCursor.moveToFirst();
-        }
-        return mCursor; // iterate to get each value.
+        return mCursor;
     }
 
     // Method for updating an existing row, taking a parameter assumed to be
