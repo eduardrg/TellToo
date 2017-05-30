@@ -8,13 +8,15 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.bauble_app.bauble.FontHelper;
+import com.bauble_app.bauble.MainNavActivity;
 import com.bauble_app.bauble.R;
 import com.bauble_app.bauble.StoryObject;
 import com.bauble_app.bauble.StorySingleton;
 import com.bumptech.glide.Glide;
-import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+
+import java.io.File;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -60,18 +62,17 @@ public class ReplyFragment extends Fragment {
             TextView plays = (TextView) v.findViewById(R.id.feed_listitem_plays);
             plays.setText(so.getPlays().toString());
 
-            // Reference to an image file in Firebase Storage
-            String imagePath = so.getAuthor() + so.getTitle().replace(" ", "");
-            StorageReference pathReference = mStorageReference.child("thumbnails/"
-                    + imagePath + ".png");
+            String imageFileName = so.grabUniqueId() + ".png";
+            File imageFile = new File(MainNavActivity.THUMB_ROOT_DIR,
+                    imageFileName);
+
             // ImageView in your Activity
             CircleImageView circleImageView = (CircleImageView) v.findViewById(R.id
                     .feed_listitem_picture);
 
             // Load the image using Glide
             Glide.with(getContext() /* context */)
-                    .using(new FirebaseImageLoader())
-                    .load(pathReference)
+                    .load(imageFile)
                     .into(circleImageView);
 
             // Set font

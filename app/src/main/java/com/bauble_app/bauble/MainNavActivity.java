@@ -3,6 +3,7 @@ package com.bauble_app.bauble;
 import android.app.SearchManager;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
@@ -21,6 +22,13 @@ import com.bauble_app.bauble.create.CreateFragment;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class MainNavActivity extends AppCompatActivity {
+    public static final String THUMB_ROOT_DIR = Environment
+            .getExternalStoragePublicDirectory
+            (Environment.DIRECTORY_PICTURES) + "/saved_images";
+    public static final String STORY_ROOT_DIR = Environment
+            .getExternalStoragePublicDirectory
+                    (Environment.DIRECTORY_MUSIC) + "/saved_stories";
+
     private TextView mTextMessage;
     private FragmentManager mFragManager;
     private FirebaseAuth mAuth;

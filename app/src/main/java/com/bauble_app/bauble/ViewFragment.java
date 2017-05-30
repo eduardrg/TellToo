@@ -3,16 +3,15 @@ package com.bauble_app.bauble;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
-import android.provider.ContactsContract;
-import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -24,8 +23,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -36,35 +33,21 @@ import android.widget.Toast;
 
 import com.bauble_app.bauble.create.CreateFragment;
 import com.bumptech.glide.Glide;
-import com.firebase.ui.storage.images.FirebaseImageLoader;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FileDownloadTask;
-import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import hani.momanii.supernova_emoji_library.Actions.EmojIconActions;
-import hani.momanii.supernova_emoji_library.Helper.EmojiconEditText;
-
-import static com.facebook.FacebookSdk.getCacheDir;
 
 
 /**
@@ -72,7 +55,6 @@ import static com.facebook.FacebookSdk.getCacheDir;
  */
 public class ViewFragment extends Fragment {
 
-    private DatabaseReference mDatabase; // Do I have to have this field any time
     private CountDownTimer countDownTimer; // So I can count down
 
     private RelativeLayout waveforms;
@@ -83,11 +65,13 @@ public class ViewFragment extends Fragment {
     private FragmentManager mFragManager;
     private MediaPlayer mPlayer;
     private StorySingleton mStorySingleton;
+    private StoryObject mStory;
 
     private de.hdodenhof.circleimageview.CircleImageView storyImage;
     private de.hdodenhof.circleimageview.CircleImageView leftStoryImage;
     private de.hdodenhof.circleimageview.CircleImageView rightStoryImage;
 
+    private MyDBHelper mDB;
     private TextView leftStoryLabel;
     private TextView rightStoryLabel;
 
@@ -99,6 +83,11 @@ public class ViewFragment extends Fragment {
         // Required empty public constructor
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mDB = new MyDBHelper(getContext());
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -130,10 +119,10 @@ public class ViewFragment extends Fragment {
         waveforms.setVisibility(View.GONE);
         loading = (ProgressBar) v.findViewById(R.id.view_loading);
 
-        // set frag manager and final story object
+        // set frag manager and final mStory object
         mFragManager = getActivity().getSupportFragmentManager();
         mStorySingleton = StorySingleton.getInstance();
-        final StoryObject story = mStorySingleton.getViewStory();
+        mStory = mStorySingleton.getViewStory();
 
         // set up reply button
         mReplyButton = (ImageButton) v.findViewById(R.id.view_reply_btn);
@@ -168,7 +157,7 @@ public class ViewFragment extends Fragment {
         waveforms.setVisibility(View.GONE);
         loading = (ProgressBar) v.findViewById(R.id.view_loading);
 
-        // Circle Image Views
+        // Story thumbnail CircleImageViews
         storyImage = (CircleImageView) v.findViewById(R.id.view_thumbnail);
         leftStoryImage = (CircleImageView) v.findViewById(R.id.view_thumbnail_left);
         rightStoryImage = (CircleImageView) v.findViewById(R.id.view_thumbnail_right);
@@ -180,9 +169,9 @@ public class ViewFragment extends Fragment {
         // Get Neighbor Lists
         final List<String> leftSibs;
         final List<String> rightSibs;
-        if (story != null) {
-            leftSibs = getLeftNeighbors(story.getParentString(), story.grabUniqueId());
-            rightSibs = getRightNeighbors(story.getParentString(), story.grabUniqueId());
+        if (mStory != null) {
+            leftSibs = getLeftNeighbors(mStory.getParentString(), mStory.grabUniqueId());
+            rightSibs = getRightNeighbors(mStory.getParentString(), mStory.grabUniqueId());
         } else {
             leftSibs = null;
             rightSibs = null;
@@ -190,25 +179,19 @@ public class ViewFragment extends Fragment {
 
         // update database
         int storyNumber = StorySingleton.getInstance().getViewStoryIndex();
-        Long storyPlays = story.getPlays() + 1;
-        story.setPlays(storyPlays);
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase.child("stories").child(story.grabUniqueId()).child("plays").setValue(storyPlays);
+        Long storyPlays = mStory.getPlays() + 1;
+        mStory.setPlays(storyPlays);
+
+        mDB.incrementPlays(mStory.grabUniqueId());
 
         // get and set images & audio
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        // Reference to an image file in Firebase Storage
-        final StorageReference storageReference = storage.getReferenceFromUrl("gs://bauble-90a48.appspot.com");
-        String imagePath = story.grabUniqueId();
-        final StorageReference pathReference = storageReference.child("thumbnails/" + imagePath + ".png");
-        // TODO: also uniform file type For Tech Demo
-        audioPathReference = storageReference.child
-                ("teststories/" + imagePath + ".m4a");
+        String imageFileName = mStory.grabUniqueId() + ".png";
+        File imageFile = new File(MainNavActivity.THUMB_ROOT_DIR,
+                imageFileName);
 
         // Load the image using Glide
         Glide.with(getContext() /* context */)
-                .using(new FirebaseImageLoader())
-                .load(pathReference)
+                .load(imageFile)
                 .into(storyImage);
 
         // set sib pictures if not null and set sibling counters
@@ -223,11 +206,14 @@ public class ViewFragment extends Fragment {
                     @Override
                     public void run() {
                         //Do something after 100ms
-                        StorageReference leftPathReference = storageReference.child("thumbnails/" +
-                                leftSibs.get(index) + ".png");
-                        Glide.with(getContext() /* context */)
-                                .using(new FirebaseImageLoader())
-                                .load(leftPathReference)
+                        String leftImageFileName = leftSibs.get(index) + ".png";
+                        File leftImageFile = new File(MainNavActivity
+                                .THUMB_ROOT_DIR,
+                                leftImageFileName);
+
+                        // Load the image using Glide
+                            Glide.with(getContext())
+                                .load(leftImageFile)
                                 .into(leftStoryImage);
                     }
                 }, (i + 1) * 333); //i * 1/3 second
@@ -239,6 +225,7 @@ public class ViewFragment extends Fragment {
 //                    .using(new FirebaseImageLoader())
 //                    .load(leftPathReference)
 //                    .into(leftStoryImage);
+
         } else {
             leftStoryLabel.setText("0");
             leftStoryLabel.setTextColor(Color.LTGRAY);
@@ -256,11 +243,12 @@ public class ViewFragment extends Fragment {
                     @Override
                     public void run() {
                         //Do something after 100ms
-                        StorageReference rightPathReference = storageReference.child("thumbnails/" +
-                                rightSibs.get(rightSibs.size() - 1 - index) + ".png");
+                        String rightImageFileName = rightSibs.get(rightSibs
+                                .size() - 1 - index) + ".png";
+                        File rightImageFile = new File(MainNavActivity
+                                .THUMB_ROOT_DIR, rightImageFileName);
                         Glide.with(getContext() /* context */)
-                                .using(new FirebaseImageLoader())
-                                .load(rightPathReference)
+                                .load(rightImageFile)
                                 .into(rightStoryImage);
                     }
                 }, (i + 1) * 333); //i * 1/3 second
@@ -278,16 +266,16 @@ public class ViewFragment extends Fragment {
         }
 
         TextView title = (TextView) v.findViewById(R.id.view_title);
-        title.setText(story.getTitle());
+        title.setText(mStory.getTitle());
         TextView author = (TextView) v.findViewById(R.id.view_author);
-        author.setText("by " + story.getAuthor());
+        author.setText("by " + mStory.getAuthor());
         final TextView time = (TextView) v.findViewById(R.id.view_length);
-        time.setText("00:" + story.getDuration());
+        time.setText("00:" + mStory.getDuration());
         TextView chains = (TextView) v.findViewById(R.id.view_chains);
-        chains.setText(story.getChains().toString());
+        chains.setText(mStory.getChains().toString());
         final TextView expire = (TextView) v.findViewById(R.id.view_expire);
-        expire.setText(story.getExpireDate());
-        final String expireDate = story.getExpireDate();
+        expire.setText(mStory.getExpireDate());
+        final String expireDate = mStory.getExpireDate();
 
         // Experimental countdown timer
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
@@ -358,13 +346,13 @@ public class ViewFragment extends Fragment {
 //        });
 
         TextView plays = (TextView) v.findViewById(R.id.view_plays);
-        plays.setText(story.getPlays().toString());
+        plays.setText(mStory.getPlays().toString());
 
         LinearLayout childrenContainer = (LinearLayout) v.findViewById(R.id.view_container_childern);
-        if (story.getChildren().size() > 0) {
+        if (mStory.getChildren().size() > 0) {
             TextView emptyLabel = (TextView) v.findViewById(R.id.view_container_empty);
             emptyLabel.setVisibility(View.GONE);
-            for (String childName: story.getChildren()) {
+            for (String childName: mStory.getChildren()) {
                 Log.e("ViewFragment", "Child Name:" + childName);
                 final String uniqueIdentifyer = childName;
 
@@ -384,7 +372,7 @@ public class ViewFragment extends Fragment {
                         FragmentTransaction ft = mFragManager.beginTransaction();
                         ft.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_top)
                             .replace(R.id.content, new ViewFragment())
-                            // TODO: even though add to back stack, need to find way to load correct story when back pressed
+                            // TODO: even though add to back stack, need to find way to load correct mStory when back pressed
                             .addToBackStack("tag")
                             .commit();
 //                        fragManager.beginTransaction()
@@ -393,31 +381,41 @@ public class ViewFragment extends Fragment {
                     }
                 });
                 childrenContainer.addView(child);
-                StorageReference childPath = storageReference.child("thumbnails/" + uniqueIdentifyer + ".png");
-                Log.e("ViewFragment", "thumbnails/" + uniqueIdentifyer + ".png");
+
+                imageFileName = childName + ".png";
+
+                imageFile = new File(MainNavActivity.THUMB_ROOT_DIR,
+                        imageFileName);
+
                 // Load the image using Glide
-                Glide.with(getContext() /* context */)
-                        .using(new FirebaseImageLoader())
-                        .load(childPath)
-                        .into(child);
+                Glide.with(getContext()).load(imageFile).into(child);
+
             }
         }
 
-        // Initializes MediaPlayer
-//        mPlayer = MediaPlayer.create(getContext(), R.raw.law_of_the_jungle);
-//        if (mPlayer.isPlaying()) {
-//            mPlayer.stop();
-//            mPlayer.reset();
-//        }
-
         // Load and play audio
         // TODO: Insure the phone has space to store TEN_MEGABYTE otherwise crash
-        final long TEN_MEGABYTE = 1024 * 1024 * 20; // changed to 20 mb
-        audioLoading = new OnSuccessListener<byte[]>() {
+        // Begin loading the audio, and remove the loading bar when it has
+        // been loaded
+        AsyncTask<Void, Void, String> playAudio = new AsyncTask<Void,Void,String>
+                () {
+            //Before the background task
             @Override
-            public void onSuccess(byte[] bytes) {
+            protected void onPreExecute() {
+                mPlayer.reset();
+            }
+
+            // The background task
+            @Override
+            protected String doInBackground(Void... arg0) {
+                //Do something...
+                //Thread.sleep(5000);
+                final long TEN_MEGABYTE = 1024 * 1024 * 20; // changed to 20 mb
+                String parsedDuration = null;
+                File tempM4a = null;
                 try {
-                    Log.e("ViewFragement", "" + bytes.length + " " + bytes.length / 8);
+                    // Log.e("ViewFragement", "" + bytes.length + " " + bytes.length /
+                    // 8);
                     //Log.e("ViewFragement", Arrays.toString(bytes));
 
 
@@ -425,17 +423,11 @@ public class ViewFragment extends Fragment {
                     // create temp file that will hold byte array
                     // File tempMp3 = File.createTempFile("tempStory", "mp3", getCacheDir());
                     // TODO: make the files all mp4 or all mp3, For Tech Demo
-                    File tempM4a = File.createTempFile("tempStory", "m4a",
-                            getCacheDir());
 
-                    tempM4a.deleteOnExit();
-                    FileOutputStream fos = new FileOutputStream(tempM4a);
-                    fos.write(bytes);
-                    fos.close();
-
-
+                    tempM4a = new File(MainNavActivity.STORY_ROOT_DIR,
+                            mStory.grabUniqueId() + ".m4a");
                     // resetting mediaplayer instance to evade problems
-                    // mPlayer.reset();
+                    //
 
                     // In case you run into issues with threading consider new instance like:
                     // MediaPlayer mediaPlayer = new MediaPlayer();
@@ -450,9 +442,9 @@ public class ViewFragment extends Fragment {
                         mPlayer.prepare();
                         mPlayer.start();
                         int duration = mPlayer.getDuration();
-                        String parsedDuration = "";
+                        parsedDuration = "";
                         if (duration / 60 / 60 / 1000 > 0) {
-                            parsedDuration = parsedDuration + (duration / 1000 / 60 / 60)  + ":";
+                            parsedDuration = parsedDuration + (duration / 1000 / 60 / 60) + ":";
                             duration = duration % (60 * 60 * 1000);
                             if (duration / (60 * 1000) < 10) {
                                 parsedDuration = parsedDuration + "0";
@@ -469,24 +461,29 @@ public class ViewFragment extends Fragment {
                             parsedDuration = parsedDuration + (duration / 1000);
                         }
                         //+ (duration / 1000 / 60 % 60) + ":" + (duration / 1000 % 60) + ":" + (duration % 1000);
-                        time.setText(parsedDuration);
+                        //
                     }
 
-                    waveforms.setVisibility(View.VISIBLE);
-                    loading.setVisibility(View.GONE);
-
                 } catch (IOException ex) {
-                    System.out.println(ex.toString());
-                    System.out.println("Could not find file ");
+                    Log.e("AudioFileError", "Could not open file " +
+                            tempM4a.getPath() + " for playback.", ex);
                 }
+
+                return parsedDuration;
             }
-        };
-        audioPathReference.getBytes(TEN_MEGABYTE).addOnSuccessListener(audioLoading).addOnFailureListener(new OnFailureListener() {
+
+            // The UI thread; update the UI after task is done
             @Override
-            public void onFailure(@NonNull Exception exception) {
-                // Handle any errors
+            protected void onPostExecute(String result) {
+                // Set parsed duration
+                time.setText(result);
+                //dissmiss progress dialog
+                waveforms.setVisibility(View.VISIBLE);
+                loading.setVisibility(View.GONE);
             }
-        });
+
+        };
+        playAudio.execute((Void[])null);
 
         // Save Button Click Functionality
         ImageButton save = (ImageButton) v.findViewById(R.id.view_btn_save);
@@ -494,7 +491,7 @@ public class ViewFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 String key = StorySingleton.getInstance().getViewKey();
-                // StorySingleton.getInstance().getOwnedStoriesMap().put(key, story);
+                // StorySingleton.getInstance().getOwnedStoriesMap().put(key, mStory);
                 StorySingleton.getInstance().getOwnedKeys().add(0, key);
 
                 LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -505,7 +502,7 @@ public class ViewFragment extends Fragment {
                 Drawable drawable = storyImage.getDrawable();
                 image.setImageDrawable(drawable);
                 TextView text = (TextView) layout.findViewById(R.id.toast_save_text);
-                text.setText(story.getTitle() + " added to your collection");
+                text.setText(mStory.getTitle() + " added to your collection");
 
                 Toast toast = new Toast(getContext().getApplicationContext());
                 //toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
@@ -528,9 +525,9 @@ public class ViewFragment extends Fragment {
             }
             public void onSwipeRight() { // get child before, the one that is on the left
                 Toast.makeText(getActivity(), "right", Toast.LENGTH_SHORT).show();
-                if (story.getParentString() != null) {
-                    String parentIdentifier = story.getParentString();
-                    String uniqueIdentifier = story.grabUniqueId();
+                if (mStory.getParentString() != null) {
+                    String parentIdentifier = mStory.getParentString();
+                    String uniqueIdentifier = mStory.grabUniqueId();
                     List<String> childList = StorySingleton.getInstance().getStory(parentIdentifier).getChildren();
                     int newStoryIndex = -1;
                     for (int i = 0; i < childList.size(); i++) {
@@ -544,7 +541,7 @@ public class ViewFragment extends Fragment {
                         FragmentTransaction ft = mFragManager.beginTransaction();
                         ft.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right)
                                 .replace(R.id.content, new ViewFragment())
-                                // TODO: even though add to back stack, need to find way to load correct story when back pressed
+                                // TODO: even though add to back stack, need to find way to load correct mStory when back pressed
                                 .addToBackStack("tag")
                                 .commit();
                     }
@@ -554,9 +551,9 @@ public class ViewFragment extends Fragment {
             }
             public void onSwipeLeft() {
                 Toast.makeText(getActivity(), "left", Toast.LENGTH_SHORT).show();
-                if (story.getParentString() != null) {
-                    String parentIdentifier = story.getParentString();
-                    String uniqueIdentifier = story.grabUniqueId();
+                if (mStory.getParentString() != null) {
+                    String parentIdentifier = mStory.getParentString();
+                    String uniqueIdentifier = mStory.grabUniqueId();
                     List<String> childList = StorySingleton.getInstance().getStory(parentIdentifier).getChildren();
                     int newStoryIndex = -1;
                     for (int i = 0; i < childList.size(); i++) {
@@ -570,7 +567,7 @@ public class ViewFragment extends Fragment {
                         FragmentTransaction ft = mFragManager.beginTransaction();
                         ft.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left)
                                 .replace(R.id.content, new ViewFragment())
-                                // TODO: even though add to back stack, need to find way to load correct story when back pressed
+                                // TODO: even though add to back stack, need to find way to load correct mStory when back pressed
                                 .addToBackStack("tag")
                                 .commit();
                     }
@@ -580,13 +577,13 @@ public class ViewFragment extends Fragment {
             }
             public void onSwipeBottom() {
                 Toast.makeText(getActivity(), "bottom", Toast.LENGTH_SHORT).show();
-                if (story.getParentString() != null) {
-                    String uniqueIdentifier = story.getParentString(); // could be null
+                if (mStory.getParentString() != null) {
+                    String uniqueIdentifier = mStory.getParentString(); // could be null
                     StorySingleton.getInstance().setViewKey(uniqueIdentifier);
                     FragmentTransaction ft = mFragManager.beginTransaction();
                     ft.setCustomAnimations(R.anim.enter_from_top, R.anim.exit_to_bottom)
                             .replace(R.id.content, new ViewFragment())
-                            // TODO: even though add to back stack, need to find way to load correct story when back pressed
+                            // TODO: even though add to back stack, need to find way to load correct mStory when back pressed
                             .addToBackStack("tag")
                             .commit();
                 }
@@ -620,11 +617,12 @@ public class ViewFragment extends Fragment {
         return diffSeconds;
     }
 
-    // takes in a parent key and the key of the current story and returns a list of it's right
+    // takes in a parent key and the key of the current mStory and returns a list of it's right
     // siblings
     // returns null if the parent key is null or there are not siblings to the right
     private List<String> getRightNeighbors(String parentKey, String currentKey) {
         if (parentKey != null) {
+            System.out.println("parentkey is not null");
             List<String> childList = StorySingleton.getInstance().getStory(parentKey).getChildren();
             int newStoryIndex = -1;
             for (int i = 0; i < childList.size(); i++) {
@@ -635,11 +633,13 @@ public class ViewFragment extends Fragment {
             if (newStoryIndex >= 0 && newStoryIndex < childList.size()) {
                 return childList.subList(newStoryIndex + 1, childList.size());
             }
+        } else {
+            System.out.println("parentkey is null");
         }
         return null;
     }
 
-    // takes in a parent key and the key of the current story and returns a list of it's right
+    // takes in a parent key and the key of the current mStory and returns a list of it's right
     // siblings
     // returns null if the parent key is null or there are not siblings to the right
     private List<String> getLeftNeighbors(String parentKey, String currentKey) {
@@ -669,10 +669,12 @@ public class ViewFragment extends Fragment {
     // Stops Media Player
     private void stopMediaPlayer() {
         // TODO: Find out if this block of code does anything
+        /*
         List<FileDownloadTask> tasks = audioPathReference.getActiveDownloadTasks();
         for (FileDownloadTask task : tasks) {
             task.removeOnSuccessListener(audioLoading);
         }
+        */
         if (mPlayer != null) {
             mPlayer.stop();
             mPlayer.release();

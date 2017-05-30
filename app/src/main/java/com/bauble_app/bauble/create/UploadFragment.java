@@ -1,50 +1,37 @@
 package com.bauble_app.bauble.create;
 
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.RelativeLayout;
-import android.widget.Toast;
 
+import com.bauble_app.bauble.MainNavActivity;
+import com.bauble_app.bauble.MyDBHelper;
 import com.bauble_app.bauble.R;
 import com.bauble_app.bauble.StoryObject;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
+import com.bauble_app.bauble.StorySingleton;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.jesusm.holocircleseekbar.lib.HoloCircleSeekBar;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Locale;
-import java.util.Map;
 
 
 /**
@@ -62,17 +49,28 @@ public class UploadFragment extends Fragment {
     private FirebaseDatabase mDatabase;
     private DateFormat mDateFormat;
     private Calendar mCalendar;
+    private MyDBHelper mDB;
+    private Gson mGson;
+
+    private StorySingleton mStorySingleton;
+    private StoryObject mParent;
 
     // Create a StoryObject for upload to Firebase Database
     // The cover and audio params are the paths of the cover image and audio
     // file in Firebase Storage, respectively. These are only available after
     // we upload, so they are not stored in the CreateFragment parent.
     private StoryObject makeStoryObject() {
+        Gson gsonDebug = new GsonBuilder().setPrettyPrinting().create();
+
         StoryObject so = new StoryObject(mRecordingStoragePath, mCreateFrag
                         .getAuthor()
                 , mThumbnailStoragePath,
                 mCreateFrag.getTitle());
-        so.setParent(mCreateFrag.getReplyParent());
+        so.setUniqueId("" + so.hashCode());
+        if (mParent != null) {
+            so.setParent(mParent);
+            so.setParentString(mParent.grabUniqueId());
+        }
         so.setTags(mCreateFrag.getmTags());
         so.setAccess(mCreateFrag.getmAccess());
         so.setExpiration(mCreateFrag.getmExpiration());
@@ -88,6 +86,16 @@ public class UploadFragment extends Fragment {
         }
 
         so.setExpiration(expiration);
+
+        if (mParent != null) {
+            mParent.addChildStory(so.grabUniqueId());
+            String replyDebug = gsonDebug.toJson(mParent, StoryObject.class);
+            System.out.println(replyDebug);
+        }
+
+        String soDebug = gsonDebug.toJson(so, StoryObject.class);
+        System.out.println(soDebug);
+
         return so;
     }
 
@@ -102,6 +110,9 @@ public class UploadFragment extends Fragment {
         mDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
                 Locale.US);
         mCalendar = Calendar.getInstance();
+        mDB = new MyDBHelper(getContext());
+        mGson = new Gson();
+        mStorySingleton = StorySingleton.getInstance();
     }
 
     @Override
@@ -119,26 +130,30 @@ public class UploadFragment extends Fragment {
         nextBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View btn) {
                 // Upload the audio file and thumbnail files to FirebaseStorage
-                    Uri audioFile = Uri.fromFile(new File(mCreateFrag
-                            .getRecordingPath()));
                     Uri imageFile = Uri.fromFile(new File(mCreateFrag
                         .getThumbnailPath()));
 
                     Bitmap thumbBitmap = BitmapFactory.decodeFile(imageFile
                             .getPath());
 
-                // Save the other story data to FirebaseDatabase
+                // Make a StoryObject from the data stored in CreateFrag
                 StoryObject story = makeStoryObject();
-                DatabaseReference dbStoriesRef = mDatabase.getReference().child
-                        ("stories");
-                String key = dbStoriesRef.push().getKey();
-                dbStoriesRef.child(key).setValue(story);
-                StoryObject parent = story.getParent();
-                // Add this story as a child of its parent in Firebase Database
-                if (parent != null) {
-                    dbStoriesRef.child(parent.grabUniqueId()).child("children")
-                            .child(key).setValue(true);
+                String key = story.grabUniqueId();
+
+                // If this is a reply, update the parent to mark the reply as
+                // a child
+                // This will only update the last found "parent" row in the
+                // DB if there are duplicates in the cursor!
+
+                if (mParent != null) {
+                    mDB.updateRecord(mParent);
+                    mStorySingleton.putStory(mParent);
                 }
+
+                // Add this story to the list of stories
+                mDB.createRecord(story);
+                mStorySingleton.addStory(story);
+/*
 
                 // Add any new tags that this story possesses to the master
                 // list of tags
@@ -172,70 +187,39 @@ public class UploadFragment extends Fragment {
                         });
                     }
                 }
+*/
 
-                StorageReference testStoriesRef = mStorage.child
-                        ("teststories/" + key +
-                                ".m4a");
-                StorageReference thumbnailsRef = mStorage.child
-                        ("thumbnails/" + key + ".jpg");
-                
-                FileOutputStream out = null;
+                File myDir = new File(MainNavActivity.THUMB_ROOT_DIR);
+                myDir.mkdirs();
+                String fname = key + ".png";
+                File file = new File(myDir, fname);
+                if (file.exists())
+                    file.delete();
                 try {
-                    File file = new File(getActivity()
-                            .getExternalCacheDir().getAbsolutePath() +
-                            "/thumbPng.png");
-                    out = new FileOutputStream(file);
+                    FileOutputStream out = new FileOutputStream(file);
                     thumbBitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+                    out.flush();
                     out.close();
-                    imageFile = Uri.fromFile(file);
-                    thumbnailsRef = mStorage.child
-                            ("thumbnails/" + key +
-                                    ".png");
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
+                }
+                catch (Exception e) {
                     e.printStackTrace();
                 }
 
+                File from = new File(mCreateFrag
+                        .getRecordingPath());
+                File temp = new File(MainNavActivity.STORY_ROOT_DIR);
+                temp.mkdirs();
+                String audioFileName = key + ".m4a";
 
-                    testStoriesRef.putFile(audioFile)
-                            .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                @Override
-                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                    String path = taskSnapshot.getStorage().toString();
-                                    Toast.makeText(getContext(), path,
-                                            Toast.LENGTH_LONG).show();
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception exception) {
-                                    Toast.makeText(getContext(), "audio " +
-                                            "upload failed", Toast
-                                            .LENGTH_LONG).show();
-                                }
-                            });
-
-                    thumbnailsRef.putFile(imageFile).addOnSuccessListener(new
-                            OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                @Override
-                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                    String path = taskSnapshot.getStorage()
-                                            .toString();
-                                    Toast.makeText(getContext(), path, Toast
-                                            .LENGTH_LONG).show();
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                            Toast.makeText(getContext(), "image upload failed",
-                                    Toast
-                                    .LENGTH_LONG).show();
-                        }
-                    });
-
-
-
+                File to = new File(temp, audioFileName);
+                if (to.exists())
+                    to.delete();
+                try {
+                    from.renameTo(to);
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
 
