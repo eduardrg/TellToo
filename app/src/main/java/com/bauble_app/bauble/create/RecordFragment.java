@@ -1,10 +1,12 @@
 package com.bauble_app.bauble.create;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,7 +17,10 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.bauble_app.bauble.R;
 import com.coremedia.iso.boxes.Container;
@@ -47,6 +52,10 @@ public class RecordFragment extends Fragment {
     private MediaRecorder recorder;
     private int recordCount;
 
+    private ProgressBar mLoading;
+    private ImageView mFailure;
+    private TextView mLoadingText;
+
     private boolean mSupportsPause;
 
     // Requesting permission to RECORD_AUDIO
@@ -55,6 +64,7 @@ public class RecordFragment extends Fragment {
     private CreateFragment mCreateFrag;
     private MediaPlayer mPlayer;
     private PlayButton mPlayButton;
+    private RelativeLayout mLoadingWrapper;
 
 
     // Handles the event of the user allowing/denying permission to record.
@@ -96,10 +106,17 @@ public class RecordFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_create_tools, container,
+        View v = inflater.inflate(R.layout.fragment_record, container,
                 false);
         mCreateFrag = (CreateFragment) getParentFragment();
         // Append the record buttons to the layout
+        mLoading = (ProgressBar) v.findViewById(R.id.record_loading);
+        mLoadingText = (TextView) v.findViewById(R.id.record_loading_label);
+        mFailure = (ImageView) v.findViewById(R.id.record_processing_failed);
+        mLoadingWrapper = (RelativeLayout) v.findViewById(R.id
+                .record_progress_wrapper);
+        hideLoading();
+        hideFailure();
         appendButtons(v);
         return v;
     }
@@ -121,11 +138,6 @@ public class RecordFragment extends Fragment {
                 Fragment tagFrag = new TagFragment();
                 getFragmentManager().beginTransaction().replace(R.id
                         .create_tools, tagFrag).commit();
-                /*
-                Fragment editFrag = new UploadFragment();
-                getFragmentManager().beginTransaction().replace(R.id
-                        .create_tools, editFrag).commit();
-                        */
             }
         };
         return listener;
@@ -227,6 +239,7 @@ public class RecordFragment extends Fragment {
         }
     }
 
+    @SuppressLint("NewApi")
     private void startRecording() {
         initializeRecorder();
         if (recordCount == 0 || !mSupportsPause) {
@@ -236,6 +249,7 @@ public class RecordFragment extends Fragment {
         }
     }
 
+    @SuppressLint("NewApi")
     private void stopRecording() {
         if (mSupportsPause) {
             recorder.pause();
@@ -246,57 +260,124 @@ public class RecordFragment extends Fragment {
         }
     }
 
-
-
     // Uses the isoparser-1.1.22 library to concatenate MP4 files
-    //
+
+    // TODO: Allow user to dismiss failure dialog
     private void processFiles() {
-        List<Movie> inMovies = new ArrayList<Movie>();
+        // File concatenation is necessary if MediaRecorder.pause() is not
+        // supported
+        if (!mSupportsPause) {
+            AsyncTask<Void, Void, Boolean> concatTask = new AsyncTask<Void, Void, Boolean>() {
+                private final String DEBUG_TAG = "Create_processFiles";
 
-        for (int i = 0; i < recordCount; i++) {
-            String videoUri = mFilePath + mFileName + "(" + i + ")" +
-                    mFileExtension;
-            try {
-                inMovies.add(MovieCreator.build(videoUri));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+                //Before the background task
+                @Override
+                protected void onPreExecute() {
+                    showLoading();
+                }
+
+                // The background task
+                @Override
+                protected Boolean doInBackground(Void... arg0) {
+                    List<Movie> inMovies = new ArrayList<Movie>();
+                    for (int i = 0; i < recordCount; i++) {
+                        String videoUri = mFilePath + mFileName + "(" + i + ")" +
+                                mFileExtension;
+                        try {
+                            inMovies.add(MovieCreator.build(videoUri));
+                        } catch (IOException e) {
+                            Log.e(DEBUG_TAG, "Adding movie failed: " + e.getMessage
+                                    ());
+                            return false;
+                        }
+                    }
+
+                    List<Track> audioTracks = new LinkedList<Track>();
+
+                    for (Movie m : inMovies) {
+                        for (Track t : m.getTracks()) {
+                            audioTracks.add(t);
+                        }
+                    }
+
+                    Movie result = new Movie();
+
+                    if (!audioTracks.isEmpty()) {
+                        try {
+                            result.addTrack(new AppendTrack(audioTracks.toArray(new Track[audioTracks.size()])));
+                        } catch (IOException e) {
+                            Log.e(DEBUG_TAG, "addTrack failed: " + e.getMessage());
+                            return false;
+                        }
+                    }
+
+                    Container out = new DefaultMp4Builder().build(result);
+
+                    FileChannel fc = null;
+                    try {
+                        fc = new RandomAccessFile(String.format(mFilePath + mFileName + mFileExtension),
+                                "rw")
+                                .getChannel();
+                        out.writeContainer(fc);
+                        fc.close();
+                    } catch (FileNotFoundException e) {
+                        Log.e(DEBUG_TAG, "Instantiating RandomAccessFile failed: "
+                                + e.getMessage());
+                        return false;
+                    } catch (IOException e) {
+                        Log.e(DEBUG_TAG, "Writing to RandomAccessFile failed: "
+                                + e.getMessage());
+                        return false;
+                    }
+
+                    return true;
+                }
+
+                // The UI thread; update the UI after task is done
+                @Override
+                protected void onPostExecute(Boolean result) {
+                    handleLoadingViews(result);
+                }
+            };
         }
+    }
 
-        List<Track> audioTracks = new LinkedList<Track>();
-
-        for (Movie m : inMovies) {
-            for (Track t : m.getTracks()) {
-                audioTracks.add(t);
-            }
+    private void handleLoadingViews(boolean success) {
+        // Hide progress bar
+        mLoadingWrapper.setVisibility(View.INVISIBLE);
+        hideLoading();
+        if (!success) {
+            showFailure();
         }
+    }
 
-        Movie result = new Movie();
+    private void showLoading() {
+        mLoadingWrapper.setVisibility(View.VISIBLE);
+        // Show the processing progress bar
+        mLoading.setVisibility(View.VISIBLE);
+        // Notify the user via the loading label
+        mLoadingText.setText("processing...");
+        mLoadingText.setVisibility(View.VISIBLE);
+    }
 
-        if (!audioTracks.isEmpty()) {
-            try {
-                result.addTrack(new AppendTrack(audioTracks.toArray(new Track[audioTracks.size()])));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+    private void hideLoading() {
+        mLoadingWrapper.setVisibility(View.INVISIBLE);
+        mLoading.setVisibility(View.INVISIBLE);
+        mLoadingText.setVisibility(View.INVISIBLE);
+    }
 
-        Container out = new DefaultMp4Builder().build(result);
+    private void showFailure() {
+        mLoadingWrapper.setVisibility(View.VISIBLE);
+        // Show the failure icon
+        mFailure.setVisibility(View.VISIBLE);
+        // Notify the user via the loading label
+        mLoadingText.setText("Sorry! We couldn't process your recording.");
+        mLoadingText.setVisibility(View.VISIBLE);
+    }
 
-        FileChannel fc = null;
-        try {
-            fc = new RandomAccessFile(String.format(mFilePath + mFileName + mFileExtension),
-                    "rw")
-                    .getChannel();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        try {
-            out.writeContainer(fc);
-            fc.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    private void hideFailure() {
+        mFailure.setVisibility(View.INVISIBLE);
+        mLoadingText.setVisibility(View.INVISIBLE);
     }
 
     private void onRecord(boolean start) {

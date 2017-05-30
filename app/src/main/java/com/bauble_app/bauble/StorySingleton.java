@@ -12,6 +12,7 @@ public class StorySingleton {
     private List<String> userOwnedKeys;
     private List<String> mKeys;
     private String viewKey;
+    private String graphKey;
     private String userName;
 
     public static StorySingleton getInstance() {
@@ -24,6 +25,7 @@ public class StorySingleton {
         userOwnedKeys = new  ArrayList<String>();
         mKeys = new ArrayList<String>();
         viewKey = "";
+        graphKey = "";
     }
 
     public void addOwnedStory(String key, StoryObject story) {
@@ -115,5 +117,17 @@ public class StorySingleton {
 
     public List<String> getKeys() {
         return this.mKeys;
+    }
+
+    public String getGraphKey() {
+        return graphKey;
+    }
+
+    public void setGraphKey(String graphKey) {
+        this.graphKey = graphKey;
+    }
+
+    public boolean isEmpty() {
+        return this.storyMap.isEmpty();
     }
 }

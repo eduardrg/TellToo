@@ -17,8 +17,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import com.bauble_app.bauble.auth.AuthChoiceFragment;
 import com.bauble_app.bauble.create.CreateFragment;
+import com.bauble_app.bauble.explore.ExploreFragment;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class MainNavActivity extends AppCompatActivity {
@@ -50,24 +50,29 @@ public class MainNavActivity extends AppCompatActivity {
                     return true;
                 case R.id.navigation_create:
                     Fragment frag;
+                    /*
                     if (mAuth.getCurrentUser() == null) {
                         // User is unauthenticated; show signup screen
                         frag = new AuthChoiceFragment();
                     } else {
                         frag = new CreateFragment();
                     }
+                    */
+                    frag = new CreateFragment();
                     mFragManager.beginTransaction()
                             .replace(R.id.content, frag).commit();
                     return true;
-
                 case R.id.navigation_me:
                     Fragment meFrag;
+                    /*
                     // Decide whether to show signup or profile screen
                     if (mAuth.getCurrentUser() == null) {
                         meFrag = new AuthChoiceFragment();
                     } else {
                         meFrag = new ProfileFragment();
                     }
+                    */
+                    meFrag = new ProfileFragment();
                     mFragManager.beginTransaction()
                             .replace(R.id.content, meFrag)
                             .commit();
@@ -96,8 +101,6 @@ public class MainNavActivity extends AppCompatActivity {
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-
-        mAuth = FirebaseAuth.getInstance();
 
         mNavigation = (BottomNavigationView) findViewById(R.id.navigation);
         mNavigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
