@@ -7,6 +7,7 @@
     <!--color for all of the brand related colors-->
     <!--Dark Gray-->
     <color name="colorBrand">#030303</color>
+    <color name="colorBrandOpaque">#79030303</color>
     <!--White-->
     <color name="colorBrandHighlight">#FFFFFF</color>
     <!--Gray-->

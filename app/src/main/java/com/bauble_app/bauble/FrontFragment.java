@@ -47,56 +47,56 @@ public class FrontFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_front, container,
                 false);
 
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        // Reference to an image file in Firebase Storage
-        StorageReference storageReference = storage.getReferenceFromUrl("gs://bauble-90a48.appspot.com");
-        StorageReference pathReference = storageReference.child("audio/RE02p5GBRgWMwZbG95Rb1144gL13/thumbnail_01.png");
-
-        chainView = (TextView) v.findViewById(R.id.community_listitem_chains);
-        authorView = (TextView)  v.findViewById(R.id.community_listitem_author);
-        timeView = (TextView)  v.findViewById(R.id.community_listitem_length);
-        expireView = (TextView)  v.findViewById(R.id.community_listitem_expire);
-        playView  = (TextView)  v.findViewById(R.id.community_listitem_plays);
-        Log.e("FrontFragment", "Data Called for");
-
-        // Set Story's stats
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-        DatabaseReference reference = mDatabase.child("stories").child("1");
-        reference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.e("FrontFragment", "Data Called for");
-                String title = dataSnapshot.child("Title").getValue(String.class);
-                Long chains = dataSnapshot.child("chain").getValue(Long.class);
-                String author = dataSnapshot.child("author").getValue(String.class);
-                Long plays = dataSnapshot.child("play").getValue(Long.class);
-                Long time = dataSnapshot.child("duration").getValue(Long.class);
-                String expire = dataSnapshot.child("expiration").getValue(String.class);
-                chainView.setText(chains.toString());
-                authorView.setText(author.toString());
-                playView.setText(plays.toString());
-                timeView.setText("00:" + time.toString());
-                expireView.setText(expire.toString());
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-
-
-
-
-        // ImageView in your Activity
-        ImageView imageView = (ImageView) v.findViewById(R.id.community_listitem_picture);
-
-        // Load the image using Glide
-        Glide.with(this /* context */)
-                .using(new FirebaseImageLoader())
-                .load(pathReference)
-                .into(imageView);
+//        FirebaseStorage storage = FirebaseStorage.getInstance();
+//        // Reference to an image file in Firebase Storage
+//        StorageReference storageReference = storage.getReferenceFromUrl("gs://bauble-90a48.appspot.com");
+//        StorageReference pathReference = storageReference.child("audio/RE02p5GBRgWMwZbG95Rb1144gL13/thumbnail_01.png");
+//
+//        chainView = (TextView) v.findViewById(R.id.community_listitem_chains);
+//        authorView = (TextView)  v.findViewById(R.id.community_listitem_author);
+//        timeView = (TextView)  v.findViewById(R.id.community_listitem_length);
+//        expireView = (TextView)  v.findViewById(R.id.community_listitem_expire);
+//        playView  = (TextView)  v.findViewById(R.id.community_listitem_plays);
+//        Log.e("FrontFragment", "Data Called for");
+//
+//        // Set Story's stats
+//        mDatabase = FirebaseDatabase.getInstance().getReference();
+//        DatabaseReference reference = mDatabase.child("stories").child("1");
+//        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                Log.e("FrontFragment", "Data Called for");
+//                String title = dataSnapshot.child("Title").getValue(String.class);
+//                Long chains = dataSnapshot.child("chain").getValue(Long.class);
+//                String author = dataSnapshot.child("author").getValue(String.class);
+//                Long plays = dataSnapshot.child("play").getValue(Long.class);
+//                Long time = dataSnapshot.child("duration").getValue(Long.class);
+//                String expire = dataSnapshot.child("expiration").getValue(String.class);
+//                chainView.setText(chains.toString());
+//                authorView.setText(author.toString());
+//                playView.setText(plays.toString());
+//                timeView.setText("00:" + time.toString());
+//                expireView.setText(expire.toString());
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
+//
+//
+//
+//
+//
+//        // ImageView in your Activity
+//        ImageView imageView = (ImageView) v.findViewById(R.id.community_listitem_picture);
+//
+//        // Load the image using Glide
+//        Glide.with(this /* context */)
+//                .using(new FirebaseImageLoader())
+//                .load(pathReference)
+//                .into(imageView);
 
 
         // Inflate the layout for this fragment

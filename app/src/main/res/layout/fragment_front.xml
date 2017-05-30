@@ -6,201 +6,112 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        <RelativeLayout
+            android:id="@+id/cause_elements"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="@dimen/listitem_feed_padding"
-            android:layout_marginBottom="@dimen/listitem_feed_margin"
-            android:background="@color/colorFeedListItem">
-
+            android:padding="5dp">
             <ImageView
-                android:id="@+id/community_listitem_picture"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:src="@drawable/place_holder_img"/>
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/drumfountain"
+                android:layout_alignParentTop="true"
+                android:adjustViewBounds="true" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_centerInParent="true"
+                android:background="@color/colorBrandOpaque"
+                android:padding="20dp">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Capstone Night"
+                    android:textColor="@color/tw__solid_white"
+                    android:textSize="44dp"
+                    android:textAlignment="center"
+                    />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Tell your experience"
+                    android:layout_marginTop="20dp"
+                    android:textColor="@color/tw__solid_white"
+                    android:textSize="18dp"
+                    android:textAlignment="center"
+                    />
+
+                <ProgressBar
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_height="5dp"
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="20dp"
+
+                    android:max="100"
+                    android:progress="40"
+                    android:progressDrawable="@drawable/progress_bar_gradient"
+                    />
+            </LinearLayout>
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="5dp"
+            android:text="Story Replies" />
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
+            android:background="@drawable/top_bot_lines">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/community_listitem_picture"
-                android:orientation="vertical"
-                android:layout_centerInParent="true">
-                <TextView
-                    android:id="@+id/community_listitem_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Community Story"
-                    android:textAlignment="center"
-                    android:textSize="@dimen/section_title_textsize"
-                    android:textStyle="bold"/>
-                <TextView
-                    android:id="@+id/community_listitem_author"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="author"
-                    android:textAlignment="center" />
+                android:orientation="vertical">
+
                 <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:id="@+id/view_container_childern"
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp"
                     android:orientation="horizontal"
-                    android:layout_gravity="center">
-                    <TextView
-                        android:id="@+id/community_listitem_length"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="time"
-                        android:layout_margin="@dimen/listitem_feed_stat_margin"/>
-                    <TextView
-                        android:id="@+id/community_listitem_chains"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="chains"
-                        android:layout_margin="@dimen/listitem_feed_stat_margin"/>
-                    <TextView
-                        android:id="@+id/community_listitem_expire"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="expire"
-                        android:layout_margin="@dimen/listitem_feed_stat_margin"/>
-                    <TextView
-                        android:id="@+id/community_listitem_plays"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="plays"
-                        android:layout_margin="@dimen/listitem_feed_stat_margin"/>
-                </LinearLayout>
-            </LinearLayout>
-
-        </RelativeLayout>
-
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:layout_weight="1" >
-        </Space>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_gravity="center">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_trending"/>
-
-                <TextView
-                    android:id="@+id/community_tag_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Today's Trending Tags"
-                    android:textSize="@dimen/section_title_textsize"
-                    android:textStyle="bold"/>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text = "Tag 1"/>
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text = "Tag 2"/>
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text = "Tag 3"/>
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text = "Tag 4"/>
-            </LinearLayout>
-        </LinearLayout>
-
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:layout_weight="1" >
-        </Space>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_gravity="bottom">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/front_title_collection"
-                android:textSize="@dimen/section_title_textsize"
-                android:textStyle="bold"
-                android:padding="5dp"/>
-
-            <HorizontalScrollView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="0dp"
-                android:layout_marginRight="0dp">
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:background="@color/colorGrayAccent"
                     android:padding="5dp">
 
-                    <Button
-                        android:layout_width="100dp"
-                        android:layout_height="100dp"
-                        android:background="@color/colorAccent"
-                        android:layout_margin="5dp"/>
-
-                    <Button
-                        android:layout_width="100dp"
-                        android:layout_height="100dp"
-                        android:background="@color/colorAccent"
-                        android:layout_margin="5dp"/>
-
-                    <Button
-                        android:layout_width="100dp"
-                        android:layout_height="100dp"
-                        android:background="@color/colorAccent"
-                        android:layout_margin="5dp"/>
-
-                    <Button
-                        android:layout_width="100dp"
-                        android:layout_height="100dp"
-                        android:background="@color/colorAccent"
-                        android:layout_margin="5dp"/>
-
-                    <Button
-                        android:layout_width="100dp"
-                        android:layout_height="100dp"
-                        android:background="@color/colorAccent"
-                        android:layout_margin="5dp"/>
-
-                    <Button
-                        android:layout_width="100dp"
-                        android:layout_height="100dp"
-                        android:background="@color/colorAccent"
-                        android:layout_margin="5dp"/>
-
+                    <TextView
+                        android:id="@+id/view_container_empty"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="10dp"
+                        android:text="No replies yet..."
+                        android:textColor="@color/light_grey"
+                        android:textSize="24dp" />
+                    <!--<ImageView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:src="@drawable/place_holder_img"-->
+                    <!--android:layout_weight="1"/>-->
+                    <!--<ImageView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:src="@drawable/place_holder_img"-->
+                    <!--android:layout_weight="1"/>-->
+                    <!--<ImageView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:src="@drawable/place_holder_img"-->
+                    <!--android:layout_weight="1"/>-->
                 </LinearLayout>
-            </HorizontalScrollView>
-        </LinearLayout>
+            </LinearLayout>
+        </HorizontalScrollView>
     </LinearLayout>
 
 </FrameLayout>
