@@ -37,6 +37,7 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 import static android.widget.RelativeLayout.BELOW;
 
@@ -99,7 +100,7 @@ public class RecordFragment extends Fragment {
         mSupportsPause = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N);
         // Record to the external cache directory for visibility
         mFilePath = getActivity().getExternalFilesDir(null).getAbsolutePath();
-        mFileName = "/audiorecordtest";
+        mFileName = "/" + UUID.randomUUID();
         mFileExtension = ".m4a";
         recordCount = 0;
     }
@@ -332,7 +333,6 @@ public class RecordFragment extends Fragment {
 
                     return true;
                 }
-
                 // The UI thread; update the UI after task is done
                 @Override
                 protected void onPostExecute(Boolean result) {
