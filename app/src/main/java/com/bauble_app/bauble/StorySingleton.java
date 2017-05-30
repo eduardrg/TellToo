@@ -96,7 +96,9 @@ public class StorySingleton {
         if (so != null) {
             String key = so.grabUniqueId();
             this.storyMap.put(key, so);
-            this.mKeys.add(key);
+            if (!this.mKeys.contains(key)) {
+                this.mKeys.add(key);
+            }
         }
     }
 
