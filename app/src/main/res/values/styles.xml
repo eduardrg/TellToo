@@ -37,4 +37,13 @@
         <item name="android:maxWidth">12dip</item>
     </style>
 
+    <style name="PauseDialog" parent="@android:style/Theme.Dialog">
+        <item name="android:windowAnimationStyle">@style/PauseDialogAnimation</item>
+    </style>
+
+    <style name="PauseDialogAnimation">
+        <item name="android:windowEnterAnimation">@anim/enter_from_bottom_fade</item>
+        <item name="android:windowExitAnimation">@anim/exit_to_bottom_fade</item>
+    </style>
+
 </resources>

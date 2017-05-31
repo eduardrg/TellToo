@@ -464,7 +464,7 @@ public class ViewFragment extends Fragment {
                 waveforms.setVisibility(View.VISIBLE);
                 loading.setVisibility(View.GONE);
                 // Set up waveform movement
-                int numberOfSeconds = storyDuration;
+                int numberOfSeconds = storyDuration + 1;
                 countDownTimer = new CountDownTimer(numberOfSeconds * 1000, 100) { // 10 second timer
 
                     private int[] data = null;
@@ -826,7 +826,7 @@ public class ViewFragment extends Fragment {
 
     // Call to show custom dialog
     private void showChildDialog(Context context, View v, String imageFileName, File imageFile) {
-        final Dialog dialog = new Dialog(context);
+        final Dialog dialog = new Dialog(context, R.style.PauseDialog);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.story_reply_dialog);
         dialog.setCanceledOnTouchOutside(true);
@@ -894,7 +894,7 @@ public class ViewFragment extends Fragment {
         WindowManager.LayoutParams wlp = window.getAttributes();
 
         wlp.y = 150;
-        wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+        // wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
         window.setAttributes(wlp);
 
         dialog.show();
