@@ -188,7 +188,7 @@ public class FeedAdapter extends BaseAdapter {
     }
 
     // Returns seconds remaining
-    private Long calculateExpire(Date expire, Date current) {
+    public static Long calculateExpire(Date expire, Date current) {
         // Get msec from each, and subtract.
         if (expire != null && current != null) {
             Long diff = expire.getTime() - current.getTime();
