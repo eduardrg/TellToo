@@ -60,14 +60,39 @@
                     android:textAlignment="center"
                     />
 
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="20dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="$"
+                        android:textColor="@color/tw__solid_white" />
+                    <TextView
+                        android:id="@+id/community_amount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="10"
+                        android:textColor="@color/tw__solid_white" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Raised"
+                        android:textColor="@color/tw__solid_white"
+                        android:paddingLeft="5dp"/>
+                </LinearLayout>
+
                 <ProgressBar
+                    android:id="@+id/community_donate_progress"
                     style="?android:attr/progressBarStyleHorizontal"
                     android:layout_height="5dp"
                     android:layout_width="match_parent"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="0dp"
 
                     android:max="100"
-                    android:progress="40"
+                    android:progress="1"
                     android:progressDrawable="@drawable/progress_bar_gradient"
                     />
             </LinearLayout>
