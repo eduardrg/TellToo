@@ -168,10 +168,19 @@ public class UploadFragment extends Fragment {
 
                         // Get story cover image
                         try {
-                            Uri imageFile = Uri.fromFile(new File(mCreateFrag
-                                    .getThumbnailPath()));
-                            Bitmap thumbBitmap = BitmapFactory.decodeFile(imageFile
-                                    .getPath());
+                            Bitmap thumbBitmap;
+                            // Image is not set, use placeholder
+                            if (mCreateFrag.getThumbnailPath().isEmpty()) {
+                                thumbBitmap = BitmapFactory.decodeResource
+                                        (getResources(), R.drawable
+                                                .place_holder_img);
+                            // Get selected image
+                            } else {
+                                Uri imageFile = Uri.fromFile(new File(mCreateFrag
+                                        .getThumbnailPath()));
+                                thumbBitmap = BitmapFactory.decodeFile(imageFile
+                                        .getPath());
+                            }
 
                             File myDir = new File(MainNavActivity.THUMB_ROOT_DIR);
                             myDir.mkdirs();
@@ -264,6 +273,7 @@ public class UploadFragment extends Fragment {
             }
         });
 
+        mCreateFrag.removeSkip();
         return v;
     }
 

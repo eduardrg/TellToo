@@ -79,6 +79,7 @@ public class PrivacyFragment extends Fragment {
         });
         mCreateFrag = (CreateFragment) getParentFragment();
         mCreateFrag.setNextListener(this.getNextListener());
+        mCreateFrag.setSkipListener(this.getSkipListener());
         return v;
     }
 
@@ -92,6 +93,10 @@ public class PrivacyFragment extends Fragment {
             }
         };
         return listener;
+    }
+
+    View.OnClickListener getSkipListener() {
+        return getNextListener();
     }
 
 }

@@ -8,11 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bauble_app.bauble.R;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,13 +44,15 @@ public class TagFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_tags, container, false);
 
         // Initalize suggested tags TagGroup
+        /*
         mSuggestedTagGroup = (TagGroup) v.findViewById(R.id.tag_group2);
         mSuggestedTagGroup.setAllowRepeats(false);
-
+*/
         // Initalize suggested tags list
-        mSuggestedTags = new ArrayList<String>();
+        //mSuggestedTags = new ArrayList<String>();
 
         // Load tags from Firebase Database into suggested tags TagGroup
+        /*
         mReference.child("tags").addListenerForSingleValueEvent(new ValueEventListener() {
             final TagGroup tagGroup = mSuggestedTagGroup;
             final List<String> tagList = mSuggestedTags;
@@ -70,6 +69,7 @@ public class TagFragment extends Fragment {
             public void onCancelled(DatabaseError databaseError) {
             }
         });
+        */
 
         // Initalize TagGroup for tagging this story
         mAddedTagGroup = (TagGroup) v.findViewById(R.id.tag_group1);
@@ -103,6 +103,7 @@ public class TagFragment extends Fragment {
         // mAddedTagGroup.setAutoCompleteTags(mSuggestedTags);
 
         // Clicking on a "suggested" tag should add it to the "added" tags
+        /*
         mSuggestedTagGroup.setOnTagClickListener(new TagGroup.OnTagClickListener() {
             @Override
             public void onTagClick(String tag) {
@@ -115,9 +116,11 @@ public class TagFragment extends Fragment {
                 }
             }
         });
+        */
 
         mCreateFrag = (CreateFragment) getParentFragment();
         mCreateFrag.setNextListener(this.getNextListener());
+        mCreateFrag.setSkipListener(this.getSkipListener());
 
         return v;
     }
@@ -130,6 +133,19 @@ public class TagFragment extends Fragment {
                 Fragment privacyFrag = new PrivacyFragment();
                 getFragmentManager().beginTransaction().replace(R.id
                         .create_tools, privacyFrag).commit();
+            }
+        };
+        return listener;
+    }
+
+    View.OnClickListener getSkipListener() {
+        View.OnClickListener listener = new View.OnClickListener() {
+            @Override
+            public void onClick(View btn) {
+                mCreateFrag.setmTags(mAddedTagGroup.getTags());
+                Fragment uploadFrag = new UploadFragment();
+                getFragmentManager().beginTransaction().replace(R.id
+                        .create_tools, uploadFrag).commit();
             }
         };
         return listener;

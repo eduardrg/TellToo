@@ -185,6 +185,31 @@ public class RecordFragment extends Fragment {
         return mIsRecording;
     }
 
+    public View.OnClickListener getSkipListener() {
+        View.OnClickListener listener = new View.OnClickListener() {
+            @Override
+            public void onClick(View btn) {
+                if (recordCount >= 1) {
+                    if (recorder != null) {
+                        recorder.release();
+                    }
+                    if (!mSupportsPause) {
+                        processFiles();
+                    }
+                    mIsRecording = false;
+                    mCreateFrag.setRecordingPath(mFilePath + mFileName +
+                            mFileExtension);
+                    Fragment uploadFrag = new UploadFragment();
+                    getFragmentManager().beginTransaction().replace(R.id
+                            .create_tools, uploadFrag).commit();
+                } else {
+                    Toast.makeText(getContext(), "Record something to continue", Toast.LENGTH_SHORT).show();
+                }
+            }
+        };
+        return listener;
+    }
+
     // Button that starts or stops the audio recorder in CreateFragment
     public class RecordButton extends android.support.v7.widget
             .AppCompatImageButton {

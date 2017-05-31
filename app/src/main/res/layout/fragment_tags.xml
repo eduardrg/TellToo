@@ -33,42 +33,4 @@
         android:layout_marginBottom="25dp"
         app:atg_isAppendMode="true"/>
 
-    <com.bauble_app.bauble.CustomText
-        android:id="@+id/tag_search_title2"
-        android:layout_below="@id/tag_group1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:textAlignment="center"
-        android:text="Find Tags"
-        android:layout_marginBottom="15dp"/>
-
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/tag_search_input_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/tag_search_title2"
-        android:layout_marginBottom="40dp">
-
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Search for tags..."/>
-
-    </android.support.design.widget.TextInputLayout>
-
-    <com.bauble_app.bauble.CustomText
-        android:id="@+id/tag_suggested_title2"
-        android:layout_below="@id/tag_search_input_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:textAlignment="center"
-        android:text="Suggested Tags"
-        android:layout_marginBottom="30dp"/>
-
-    <me.gujun.android.taggroup.TagGroup
-        android:id="@+id/tag_group2"
-        style="@style/TagGroup"
-        android:layout_below="@id/tag_suggested_title2"/>
 </RelativeLayout>

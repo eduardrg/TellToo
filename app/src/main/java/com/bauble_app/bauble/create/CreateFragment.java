@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.bauble_app.bauble.BuildConfig;
 import com.bauble_app.bauble.CustomText;
 import com.bauble_app.bauble.R;
 import com.bauble_app.bauble.StoryObject;
@@ -23,6 +22,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import static android.view.View.GONE;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -33,6 +34,7 @@ public class CreateFragment extends Fragment {
     private String mRecordingPath;
     private String mThumbnailPath;
     private Button mNextButton;
+    private Button mSkipButton;
 
     private FragmentManager mChildFragManager;
     private StorySingleton mStorySingleton;
@@ -62,10 +64,10 @@ public class CreateFragment extends Fragment {
         mDatabase = FirebaseDatabase.getInstance();
         mStorySingleton = StorySingleton.getInstance();
         mChildFragManager = getChildFragmentManager();
-        mAuthor = "Anonymous";
+        mAccess = "signedIn";
+        mAuthor = "CapstoneUser";
         mTitle = "Untitled";
-        mThumbnailPath = "android.resource://"+ BuildConfig
-                .APPLICATION_ID+"‌​/" + R.drawable.place_holder_img;
+        mThumbnailPath = "";
         String userId = mAuth.getCurrentUser().getUid();
         DatabaseReference users = mDatabase.getReference("users");
         users.child(userId).child("name").addValueEventListener(new ValueEventListener() {
@@ -117,6 +119,8 @@ public class CreateFragment extends Fragment {
         mChildFragManager.beginTransaction().replace(R.id
                 .create_tools, mRecordFrag).commit();
 
+        mSkipButton = (Button) v.findViewById(R.id.create_skip);
+        mSkipButton.setOnClickListener(mRecordFrag.getSkipListener());
         mNextButton.setOnClickListener(mRecordFrag.getNextListener());
         return v;
     }
@@ -201,5 +205,17 @@ public class CreateFragment extends Fragment {
 
     public void setmExpiration(String mExpiration) {
         this.mExpiration = mExpiration;
+    }
+
+    public void setSkipListener(View.OnClickListener skipListener) {
+        this.mSkipButton.setOnClickListener(skipListener);
+    }
+
+    public void removeSkip() {
+        View spacer = getView().findViewById(R.id.create_spacer);
+        View create_skip = getView().findViewById(R.id.create_skip);
+        spacer.setVisibility(GONE);
+        create_skip.setVisibility(GONE);
+
     }
 }
