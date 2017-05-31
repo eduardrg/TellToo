@@ -46,8 +46,9 @@ public class StorySingleton {
     public StoryObject getViewStory() {
         if (this.storyMap.containsKey(this.viewKey)) {
             return this.storyMap.get(this.viewKey);
+        } else {
+            return this.getStory(0);
         }
-        return null;
     }
 
     public void setDonationProgress(int i) {
