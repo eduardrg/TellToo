@@ -33,9 +33,9 @@
                 android:id="@+id/profile_logout"
                 android:layout_marginTop="30dp"
                 android:layout_marginRight="0dp"
-                android:layout_width="180dp"
-                android:layout_height="wrap_content"
-                android:text="log me out"
+                android:layout_width="160dp"
+                android:layout_height="30dp"
+                android:text="Log Out"
                 android:layout_gravity="center"
                 android:background="@drawable/btn_forgot"/>
         </LinearLayout>

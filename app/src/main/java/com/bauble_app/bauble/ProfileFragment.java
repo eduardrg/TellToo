@@ -1,13 +1,16 @@
 package com.bauble_app.bauble;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -31,13 +34,28 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_profile, container, false);
+        final View v = inflater.inflate(R.layout.fragment_profile, container, false);
         showName(v);
         Button btn = (Button) v.findViewById(R.id.profile_logout);
         btn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View btn) {
-                Toast.makeText(getContext(), "Sorry, this demo prohibits you " +
-                        "from logging out.", Toast.LENGTH_LONG).show();
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                View layout = inflater.inflate(R.layout.toast_logout,
+                        (ViewGroup) v.findViewById(R.id.toast_layout_root));
+
+                TextView text = (TextView) layout.findViewById(R.id.toast_save_text);
+                text.setText("Sorry, this demo prohibits you " +
+                        "from logging out.");
+
+                Toast toast = new Toast(getContext().getApplicationContext());
+                //toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+                toast.setGravity(Gravity.BOTTOM, 0, 200);
+                toast.setDuration(Toast.LENGTH_SHORT);
+                toast.setView(layout);
+                toast.show();
+
+//                Toast.makeText(getContext(), "Sorry, this demo prohibits you " +
+//                        "from logging out.", Toast.LENGTH_LONG).show();
             }
         });
 
