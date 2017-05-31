@@ -838,6 +838,7 @@ public class ViewFragment extends Fragment {
 
         LinearLayout childrenContainer = (LinearLayout) layout.findViewById(R.id.view_container_childern);
         if (mStory.getChildren().size() > 0) {
+            Log.e("ViewFragment", "GOT HERE");
             TextView emptyLabel = (TextView) layout.findViewById(R.id.view_container_empty);
             emptyLabel.setVisibility(View.GONE);
             for (String childName: mStory.getChildren()) {
@@ -880,6 +881,9 @@ public class ViewFragment extends Fragment {
 
             }
         }
+
+        dialog.setContentView(layout);
+
         /**
          * if you want the dialog to be specific size, do the following
          * this will cover 85% of the screen (95% width and 33% height)
