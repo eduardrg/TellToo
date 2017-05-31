@@ -97,73 +97,33 @@
                     />
             </LinearLayout>
 
-            <ImageButton
-                android:id="@+id/view_reply_btn"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:adjustViewBounds="true"
-                android:background="@drawable/round_button_record"
-                android:scaleType="fitCenter"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="125dp"
-                android:layout_below="@id/cause_elements"/>
-
         </RelativeLayout>
 
+        <ImageButton
+            android:id="@+id/view_reply_btn"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:adjustViewBounds="true"
+            android:background="@drawable/round_button_record"
+            android:scaleType="fitCenter"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="8dp"
+            android:layout_below="@id/cause_elements"/>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_marginTop="5dp"
-            android:text="Story Replies" />
-
-        <HorizontalScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="0dp"
-            android:layout_marginRight="0dp"
-            android:background="@drawable/top_bot_lines">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <LinearLayout
-                    android:id="@+id/view_container_childern"
-                    android:layout_width="match_parent"
-                    android:layout_height="80dp"
-                    android:orientation="horizontal"
-                    android:padding="5dp">
-
-                    <TextView
-                        android:id="@+id/view_container_empty"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginLeft="10dp"
-                        android:text="No replies yet..."
-                        android:textColor="@color/light_grey"
-                        android:textSize="24dp" />
-                    <!--<ImageView-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:src="@drawable/place_holder_img"-->
-                    <!--android:layout_weight="1"/>-->
-                    <!--<ImageView-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:src="@drawable/place_holder_img"-->
-                    <!--android:layout_weight="1"/>-->
-                    <!--<ImageView-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:src="@drawable/place_holder_img"-->
-                    <!--android:layout_weight="1"/>-->
-                </LinearLayout>
-            </LinearLayout>
-        </HorizontalScrollView>
+        <com.bauble_app.bauble.CustomButton
+            android:id="@+id/view_show_child"
+            android:layout_alignParentTop="true"
+            android:gravity="top|center"
+            android:paddingTop="2dp"
+            android:layout_width="120dp"
+            android:layout_height="28dp"
+            android:layout_margin="4dp"
+            android:background="@drawable/btn_com_save"
+            android:layout_gravity="center"
+            android:text="Story Replies"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:textSize="17sp"/>
     </LinearLayout>
 
 </FrameLayout>

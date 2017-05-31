@@ -15,6 +15,8 @@ public class StorySingleton {
     private String graphKey;
     private String userName;
 
+    private int donationProgress;
+
     public static StorySingleton getInstance() {
         return ourInstance;
     }
@@ -46,6 +48,14 @@ public class StorySingleton {
             return this.storyMap.get(this.viewKey);
         }
         return null;
+    }
+
+    public void setDonationProgress(int i) {
+        this.donationProgress = i;
+    }
+
+    public int getDonationProgress() {
+        return this.donationProgress;
     }
 
     public String getUserName() {

@@ -72,7 +72,9 @@ public class FrontFragment extends Fragment {
         });
 
         donateBar = (ProgressBar) v.findViewById(R.id.community_donate_progress);
+        donateBar.setProgress(StorySingleton.getInstance().getDonationProgress());
         donateAmount = (TextView) v.findViewById(R.id.community_amount);
+        donateAmount.setText("" + (StorySingleton.getInstance().getDonationProgress() * 10));
 
 //        FirebaseStorage storage = FirebaseStorage.getInstance();
 //        // Reference to an image file in Firebase Storage
@@ -147,6 +149,7 @@ public class FrontFragment extends Fragment {
             public void onClick(View v) {
                 int progress = donateBar.getProgress();
                 donateBar.setProgress(progress + 1);
+                StorySingleton.getInstance().setDonationProgress(progress + 1);
                 int amount = Integer.parseInt(donateAmount.getText().toString());
                 donateAmount.setText("" + (amount + 10));
                 dialog.dismiss();

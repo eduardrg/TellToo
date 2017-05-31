@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
                     StorySingleton.getInstance().addStory(so);
                 }
             }
+            StorySingleton.getInstance().setDonationProgress(1);
         } finally {
             cursor.close();
             Intent intent = new Intent(getApplicationContext(), MainNavActivity.class);
