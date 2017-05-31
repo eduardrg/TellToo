@@ -591,11 +591,11 @@ public class ViewFragment extends Fragment {
         LinearLayout wholeView = (LinearLayout) v.findViewById(R.id.view_whole_view);
         wholeView.setOnTouchListener(new OnSwipeTouchListener(getActivity()) {
             public void onSwipeTop() {
-                Toast.makeText(getActivity(), "top", Toast.LENGTH_SHORT).show();
+                // Toast.makeText(getActivity(), "top", Toast.LENGTH_SHORT).show();
                 showChildDialog(getContext(), v, imageFileName, imageFile);
             }
             public void onSwipeRight() { // get child before, the one that is on the left
-                Toast.makeText(getActivity(), "right", Toast.LENGTH_SHORT).show();
+                // Toast.makeText(getActivity(), "right", Toast.LENGTH_SHORT).show();
                 if (mStory.getParentString() != null) {
                     String parentIdentifier = mStory.getParentString();
                     String uniqueIdentifier = mStory.grabUniqueId();
@@ -621,7 +621,7 @@ public class ViewFragment extends Fragment {
                 }
             }
             public void onSwipeLeft() {
-                Toast.makeText(getActivity(), "left", Toast.LENGTH_SHORT).show();
+                // Toast.makeText(getActivity(), "left", Toast.LENGTH_SHORT).show();
                 if (mStory.getParentString() != null) {
                     String parentIdentifier = mStory.getParentString();
                     String uniqueIdentifier = mStory.grabUniqueId();
@@ -647,7 +647,7 @@ public class ViewFragment extends Fragment {
                 }
             }
             public void onSwipeBottom() {
-                Toast.makeText(getActivity(), "bottom", Toast.LENGTH_SHORT).show();
+                // Toast.makeText(getActivity(), "bottom", Toast.LENGTH_SHORT).show();
                 if (mStory.getParentString() != null) {
                     String uniqueIdentifier = mStory.getParentString(); // could be null
                     StorySingleton.getInstance().setViewKey(uniqueIdentifier);

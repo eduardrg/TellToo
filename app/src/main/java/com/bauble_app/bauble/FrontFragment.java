@@ -104,7 +104,7 @@ public class FrontFragment extends Fragment {
         LinearLayout wholeView = (LinearLayout) v.findViewById(R.id.community_whole_view);
         wholeView.setOnTouchListener(new OnSwipeTouchListener(getActivity()) {
             public void onSwipeTop() {
-                Toast.makeText(getActivity(), "top", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getActivity(), "top", Toast.LENGTH_SHORT).show();
                 showChildDialog(getContext(), v, imageFileName, imageFile);
             }
             public void onSwipeRight() {
