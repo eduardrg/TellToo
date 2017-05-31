@@ -4,8 +4,10 @@ package com.bauble_app.bauble;
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -19,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
@@ -29,10 +32,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.googlecode.mp4parser.authoring.tracks.TextTrackImpl;
 
 import org.w3c.dom.Text;
 
 import java.io.File;
+import java.util.List;
 
 
 /**
@@ -51,6 +56,10 @@ public class FrontFragment extends Fragment {
     public ProgressBar donateBar;
     public TextView donateAmount;
 
+    private FragmentManager mFragManager;
+    private MediaPlayer mPlayer;
+    private StoryObject mStory;
+
     public FrontFragment() {
         // Required empty public constructor
     }
@@ -60,8 +69,23 @@ public class FrontFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View v = inflater.inflate(R.layout.fragment_front, container,
+        final View v = inflater.inflate(R.layout.fragment_front, container,
                 false);
+
+        mStory = StorySingleton.getInstance().getViewStory();
+
+        // get and set images & audio
+        String imageFileNamePre = "";
+        File imageFilePre = null;
+
+        if (mStory != null) {
+            imageFileNamePre = mStory.grabUniqueId() + ".png";
+            imageFilePre = new File(MainNavActivity.THUMB_ROOT_DIR,
+                    imageFileNamePre);
+        }
+
+        final String imageFileName = imageFileNamePre;
+        final File imageFile = imageFilePre;
 
         saveCollection = (com.bauble_app.bauble.CustomButton) v.findViewById(R.id.community_collect);
         saveCollection.setOnClickListener(new View.OnClickListener() {
@@ -75,6 +99,41 @@ public class FrontFragment extends Fragment {
         donateBar.setProgress(StorySingleton.getInstance().getDonationProgress());
         donateAmount = (TextView) v.findViewById(R.id.community_amount);
         donateAmount.setText("" + (StorySingleton.getInstance().getDonationProgress() * 10));
+
+        // Set Swipe Action Recognizer
+        LinearLayout wholeView = (LinearLayout) v.findViewById(R.id.community_whole_view);
+        wholeView.setOnTouchListener(new OnSwipeTouchListener(getActivity()) {
+            public void onSwipeTop() {
+                Toast.makeText(getActivity(), "top", Toast.LENGTH_SHORT).show();
+                showChildDialog(getContext(), v, imageFileName, imageFile);
+            }
+            public void onSwipeRight() {
+
+            }
+            public void onSwipeLeft() {
+
+            }
+            public void onSwipeBottom() {
+
+            }
+
+        });
+
+        com.bauble_app.bauble.CustomButton showStoryBtn = (com.bauble_app.bauble.CustomButton) v.findViewById(R.id.community_show_child);
+        showStoryBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showChildDialog(getContext(), v, imageFileName, imageFile);
+            }
+        });
+
+        LinearLayout causeElements = (LinearLayout) v.findViewById(R.id.cause_elements);
+        causeElements.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showSaveDialog(getContext(), v);
+            }
+        });
 
 //        FirebaseStorage storage = FirebaseStorage.getInstance();
 //        // Reference to an image file in Firebase Storage
@@ -182,6 +241,102 @@ public class FrontFragment extends Fragment {
         window.setAttributes(wlp);
 
         dialog.show();
+    }
+
+    // Call to show custom dialog
+    private void showChildDialog(Context context, View v, String imageFileName, File imageFile) {
+        final Dialog dialog = new Dialog(context, R.style.PauseDialog);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.story_reply_dialog);
+        dialog.setCanceledOnTouchOutside(true);
+        dialog.setCancelable(true);
+
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View layout = inflater.inflate(R.layout.story_reply_dialog,
+                (ViewGroup) v.findViewById(R.id.reply_layout_root));
+
+        LinearLayout childrenContainer = (LinearLayout) layout.findViewById(R.id.view_container_childern);
+        if (mStory != null && mStory.getChildren().size() > 0) {
+            Log.e("ViewFragment", "GOT HERE");
+            TextView emptyLabel = (TextView) layout.findViewById(R.id.view_container_empty);
+            emptyLabel.setVisibility(View.GONE);
+            for (String childName: mStory.getChildren()) {
+                Log.e("ViewFragment", "Child Name:" + childName);
+                final String uniqueIdentifyer = childName;
+
+                de.hdodenhof.circleimageview.CircleImageView child = new de.hdodenhof.circleimageview.CircleImageView(getContext());
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(200, 200);
+                lp.setMargins(0, 0, 60, 0);
+                child.setLayoutParams(lp);
+                child.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        StorySingleton.getInstance().setViewKey(uniqueIdentifyer);
+                        // Placeholder for transition to view
+                        // ViewFragment.this.fragManager = getActivity().getSupportFragmentManager();
+
+                        // Stop sound before transaction
+                        stopMediaPlayer();
+                        FragmentTransaction ft = mFragManager.beginTransaction();
+                        ft.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_top)
+                                .replace(R.id.content, new ViewFragment())
+                                // TODO: even though add to back stack, need to find way to load correct mStory when back pressed
+                                .addToBackStack("tag")
+                                .commit();
+//                        fragManager.beginTransaction()
+//                                .replace(R.id.content, new ViewFragment())
+//                                .commit();
+                    }
+                });
+                childrenContainer.addView(child);
+
+                imageFileName = childName + ".png";
+
+                imageFile = new File(MainNavActivity.THUMB_ROOT_DIR,
+                        imageFileName);
+
+                // Load the image using Glide
+                Glide.with(getContext()).load(imageFile).into(child);
+
+            }
+        }
+
+        dialog.setContentView(layout);
+
+        /**
+         * if you want the dialog to be specific size, do the following
+         * this will cover 85% of the screen (95% width and 33% height)
+         */
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        int dialogWidth = (int)(displayMetrics.widthPixels * 0.95);
+        int dialogHeight = (int)(displayMetrics.heightPixels * 0.20);
+        dialog.getWindow().setLayout(dialogWidth, dialogHeight);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+
+        Window window = dialog.getWindow();
+        WindowManager.LayoutParams wlp = window.getAttributes();
+
+        wlp.y = 400;
+        // wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+        window.setAttributes(wlp);
+
+        dialog.show();
+    }
+
+    // Stops Media Player
+    private void stopMediaPlayer() {
+        // TODO: Find out if this block of code does anything
+        /*
+        List<FileDownloadTask> tasks = audioPathReference.getActiveDownloadTasks();
+        for (FileDownloadTask task : tasks) {
+            task.removeOnSuccessListener(audioLoading);
+        }
+        */
+        if (mPlayer != null) {
+            mPlayer.stop();
+            mPlayer.release();
+            mPlayer = null;
+        }
     }
 
 }
