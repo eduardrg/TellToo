@@ -229,7 +229,7 @@ public class FrontFragment extends Fragment {
          */
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         int dialogWidth = (int)(displayMetrics.widthPixels * 0.95);
-        int dialogHeight = (int)(displayMetrics.heightPixels * 0.45);
+        int dialogHeight = (int)(displayMetrics.heightPixels * 0.52);
         dialog.getWindow().setLayout(dialogWidth, dialogHeight);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 

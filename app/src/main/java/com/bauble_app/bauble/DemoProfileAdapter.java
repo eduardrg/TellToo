@@ -115,7 +115,7 @@ public class DemoProfileAdapter extends BaseAdapter {
 
         } else if (timeTill / 60 > 0) {
             expire.setText("" + timeTill / 60 + "h");
-            
+
         } else if (timeTill > 0) {
 
             expire.setText("" + timeTill / 60 + "m");
