@@ -508,6 +508,7 @@ public class ViewFragment extends Fragment {
                         data[wavebars.getChildCount() - 1] = lastVal;
                     }
 
+                    @SuppressWarnings("deprecation")
                     @Override
                     public void onFinish() {
 //                Random r = new Random();
@@ -518,11 +519,15 @@ public class ViewFragment extends Fragment {
 //                }
 
                         Log.e("ViewFragment", "First Countdown Done");
-
-                        // Set all bars to grayed out
-                        for (int i = 0; i < wavebars.getChildCount(); i++) {
-                            ProgressBar bar = (ProgressBar) wavebars.getChildAt(i);
-                            bar.setProgressDrawable(getResources().getDrawable(R.drawable.vertical_progress_bar_done));
+                        try {
+                            // Set all bars to grayed out
+                            for (int i = 0; i < wavebars.getChildCount(); i++) {
+                                ProgressBar bar = (ProgressBar) wavebars.getChildAt(i);
+                                bar.setProgressDrawable(getResources().getDrawable(R.drawable.vertical_progress_bar_done));
+                            }
+                        } catch (IllegalStateException e) {
+                            Log.e("ViewFragment", "Couldn't reset wavebars: "
+                             +       e.getMessage());
                         }
 
                         // Code for having the waveform burn down
