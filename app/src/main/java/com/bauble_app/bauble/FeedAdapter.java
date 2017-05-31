@@ -86,7 +86,23 @@ public class FeedAdapter extends BaseAdapter {
         String authorString = story.getAuthor();
         author.setText(authorString);
         TextView time = (TextView) vi.findViewById(R.id.feed_listitem_length);
-        time.setText("00:" + story.getDuration().toString());
+
+
+        Long durationInSeconds = story.getDuration();
+        Long durationMinutes = durationInSeconds / 60;
+        Long durationSeconds = durationInSeconds % 60;
+
+        String durationString = "";
+        if (durationMinutes < 10) {
+            durationString += "0";
+        }
+        durationString += durationMinutes + ":";
+        if (durationSeconds < 10) {
+            durationString += "0";
+        }
+        durationString += durationSeconds;
+        time.setText(durationString);
+
         TextView chains = (TextView) vi.findViewById(R.id.feed_listitem_chains);
         chains.setText(story.getChains().toString());
         final TextView expire = (TextView) vi.findViewById(R.id.feed_listitem_expire);
