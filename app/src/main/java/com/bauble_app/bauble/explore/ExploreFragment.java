@@ -13,8 +13,8 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.bauble_app.bauble.BaseTouchListener;
 import com.bauble_app.bauble.MainNavActivity;
-import com.bauble_app.bauble.OnSwipeTouchListener;
 import com.bauble_app.bauble.R;
 import com.bauble_app.bauble.StoryObject;
 import com.bauble_app.bauble.StorySingleton;
@@ -39,7 +39,8 @@ public class ExploreFragment extends Fragment {
     // TODO: this can be used to add a back button
     private Stack<StoryObject> mClickStack;
     private Button mBack;
-    private OnSwipeTouchListener mSwipeListener;
+    private BaseTouchListener mSwipeListener;
+    private BaseTouchListener mChildTouchListener;
 
     public ExploreFragment() {
         // Required empty public constructor
@@ -77,10 +78,9 @@ public class ExploreFragment extends Fragment {
             }
         });
 
-        mSwipeListener = new OnSwipeTouchListener(getActivity()) {
+        mSwipeListener = new BaseTouchListener(getActivity()) {
             public void onSwipeTop() {
                 Toast.makeText(getActivity(), "top", Toast.LENGTH_SHORT).show();
-                this.onSwipeRight();
             }
             public void onSwipeRight() { // get child before, the one that is on the left
                 Toast.makeText(getActivity(), "right", Toast.LENGTH_SHORT).show();
@@ -106,7 +106,7 @@ public class ExploreFragment extends Fragment {
 
         };
 
-        // Set Swipe Action Recognizer
+        // Set Swipe Action Recognizer for general layout
         LinearLayout wholeView = (LinearLayout) v.findViewById(R.id
                 .explore_whole_view);
         wholeView.setOnTouchListener(mSwipeListener);
@@ -117,10 +117,12 @@ public class ExploreFragment extends Fragment {
                 mRoot = mStorySingleton.getStory(0);
                 mClickStack.push(mRoot);
                 showChildrenLoop(mRoot, "explore_root");
+                showReply(mRoot.grabUniqueId(), v);
             }
         } else {
             mClickStack.push(mRoot);
             showChildrenLoop(mRoot, "explore_root");
+            showReply(mRoot.grabUniqueId(), v);
         }
         return v;
     }
@@ -134,7 +136,7 @@ public class ExploreFragment extends Fragment {
                 .into(cover);
         // cannot call setTag(Object) when using Glide
         cover.setTag(cover.getId(), uniqueId);
-        attachListeners(uniqueId, cover);
+        attachListeners(cover);
     }
 
     private void processNav(StoryObject clickedStory) {
@@ -155,7 +157,7 @@ public class ExploreFragment extends Fragment {
             // Load cover images into children that exist
             showChildrenLoop(mRoot, "explore_root");
             // Show a preview of the clicked story at top
-            showReply(clickedStory.grabUniqueId());
+            showReply(clickedStory.grabUniqueId(), getView());
         }
     }
     // for when we are redrawing the tree
@@ -167,8 +169,7 @@ public class ExploreFragment extends Fragment {
                 .light_grey_color_drawable)
                 .into(cover);
         cover.setTag(cover.getId(), null);
-        cover.setOnClickListener(null);
-        cover.setOnLongClickListener(null);
+        cover.setOnTouchListener(null);
     }
 
     // Iterate over all views and loadBlankCovers if they are circleImageViews
@@ -183,7 +184,7 @@ public class ExploreFragment extends Fragment {
         }
     }
 
-    private void showReply(final String uniqueId) {
+    private void showReply(final String uniqueId, View v) {
         if (uniqueId != null) {
             Bundle bundle = new Bundle();
             bundle.putString("replyStoryKey", uniqueId);
@@ -191,7 +192,7 @@ public class ExploreFragment extends Fragment {
             replyFrag.setArguments(bundle);
             getChildFragmentManager().beginTransaction().replace(R.id
                     .explore_preview, replyFrag).commit();
-            getView().findViewById(R.id.explore_preview)
+            v.findViewById(R.id.explore_preview)
                     .setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -205,37 +206,51 @@ public class ExploreFragment extends Fragment {
         }
     }
 
-    private void attachListeners(String uniqueId, CircleImageView cover) {
-        cover.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final Object tag = v.getTag(v.getId());
-                if (tag != null && tag instanceof String) {
-                    StoryObject clickedStory = mStorySingleton.getStory(
-                            (String) tag);
-                    if (!clickedStory.equals(mRoot)) {
-                        processNav(clickedStory);
-                    }
-                }
-            }
-        });
-        cover.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                Object tag = v.getTag(v.getId());
-                if (tag != null && tag instanceof String) {
-                    mStorySingleton.setViewKey((String) tag);
-                    getActivity().getSupportFragmentManager()
-                            .beginTransaction().replace
-                            (R.id.content, new ViewFragment())
-                            .commit();
-                }
-                return true;
-            }
-        });
-        cover.setOnTouchListener(mSwipeListener);
+    private void attachListeners(final CircleImageView cover) {
+        cover.setOnTouchListener(new GraphTouchListener(getActivity()) {
+             public void onSwipeTop() {
+                 mSwipeListener.onSwipeTop();
+             }
 
+             public void onSwipeRight() { // get child before, the one that is on the left
+                 mSwipeListener.onSwipeRight();
+             }
+
+             public void onSwipeLeft() {
+                 mSwipeListener.onSwipeLeft();
+             }
+
+             public void onSwipeBottom() {
+                 mSwipeListener.onSwipeBottom();
+             }
+
+             @Override
+             public void onClick() {
+                 final Object tag = cover.getTag(cover.getId());
+                 if (tag != null && tag instanceof String) {
+                     StoryObject clickedStory = mStorySingleton.getStory(
+                             (String) tag);
+                     if (!clickedStory.equals(mRoot)) {
+                         processNav(clickedStory);
+                     }
+                 }
+             }
+
+             @Override
+             public void onDoubleTap() {
+                 Object tag = cover.getTag(cover.getId());
+                 if (tag != null && tag instanceof String) {
+                     mStorySingleton.setViewKey((String) tag);
+                     getActivity().getSupportFragmentManager()
+                             .beginTransaction().replace
+                             (R.id.content, new ViewFragment())
+                             .commit();
+                 }
+             }
+                                 }
+        );
     }
+
     private void showChildrenLoop(StoryObject so, String idAsString) {
         if (idAsString.equals("explore_root")) {
             CircleImageView cover = (CircleImageView) mView.findViewById(R

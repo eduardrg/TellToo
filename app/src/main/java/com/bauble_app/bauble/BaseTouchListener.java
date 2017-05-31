@@ -11,12 +11,29 @@ import android.view.View.OnTouchListener;
  * Created by ChrisLi on 5/23/17.
  */
 
-public class OnSwipeTouchListener implements OnTouchListener {
+public class BaseTouchListener implements OnTouchListener {
     private final GestureDetector gestureDetector;
 
-    public OnSwipeTouchListener (Context ctx){
-        gestureDetector = new GestureDetector(ctx, new GestureListener());
+    public BaseTouchListener(Context ctx){
+        gestureDetector = new GestureDetector(ctx, new GestureListener(this));
     }
+    public void onSwipeRight() {
+    };
+
+    public void onSwipeLeft() {
+    };
+
+    public void onSwipeTop() {
+    };
+
+    public void onSwipeBottom() {
+    };
+
+    public void onDoubleTap() {
+    };
+
+    public void onClick() {
+    };
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
@@ -27,9 +44,26 @@ public class OnSwipeTouchListener implements OnTouchListener {
 
         private static final int SWIPE_THRESHOLD = 100;
         private static final int SWIPE_VELOCITY_THRESHOLD = 100;
+        private BaseTouchListener mHelper;
+
+        public GestureListener(BaseTouchListener helper) {
+            mHelper = helper;
+        }
 
         @Override
         public boolean onDown(MotionEvent e) {
+            return true;
+        }
+
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent e) {
+            mHelper.onClick();
+            return true;
+        }
+
+        @Override
+        public boolean onDoubleTap(MotionEvent e) {
+            mHelper.onDoubleTap();
             return true;
         }
 
@@ -42,37 +76,24 @@ public class OnSwipeTouchListener implements OnTouchListener {
                 if (Math.abs(diffX) > Math.abs(diffY)) {
                     if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
                         if (diffX > 0) {
-                            onSwipeRight();
+                            mHelper.onSwipeRight();
                         } else {
-                            onSwipeLeft();
+                            mHelper.onSwipeLeft();
                         }
-                        result = true;
+                    }
+                } else {
+                    if (Math.abs(diffY) > SWIPE_THRESHOLD && Math.abs(velocityY) > SWIPE_VELOCITY_THRESHOLD) {
+                        if (diffY > 0) {
+                            mHelper.onSwipeBottom();
+                        } else {
+                            mHelper.onSwipeTop();
+                        }
                     }
                 }
-                else if (Math.abs(diffY) > SWIPE_THRESHOLD && Math.abs(velocityY) > SWIPE_VELOCITY_THRESHOLD) {
-                    if (diffY > 0) {
-                        onSwipeBottom();
-                    } else {
-                        onSwipeTop();
-                    }
-                    result = true;
-                }
-            } catch (Exception exception) {
-                exception.printStackTrace();
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
             return result;
         }
-    }
-
-    public void onSwipeRight() {
-    }
-
-    public void onSwipeLeft() {
-    }
-
-    public void onSwipeTop() {
-    }
-
-    public void onSwipeBottom() {
     }
 }

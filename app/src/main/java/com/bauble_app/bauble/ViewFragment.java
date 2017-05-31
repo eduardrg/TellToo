@@ -234,11 +234,16 @@ public class ViewFragment extends Fragment {
                         File leftImageFile = new File(MainNavActivity
                                 .THUMB_ROOT_DIR,
                                 leftImageFileName);
+                        if (getContext() != null) {
+                            // Navigating extremely rapidly between View and
+                            // Explore causes Glide to try to load with a
+                            // null context
 
-                        // Load the image using Glide
+                            // Load the image using Glide
                             Glide.with(getContext())
-                                .load(leftImageFile)
-                                .into(leftStoryImage);
+                                    .load(leftImageFile)
+                                    .into(leftStoryImage);
+                        }
                     }
                 }, (i + 1) * 333); //i * 1/3 second
             }
@@ -271,9 +276,14 @@ public class ViewFragment extends Fragment {
                                 .size() - 1 - index) + ".png";
                         File rightImageFile = new File(MainNavActivity
                                 .THUMB_ROOT_DIR, rightImageFileName);
-                        Glide.with(getContext() /* context */)
-                                .load(rightImageFile)
-                                .into(rightStoryImage);
+                        if (getContext() != null) {
+                            // Navigating extremely rapidly between View and
+                            // Explore causes Glide to try to load with a
+                            // null context
+                            Glide.with(getContext() /* context */)
+                                    .load(rightImageFile)
+                                    .into(rightStoryImage);
+                        }
                     }
                 }, (i + 1) * 333); //i * 1/3 second
             }
@@ -589,7 +599,7 @@ public class ViewFragment extends Fragment {
 
         // Set Swipe Action Recognizer
         LinearLayout wholeView = (LinearLayout) v.findViewById(R.id.view_whole_view);
-        wholeView.setOnTouchListener(new OnSwipeTouchListener(getActivity()) {
+        wholeView.setOnTouchListener(new BaseTouchListener(getActivity()) {
             public void onSwipeTop() {
                 // Toast.makeText(getActivity(), "top", Toast.LENGTH_SHORT).show();
                 showChildDialog(getContext(), v, imageFileName, imageFile);
