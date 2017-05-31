@@ -1081,7 +1081,7 @@
                     android:orientation="vertical">
 
                     <ImageButton
-                        android:id="@+id/view_reply_btn"
+                        android:id="@+id/front_reply_btn"
                         android:layout_width="60dp"
                         android:layout_height="60dp"
                         android:adjustViewBounds="true"

@@ -139,7 +139,7 @@ public class ViewFragment extends Fragment {
         mStory = mStorySingleton.getViewStory();
 
         // set up reply button
-        mReplyButton = (ImageButton) v.findViewById(R.id.view_reply_btn);
+        mReplyButton = (ImageButton) v.findViewById(R.id.front_reply_btn);
         mReplyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -196,25 +196,31 @@ public class ViewFragment extends Fragment {
         Long storyPlays = mStory.getPlays() + 1;
         mStory.setPlays(storyPlays);
 
-        mDB.incrementPlays(mStory.grabUniqueId());
+        // mDB.incrementPlays(mStory.grabUniqueId());
 
         //Place ofr imageFileName & imageFile
 
         // get and set images & audio
-        final String imageFileName = mStory.grabUniqueId() + ".png";
-        final File imageFile = new File(MainNavActivity.THUMB_ROOT_DIR,
-                imageFileName);
+        if (mStory.grabUniqueId().equals("CapstoneRootStory")) {
+            Glide.with(getContext() /* context */)
+                    .load(R.drawable.drumfountain)
+                    .into(storyImage);
+        } else {
+            final String imageFileName = mStory.grabUniqueId() + ".png";
+            final File imageFile = new File(MainNavActivity.THUMB_ROOT_DIR,
+                    imageFileName);
 
-        // Load the image using Glide
-        Glide.with(getContext() /* context */)
-                .load(imageFile)
-                .into(storyImage);
+            // Load the image using Glide
+            Glide.with(getContext() /* context */)
+                    .load(imageFile)
+                    .into(storyImage);
+        }
 
         childButton = (com.bauble_app.bauble.CustomButton) v.findViewById(R.id.view_show_child);
         childButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showChildDialog(getContext(), v, imageFileName, imageFile);
+                showChildDialog(getContext(), v);
             }
         });
 
@@ -607,7 +613,7 @@ public class ViewFragment extends Fragment {
         wholeView.setOnTouchListener(new BaseTouchListener(getActivity()) {
             public void onSwipeTop() {
                 // Toast.makeText(getActivity(), "top", Toast.LENGTH_SHORT).show();
-                showChildDialog(getContext(), v, imageFileName, imageFile);
+                showChildDialog(getContext(), v);
             }
             public void onSwipeRight() { // get child before, the one that is on the left
                 // Toast.makeText(getActivity(), "right", Toast.LENGTH_SHORT).show();
@@ -840,7 +846,7 @@ public class ViewFragment extends Fragment {
     }
 
     // Call to show custom dialog
-    private void showChildDialog(Context context, View v, String imageFileName, File imageFile) {
+    private void showChildDialog(Context context, View v) {
         final Dialog dialog = new Dialog(context, R.style.PauseDialog);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.story_reply_dialog);
@@ -886,9 +892,9 @@ public class ViewFragment extends Fragment {
                 });
                 childrenContainer.addView(child);
 
-                imageFileName = childName + ".png";
+                String imageFileName = childName + ".png";
 
-                imageFile = new File(MainNavActivity.THUMB_ROOT_DIR,
+                File imageFile = new File(MainNavActivity.THUMB_ROOT_DIR,
                         imageFileName);
 
                 // Load the image using Glide

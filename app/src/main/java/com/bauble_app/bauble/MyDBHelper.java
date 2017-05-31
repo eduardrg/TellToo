@@ -47,7 +47,7 @@ public class MyDBHelper extends SQLiteOpenHelper {
     // Method for getting stories as JSON from the DB
     public Cursor selectRecordWithKey(String storyKey) {
         String[] cols = new String[] {STORY_ID, STORY_KEY, STORY_OBJ};
-        String whereCondition = STORY_KEY + " = " + storyKey;
+        String whereCondition = STORY_KEY + " = \"" + storyKey + "\"";
         Cursor mCursor = readableDB.query(true, STORY_TABLE, cols, whereCondition, null, null, null, null, null);
         return mCursor;
     }
@@ -102,7 +102,7 @@ public class MyDBHelper extends SQLiteOpenHelper {
         if (so != null) {
             String storyKey = so.grabUniqueId();
             String storyAsString = mGson.toJson(so, StoryObject.class);
-            String whereCondition = STORY_KEY + " = " + storyKey;
+            String whereCondition = STORY_KEY + " = \"" + storyKey + "\"";
             ContentValues values = new ContentValues();
             values.put(STORY_OBJ, storyAsString);
             writeableDB.update(STORY_TABLE, values, whereCondition, null);

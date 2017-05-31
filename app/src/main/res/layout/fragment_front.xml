@@ -108,11 +108,10 @@
                     android:progressDrawable="@drawable/progress_bar_gradient"
                     />
             </LinearLayout>
-
         </RelativeLayout>
 
         <ImageButton
-            android:id="@+id/view_reply_btn"
+            android:id="@+id/front_reply_btn"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:adjustViewBounds="true"

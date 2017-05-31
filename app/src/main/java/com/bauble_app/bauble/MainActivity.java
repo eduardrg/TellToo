@@ -9,6 +9,12 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
 public class MainActivity extends AppCompatActivity {
 
     public static final boolean DEBUG = false; // set to true if want to debug
@@ -32,8 +38,40 @@ public class MainActivity extends AppCompatActivity {
         loadData();
     }
 
+    private void copyAssets(InputStream in) {
+        OutputStream out = null;
+        try {
+
+            String outDir = MainNavActivity.THUMB_ROOT_DIR ;
+
+            File outFile = new File(outDir, "CapstoneRootStory.png");
+
+            out = new FileOutputStream(outFile);
+            copyFile(in, out);
+            in.close();
+            in = null;
+            out.flush();
+            out.close();
+            out = null;
+        } catch(IOException e) {
+            Log.e("tag", "Failed to copy asset file: " + e);
+        }
+    }
+    private void copyFile(InputStream in, OutputStream out) throws IOException {
+        byte[] buffer = new byte[1024];
+        int read;
+        while((read = in.read(buffer)) != -1){
+            out.write(buffer, 0, read);
+        }
+    }
+
     public void loadData() {
+        StoryObject capstoneRoot = new StoryObject("", "TellToo", "", "Capstone Night");
+        capstoneRoot.setUniqueId("CapstoneRootStory");
+        mDB.createRecord(capstoneRoot);
+        StorySingleton.getInstance().addStory(capstoneRoot);
         Cursor cursor = mDB.selectRecords();
+
         try {
             while (cursor.moveToNext()) {
                 String storyAsString = cursor.getString(cursor.getColumnIndex

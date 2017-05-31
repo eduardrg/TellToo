@@ -139,19 +139,26 @@ public class ReplyFragment extends Fragment {
                 expire.setTextColor(Color.DKGRAY);
             }
 
-            String imageFileName = story.grabUniqueId() + ".png";
-            File imageFile = new File(MainNavActivity.THUMB_ROOT_DIR,
-                    imageFileName);
-
             // ImageView in your Activity
             CircleImageView circleImageView = (CircleImageView) v.findViewById(R.id
                     .feed_listitem_picture);
 
-            // Load the image using Glide
-            Glide.with(getContext() /* context */)
-                    .load(imageFile)
-                    .into(circleImageView);
+            // get and set images & audio
+            if (story.grabUniqueId().equals("CapstoneRootStory")) {
+                Glide.with(getContext() /* context */)
+                        .load(R.drawable.drumfountain)
+                        .into(circleImageView);
+            } else {
+                String imageFileName = story.grabUniqueId() + ".png";
+                File imageFile = new File(MainNavActivity.THUMB_ROOT_DIR,
+                        imageFileName);
 
+                // Load the image using Glide
+                Glide.with(getContext() /* context */)
+                        .load(imageFile)
+                        .into(circleImageView);
+            }
+            
             // Set font
             title.setTypeface(FontHelper.getTypeface("Lato-Italic", getContext()));
         }

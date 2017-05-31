@@ -169,11 +169,9 @@ public class UploadFragment extends Fragment {
                         // Get story cover image
                         try {
                             Bitmap thumbBitmap;
-                            // Image is not set, use placeholder
+                            // Image is not set
                             if (mCreateFrag.getThumbnailPath().isEmpty()) {
-                                thumbBitmap = BitmapFactory.decodeResource
-                                        (getResources(), R.drawable
-                                                .place_holder_img);
+                                return false;
                             // Get selected image
                             } else {
                                 Uri imageFile = Uri.fromFile(new File(mCreateFrag
@@ -263,9 +261,12 @@ public class UploadFragment extends Fragment {
                                     .beginTransaction().replace
                                     (R.id.content, new ViewFragment())
                                     .commit();
+                        } else if (mCreateFrag.getThumbnailPath().isEmpty()) {
+                            Toast.makeText(getContext(), "Please select an " +
+                                    "image!", Toast.LENGTH_LONG).show();
                         } else {
-                            Toast.makeText(getContext(), "Upload failed", Toast
-                                    .LENGTH_LONG).show();
+                                Toast.makeText(getContext(), "Upload failed", Toast
+                                        .LENGTH_LONG).show();
                         }
                     }
                 };

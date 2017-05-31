@@ -17,27 +17,17 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.ImageView;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bauble_app.bauble.create.CreateFragment;
 import com.bumptech.glide.Glide;
-import com.firebase.ui.storage.images.FirebaseImageLoader;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.googlecode.mp4parser.authoring.tracks.TextTrackImpl;
-
-import org.w3c.dom.Text;
 
 import java.io.File;
-import java.util.List;
 
 
 /**
@@ -102,7 +92,7 @@ public class FrontFragment extends Fragment {
 
         // Set Swipe Action Recognizer
         LinearLayout wholeView = (LinearLayout) v.findViewById(R.id.community_whole_view);
-        wholeView.setOnTouchListener(new OnSwipeTouchListener(getActivity()) {
+        wholeView.setOnTouchListener(new BaseTouchListener(getActivity()) {
             public void onSwipeTop() {
 //                Toast.makeText(getActivity(), "top", Toast.LENGTH_SHORT).show();
                 showChildDialog(getContext(), v, imageFileName, imageFile);
@@ -132,6 +122,23 @@ public class FrontFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 showSaveDialog(getContext(), v);
+            }
+        });
+
+        ImageButton replyButton = (ImageButton) v.findViewById(R.id
+                .front_reply_btn);
+        // set up reply button
+        replyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putString("replyStoryKey", "CapstoneRootStory");
+                // set Fragmentclass Arguments
+                CreateFragment createFrag = new CreateFragment();
+                createFrag.setArguments(bundle);
+                getFragmentManager().beginTransaction().replace(R.id.content,
+                        createFrag, "REPLY_FRAG").commit();
+
             }
         });
 

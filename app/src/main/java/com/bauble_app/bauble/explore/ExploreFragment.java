@@ -128,13 +128,20 @@ public class ExploreFragment extends Fragment {
     }
 
     private void loadCoverImage(String uniqueId, CircleImageView cover) {
-        String imageFileName = uniqueId + ".png";
-        File imageFile = new File(MainNavActivity.THUMB_ROOT_DIR,
-                imageFileName);
-        Glide.with(getContext())
-                .load(imageFile)
-                .into(cover);
-        // cannot call setTag(Object) when using Glide
+        // get and set images & audio
+        if (uniqueId.equals("CapstoneRootStory")) {
+            Glide.with(getContext() /* context */)
+                    .load(R.drawable.drumfountain)
+                    .into(cover);
+        } else {
+            String imageFileName = uniqueId + ".png";
+            File imageFile = new File(MainNavActivity.THUMB_ROOT_DIR,
+                    imageFileName);
+            Glide.with(getContext())
+                    .load(imageFile)
+                    .into(cover);
+        }
+
         cover.setTag(cover.getId(), uniqueId);
         attachListeners(cover);
     }
