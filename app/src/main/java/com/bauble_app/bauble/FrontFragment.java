@@ -60,8 +60,9 @@ public class FrontFragment extends Fragment {
 
         final View v = inflater.inflate(R.layout.fragment_front, container,
                 false);
-
-        mStory = StorySingleton.getInstance().getViewStory();
+        mFragManager = getActivity()
+                .getSupportFragmentManager();
+        mStory = StorySingleton.getInstance().getStory(0);
 
         // get and set images & audio
         String imageFileNamePre = "";
