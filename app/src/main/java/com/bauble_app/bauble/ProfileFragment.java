@@ -2,9 +2,11 @@ package com.bauble_app.bauble;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -17,8 +19,9 @@ import android.widget.Toast;
 
 public class ProfileFragment extends Fragment {
     public ListView listView;
-    public ProfileAdapter adapter;
+    public DemoProfileAdapter adapter;
     public ProgressBar progressBar;
+    private FragmentManager fragManager;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -68,10 +71,34 @@ public class ProfileFragment extends Fragment {
             }
         }
 
-        adapter = new ProfileAdapter(getContext(), StorySingleton.getInstance().getOwnedKeys());
+        adapter = new DemoProfileAdapter(getContext(),StorySingleton.getInstance()
+                .getStoryMap(), StorySingleton.getInstance().getOwnedKeys());
 
         // Assign adapter to ListView
         listView.setAdapter(adapter);
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        ListView listView = (ListView) view.findViewById(R.id
+                .profile_list);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+                //ARGUMENTS: AdapterView<?> parent, View view, int position, long id
+
+                StorySingleton.getInstance().setViewStory(arg2);
+
+                // Placeholder for transition to view
+                ProfileFragment.this.fragManager = getActivity().getSupportFragmentManager();
+                // Placeholder frag transaction
+                fragManager.beginTransaction()
+                        .replace(R.id.content, new ViewFragment())
+                        .commit();
+                // Toast.makeText(getActivity().getApplicationContext(), "Text message", Toast.LENGTH_SHORT).show();
+
+            }
+        });
     }
 
 }
