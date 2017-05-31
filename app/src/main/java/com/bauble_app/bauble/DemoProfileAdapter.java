@@ -110,7 +110,13 @@ public class DemoProfileAdapter extends BaseAdapter {
 
         // To set Progress Bar
         ProgressBar countDown = (ProgressBar) vi.findViewById(R.id.feed_progressBarToday);
-        if (timeTill > 0) {
+        if (timeTill / 60 / 24 > 0) {
+            expire.setText("" + timeTill / 60 / 24 + "d");
+
+        } else if (timeTill / 60 > 0) {
+            expire.setText("" + timeTill / 60 + "h");
+            
+        } else if (timeTill > 0) {
 
             expire.setText("" + timeTill / 60 + "m");
             countDown.setProgress((int) (timeTill.doubleValue() / totalTime.intValue() * 48));
