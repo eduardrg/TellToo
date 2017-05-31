@@ -82,6 +82,7 @@ public class ViewFragment extends Fragment {
     private LinearLayout emojiChain;
 
     private LinearLayout wavebars;
+    private com.bauble_app.bauble.CustomButton childButton;
 
     public ViewFragment() {
         // Required empty public constructor
@@ -275,15 +276,25 @@ public class ViewFragment extends Fragment {
 
         mDB.incrementPlays(mStory.grabUniqueId());
 
+        //Place ofr imageFileName & imageFile
+
         // get and set images & audio
-        String imageFileName = mStory.grabUniqueId() + ".png";
-        File imageFile = new File(MainNavActivity.THUMB_ROOT_DIR,
+        final String imageFileName = mStory.grabUniqueId() + ".png";
+        final File imageFile = new File(MainNavActivity.THUMB_ROOT_DIR,
                 imageFileName);
 
         // Load the image using Glide
         Glide.with(getContext() /* context */)
                 .load(imageFile)
                 .into(storyImage);
+
+        childButton = (com.bauble_app.bauble.CustomButton) v.findViewById(R.id.view_show_child);
+        childButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showChildDialog(getContext(), v, imageFileName, imageFile);
+            }
+        });
 
         // set sib pictures if not null and set sibling counters
         if (leftSibs != null && leftSibs.size() > 0) {
@@ -439,50 +450,7 @@ public class ViewFragment extends Fragment {
         TextView plays = (TextView) v.findViewById(R.id.view_plays);
         plays.setText(mStory.getPlays().toString());
 
-        LinearLayout childrenContainer = (LinearLayout) v.findViewById(R.id.view_container_childern);
-        if (mStory.getChildren().size() > 0) {
-            TextView emptyLabel = (TextView) v.findViewById(R.id.view_container_empty);
-            emptyLabel.setVisibility(View.GONE);
-            for (String childName: mStory.getChildren()) {
-                Log.e("ViewFragment", "Child Name:" + childName);
-                final String uniqueIdentifyer = childName;
-
-                de.hdodenhof.circleimageview.CircleImageView child = new de.hdodenhof.circleimageview.CircleImageView(getContext());
-                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(200, 200);
-                lp.setMargins(0, 0, 60, 0);
-                child.setLayoutParams(lp);
-                child.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        StorySingleton.getInstance().setViewKey(uniqueIdentifyer);
-                        // Placeholder for transition to view
-                        // ViewFragment.this.fragManager = getActivity().getSupportFragmentManager();
-
-                        // Stop sound before transaction
-                        stopMediaPlayer();
-                        FragmentTransaction ft = mFragManager.beginTransaction();
-                        ft.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_top)
-                            .replace(R.id.content, new ViewFragment())
-                            // TODO: even though add to back stack, need to find way to load correct mStory when back pressed
-                            .addToBackStack("tag")
-                            .commit();
-//                        fragManager.beginTransaction()
-//                                .replace(R.id.content, new ViewFragment())
-//                                .commit();
-                    }
-                });
-                childrenContainer.addView(child);
-
-                imageFileName = childName + ".png";
-
-                imageFile = new File(MainNavActivity.THUMB_ROOT_DIR,
-                        imageFileName);
-
-                // Load the image using Glide
-                Glide.with(getContext()).load(imageFile).into(child);
-
-            }
-        }
+        // OLD CHILD SETTING SPOT
 
         // Load and play audio
         // TODO: Insure the phone has space to store TEN_MEGABYTE otherwise crash
@@ -613,6 +581,7 @@ public class ViewFragment extends Fragment {
         wholeView.setOnTouchListener(new OnSwipeTouchListener(getActivity()) {
             public void onSwipeTop() {
                 Toast.makeText(getActivity(), "top", Toast.LENGTH_SHORT).show();
+                showChildDialog(getContext(), v, imageFileName, imageFile);
             }
             public void onSwipeRight() { // get child before, the one that is on the left
                 Toast.makeText(getActivity(), "right", Toast.LENGTH_SHORT).show();
@@ -837,11 +806,86 @@ public class ViewFragment extends Fragment {
         Window window = dialog.getWindow();
         WindowManager.LayoutParams wlp = window.getAttributes();
 
-        wlp.y = 400;
+        wlp.y = 300;
         // wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
         window.setAttributes(wlp);
 
         dialog.show();
     }
 
+    // Call to show custom dialog
+    private void showChildDialog(Context context, View v, String imageFileName, File imageFile) {
+        final Dialog dialog = new Dialog(context);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.story_reply_dialog);
+        dialog.setCanceledOnTouchOutside(true);
+        dialog.setCancelable(true);
+
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View layout = inflater.inflate(R.layout.story_reply_dialog,
+                (ViewGroup) v.findViewById(R.id.reply_layout_root));
+
+        LinearLayout childrenContainer = (LinearLayout) layout.findViewById(R.id.view_container_childern);
+        if (mStory.getChildren().size() > 0) {
+            TextView emptyLabel = (TextView) layout.findViewById(R.id.view_container_empty);
+            emptyLabel.setVisibility(View.GONE);
+            for (String childName: mStory.getChildren()) {
+                Log.e("ViewFragment", "Child Name:" + childName);
+                final String uniqueIdentifyer = childName;
+
+                de.hdodenhof.circleimageview.CircleImageView child = new de.hdodenhof.circleimageview.CircleImageView(getContext());
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(200, 200);
+                lp.setMargins(0, 0, 60, 0);
+                child.setLayoutParams(lp);
+                child.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        StorySingleton.getInstance().setViewKey(uniqueIdentifyer);
+                        // Placeholder for transition to view
+                        // ViewFragment.this.fragManager = getActivity().getSupportFragmentManager();
+
+                        // Stop sound before transaction
+                        stopMediaPlayer();
+                        FragmentTransaction ft = mFragManager.beginTransaction();
+                        ft.setCustomAnimations(R.anim.enter_from_bottom, R.anim.exit_to_top)
+                                .replace(R.id.content, new ViewFragment())
+                                // TODO: even though add to back stack, need to find way to load correct mStory when back pressed
+                                .addToBackStack("tag")
+                                .commit();
+//                        fragManager.beginTransaction()
+//                                .replace(R.id.content, new ViewFragment())
+//                                .commit();
+                    }
+                });
+                childrenContainer.addView(child);
+
+                imageFileName = childName + ".png";
+
+                imageFile = new File(MainNavActivity.THUMB_ROOT_DIR,
+                        imageFileName);
+
+                // Load the image using Glide
+                Glide.with(getContext()).load(imageFile).into(child);
+
+            }
+        }
+        /**
+         * if you want the dialog to be specific size, do the following
+         * this will cover 85% of the screen (95% width and 33% height)
+         */
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        int dialogWidth = (int)(displayMetrics.widthPixels * 0.95);
+        int dialogHeight = (int)(displayMetrics.heightPixels * 0.20);
+        dialog.getWindow().setLayout(dialogWidth, dialogHeight);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+
+        Window window = dialog.getWindow();
+        WindowManager.LayoutParams wlp = window.getAttributes();
+
+        wlp.y = 150;
+        wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+        window.setAttributes(wlp);
+
+        dialog.show();
+    }
 }

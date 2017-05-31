@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:id="@+id/reply_layout_root"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:background="@drawable/toast_gradient"
+    >
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
         android:layout_marginTop="5dp"
-        android:text="Story Replies" />
+        android:text="Story Replies"
+        android:textColor="@color/tw__solid_white"/>
 
     <HorizontalScrollView
         android:layout_width="match_parent"
@@ -57,5 +61,14 @@
             </LinearLayout>
         </LinearLayout>
     </HorizontalScrollView>
+
+    <ProgressBar
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:indeterminateDrawable="@drawable/bar_gradient"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:padding="0dp"
+        android:layout_gravity="bottom"/>
 
 </LinearLayout>

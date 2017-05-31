@@ -975,7 +975,7 @@
                         />
                     <ProgressBar
                         android:id="@+id/vertical_progressbar97"
-                        android:layout_width="4dp"
+                        android:layout_width="match_parent"
                         android:layout_height="60dp"
                         android:max="100"
                         android:progress="0"
@@ -1102,6 +1102,21 @@
                     android:layout_weight="1" />
 
             </LinearLayout>
+
+            <com.bauble_app.bauble.CustomButton
+                android:id="@+id/view_show_child"
+                android:layout_alignParentTop="true"
+                android:gravity="top|center"
+                android:paddingTop="2dp"
+                android:layout_width="120dp"
+                android:layout_height="28dp"
+                android:layout_margin="4dp"
+                android:background="@drawable/btn_com_save"
+                android:layout_gravity="center"
+                android:text="Story Replies"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                android:textSize="17sp"/>
         </LinearLayout>
     </ScrollView>
 
