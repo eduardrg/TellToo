@@ -153,21 +153,22 @@ public class ViewFragment extends Fragment {
                         // Waveform setting Note: higher values mean lower bar
                         for (int i = 0; i < wavebars.getChildCount() - 1; i++) {
                             ProgressBar bar = (ProgressBar) wavebars.getChildAt(i);
-                            int newVal = data[i];
-                            if (data[i] < 95) {
-                                newVal = newVal + r.nextInt(15);
+                            int newVal = data[i] + 1;
+                            if (newVal < 95) {
+                                newVal = newVal + r.nextInt(10) + 10;
                             }
                             bar.setProgress(newVal);
                             data[i] = newVal;
                         }
                         ProgressBar lastBar = (ProgressBar) wavebars.getChildAt(wavebars.getChildCount() - 1);
-                        int lastVal = r.nextInt(101);
+                        int lastVal = r.nextInt(6) + 95;
                         lastBar.setProgress(lastVal);
                         data[wavebars.getChildCount() - 1] = lastVal;
                     }
 
                     @Override
                     public void onFinish() {
+                        v.findViewById(R.id.view_color_bar).setVisibility(View.VISIBLE);
                         Log.e("ViewFragment", "Finished Countdown");
                     }
                 };
