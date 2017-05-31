@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,12 +14,7 @@ import com.bauble_app.bauble.CustomText;
 import com.bauble_app.bauble.R;
 import com.bauble_app.bauble.StoryObject;
 import com.bauble_app.bauble.StorySingleton;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import static android.view.View.GONE;
 
@@ -39,7 +33,7 @@ public class CreateFragment extends Fragment {
     private FragmentManager mChildFragManager;
     private StorySingleton mStorySingleton;
 
-    private FirebaseAuth mAuth;
+    // private FirebaseAuth mAuth;
     private FirebaseDatabase mDatabase;
     private String FDBTag = "FDB";
     private String mReplyStoryKey;
@@ -60,7 +54,7 @@ public class CreateFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mAuth = FirebaseAuth.getInstance();
+        // mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance();
         mStorySingleton = StorySingleton.getInstance();
         mChildFragManager = getChildFragmentManager();
@@ -68,6 +62,7 @@ public class CreateFragment extends Fragment {
         mAuthor = "CapstoneUser";
         mTitle = "Untitled";
         mThumbnailPath = "";
+        /*
         String userId = mAuth.getCurrentUser().getUid();
         DatabaseReference users = mDatabase.getReference("users");
         users.child(userId).child("name").addValueEventListener(new ValueEventListener() {
@@ -82,6 +77,7 @@ public class CreateFragment extends Fragment {
                         .getCode());
             }
         });
+        */
     }
 
     @Override
@@ -216,6 +212,5 @@ public class CreateFragment extends Fragment {
         View create_skip = getView().findViewById(R.id.create_skip);
         spacer.setVisibility(GONE);
         create_skip.setVisibility(GONE);
-
     }
 }
