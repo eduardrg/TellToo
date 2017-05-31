@@ -3,6 +3,7 @@ package com.bauble_app.bauble.create;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -191,6 +192,8 @@ public class UploadFragment extends Fragment {
                         }
 
                         // Get story audio
+                        String durationString = "0";
+                        MediaMetadataRetriever mmr = null;
                         try {
                             File from = new File(mCreateFrag
                                     .getRecordingPath());
@@ -198,6 +201,11 @@ public class UploadFragment extends Fragment {
                             temp.mkdirs();
                             String audioFileName = mKey + ".m4a";
 
+                            // Get audio duration
+                            mmr = new MediaMetadataRetriever();
+                            mmr.setDataSource(from.getPath());
+                            durationString = mmr.extractMetadata
+                                    (MediaMetadataRetriever.METADATA_KEY_DURATION);
                             File to = new File(temp, audioFileName);
                             if (to.exists()) {
                                 to.delete();
@@ -208,6 +216,11 @@ public class UploadFragment extends Fragment {
                                     "audio:\n"
                                     + e.getMessage());
                             return false;
+                        } finally {
+                            if (mmr != null) {
+                                mmr.release();
+                                mmr = null;
+                            }
                         }
 
                         // If this is a reply, update the parent to mark the reply as
@@ -218,6 +231,11 @@ public class UploadFragment extends Fragment {
                             mDB.updateRecord(mParent);
                             mStorySingleton.putStory(mParent);
                         }
+
+                        // Save the duration
+                        long duration_ms = Long.parseLong(durationString);
+                        long duration = duration_ms / 1000;
+                        story.setDuration(duration);
 
                         // Add this story to the list of stories
                         mDB.createRecord(story);
