@@ -34,11 +34,13 @@ public class MainNavActivity extends AppCompatActivity {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
+                /*
                 case R.id.navigation_front:
                     mFragManager.beginTransaction()
                             .replace(R.id.content, new FeedFragment())
                             .commit();
                     return true;
+                    */
                 case R.id.navigation_explore:
                     mFragManager.beginTransaction().replace(R.id.content, new
                             ExploreFragment()).commit();

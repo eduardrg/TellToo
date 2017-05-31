@@ -201,11 +201,13 @@ public class ViewFragment extends Fragment {
         //Place ofr imageFileName & imageFile
 
         // get and set images & audio
+        /*
         if (mStory.grabUniqueId().equals("CapstoneRootStory")) {
-            Glide.with(getContext() /* context */)
+            Glide.with(getContext())
                     .load(R.drawable.drumfountain)
                     .into(storyImage);
         } else {
+        */
             final String imageFileName = mStory.grabUniqueId() + ".png";
             final File imageFile = new File(MainNavActivity.THUMB_ROOT_DIR,
                     imageFileName);
@@ -214,7 +216,7 @@ public class ViewFragment extends Fragment {
             Glide.with(getContext() /* context */)
                     .load(imageFile)
                     .into(storyImage);
-        }
+        // }
 
         childButton = (com.bauble_app.bauble.CustomButton) v.findViewById(R.id.view_show_child);
         childButton.setOnClickListener(new View.OnClickListener() {

@@ -21,7 +21,6 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bauble_app.bauble.create.CreateFragment;
 import com.bumptech.glide.Glide;
@@ -131,14 +130,16 @@ public class FrontFragment extends Fragment {
         replyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Bundle bundle = new Bundle();
-                bundle.putString("replyStoryKey", "CapstoneRootStory");
-                // set Fragmentclass Arguments
-                CreateFragment createFrag = new CreateFragment();
-                createFrag.setArguments(bundle);
-                getFragmentManager().beginTransaction().replace(R.id.content,
-                        createFrag, "REPLY_FRAG").commit();
-
+                if (!StorySingleton.getInstance().isEmpty()) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("replyStoryKey", StorySingleton
+                            .getInstance().getKey());
+                    // set Fragmentclass Arguments
+                    CreateFragment createFrag = new CreateFragment();
+                    createFrag.setArguments(bundle);
+                    getFragmentManager().beginTransaction().replace(R.id.content,
+                            createFrag, "REPLY_FRAG").commit();
+                }
             }
         });
 

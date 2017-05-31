@@ -139,6 +139,10 @@ public class StorySingleton {
         return graphKey;
     }
 
+    public String getKey() {
+        return this.mKeys.get(0);
+    }
+
     public void setGraphKey(String graphKey) {
         this.graphKey = graphKey;
     }

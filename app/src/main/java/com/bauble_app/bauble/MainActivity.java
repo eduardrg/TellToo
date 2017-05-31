@@ -66,10 +66,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void loadData() {
-        StoryObject capstoneRoot = new StoryObject("", "TellToo", "", "Capstone Night");
+        /*
+        StoryObject capstoneRoot = new StoryObject("", "TellToo", "",
+                "Capstone Night");
         capstoneRoot.setUniqueId("CapstoneRootStory");
         mDB.createRecord(capstoneRoot);
         StorySingleton.getInstance().addStory(capstoneRoot);
+        */
         Cursor cursor = mDB.selectRecords();
 
         try {
