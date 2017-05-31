@@ -145,34 +145,43 @@ public class ViewFragment extends Fragment {
 
                 Log.e("ViewFragment", "First Countdown Done");
 
-                finalCountDownTimer = new CountDownTimer(2 * 1000, 100) { // 10 second timer
+                // Set all bars to grayed out
+                for (int i = 0; i < wavebars.getChildCount(); i++) {
+                    ProgressBar bar = (ProgressBar) wavebars.getChildAt(i);
+                    bar.setProgressDrawable(getResources().getDrawable(R.drawable.vertical_progress_bar_done));
+                }
 
-                    @Override
-                    public void onTick(long millsUntilFinished) { //milliseconds?
-                        Random r = new Random();
-                        // Waveform setting Note: higher values mean lower bar
-                        for (int i = 0; i < wavebars.getChildCount() - 1; i++) {
-                            ProgressBar bar = (ProgressBar) wavebars.getChildAt(i);
-                            int newVal = data[i] + 1;
-                            if (newVal < 95) {
-                                newVal = newVal + r.nextInt(10) + 10;
-                            }
-                            bar.setProgress(newVal);
-                            data[i] = newVal;
-                        }
-                        ProgressBar lastBar = (ProgressBar) wavebars.getChildAt(wavebars.getChildCount() - 1);
-                        int lastVal = r.nextInt(6) + 95;
-                        lastBar.setProgress(lastVal);
-                        data[wavebars.getChildCount() - 1] = lastVal;
-                    }
-
-                    @Override
-                    public void onFinish() {
-                        v.findViewById(R.id.view_color_bar).setVisibility(View.VISIBLE);
-                        Log.e("ViewFragment", "Finished Countdown");
-                    }
-                };
-                finalCountDownTimer.start();
+                // Code for having the waveform burn down
+//                finalCountDownTimer = new CountDownTimer(2 * 1000, 100) { // 10 second timer
+//
+//                    @Override
+//                    public void onTick(long millsUntilFinished) { //milliseconds?
+//                        Random r = new Random();
+//                        // Waveform setting Note: higher values mean lower bar
+//                        for (int i = 0; i < wavebars.getChildCount() - 1; i++) {
+//                            ProgressBar bar = (ProgressBar) wavebars.getChildAt(i);
+//                            int newVal = data[i + 1];
+//                            if (newVal < 95) {
+//                                newVal = newVal + r.nextInt(5) + 5;
+//                            } else {
+//                                newVal = 100;
+//                            }
+//                            bar.setProgress(newVal);
+//                            data[i] = newVal;
+//                        }
+//                        ProgressBar lastBar = (ProgressBar) wavebars.getChildAt(wavebars.getChildCount() - 1);
+//                        int lastVal = r.nextInt(6) + 95;
+//                        lastBar.setProgress(lastVal);
+//                        data[wavebars.getChildCount() - 1] = lastVal;
+//                    }
+//
+//                    @Override
+//                    public void onFinish() {
+//                        v.findViewById(R.id.view_color_bar).setVisibility(View.VISIBLE);
+//                        Log.e("ViewFragment", "Finished Countdown");
+//                    }
+//                };
+//                finalCountDownTimer.start();
             }
         };
         countDownTimer.start();
