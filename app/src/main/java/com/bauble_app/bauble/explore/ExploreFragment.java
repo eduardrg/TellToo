@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.bauble_app.bauble.BaseTouchListener;
 import com.bauble_app.bauble.MainNavActivity;
@@ -80,10 +79,8 @@ public class ExploreFragment extends Fragment {
 
         mSwipeListener = new BaseTouchListener(getActivity()) {
             public void onSwipeTop() {
-                Toast.makeText(getActivity(), "top", Toast.LENGTH_SHORT).show();
             }
             public void onSwipeRight() { // get child before, the one that is on the left
-                Toast.makeText(getActivity(), "right", Toast.LENGTH_SHORT).show();
                 if (mRoot.getChildren() != null && !mRoot.getChildren().isEmpty
                         ()) {
                     processNav(mStorySingleton.getStory(mRoot.getChildren().get
@@ -91,7 +88,6 @@ public class ExploreFragment extends Fragment {
                 }
             }
             public void onSwipeLeft() {
-                Toast.makeText(getActivity(), "left", Toast.LENGTH_SHORT).show();
 
                 if (mRoot.getChildren() != null && mRoot.getChildren().size
                         () >= 2) {
@@ -100,7 +96,6 @@ public class ExploreFragment extends Fragment {
                 }
             }
             public void onSwipeBottom() {
-                Toast.makeText(getActivity(), "bottom", Toast.LENGTH_SHORT).show();
                 processNav(mStorySingleton.getStory(mRoot.getParentString()));
             }
 

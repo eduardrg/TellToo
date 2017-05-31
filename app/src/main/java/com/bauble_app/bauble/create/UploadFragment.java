@@ -11,10 +11,12 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bauble_app.bauble.MainNavActivity;
@@ -59,6 +61,7 @@ public class UploadFragment extends Fragment {
 
     private StorySingleton mStorySingleton;
     private StoryObject mParent;
+    private View mView;
 
     // Create a StoryObject for upload to Firebase Database
     // The cover and audio params are the paths of the cover image and audio
@@ -129,6 +132,7 @@ public class UploadFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_edit, container, false);
+        mView = v;
         mStorage = FirebaseStorage.getInstance().getReference();
         mDatabase = FirebaseDatabase.getInstance();
         mCreateFrag = (CreateFragment) getParentFragment();
@@ -254,19 +258,56 @@ public class UploadFragment extends Fragment {
                     @Override
                     protected void onPostExecute(Boolean result) {
                         if (result) {
-                            Toast.makeText(getContext(), "Story uploaded!",
-                                    Toast.LENGTH_LONG).show();
+                            LayoutInflater inflater = getActivity().getLayoutInflater();
+                            View layout = inflater.inflate(R.layout.toast_logout,
+                                    (ViewGroup) mView.findViewById(R.id
+                                            .toast_layout_root));
+
+                            TextView text = (TextView) layout.findViewById(R.id.toast_save_text);
+                            text.setText("Story uploaded!");
+
+                            Toast toast = new Toast(getContext().getApplicationContext());
+                            //toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+                            toast.setGravity(Gravity.BOTTOM, 0, 200);
+                            toast.setDuration(Toast.LENGTH_SHORT);
+                            toast.setView(layout);
+                            toast.show();
                             mStorySingleton.setViewKey(mKey);
                             getActivity().getSupportFragmentManager()
                                     .beginTransaction().replace
                                     (R.id.content, new ViewFragment())
                                     .commit();
                         } else if (mCreateFrag.getThumbnailPath().isEmpty()) {
-                            Toast.makeText(getContext(), "Please select an " +
-                                    "image!", Toast.LENGTH_LONG).show();
+                            LayoutInflater inflater = getActivity().getLayoutInflater();
+                            View layout = inflater.inflate(R.layout.toast_logout,
+                                    (ViewGroup) mView.findViewById(R.id
+                                            .toast_layout_root));
+
+                            TextView text = (TextView) layout.findViewById(R.id.toast_save_text);
+                            text.setText("Please select an " +
+                                    "image!");
+
+                            Toast toast = new Toast(getContext().getApplicationContext());
+                            //toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+                            toast.setGravity(Gravity.BOTTOM, 0, 200);
+                            toast.setDuration(Toast.LENGTH_SHORT);
+                            toast.setView(layout);
+                            toast.show();
                         } else {
-                                Toast.makeText(getContext(), "Upload failed", Toast
-                                        .LENGTH_LONG).show();
+                            LayoutInflater inflater = getActivity().getLayoutInflater();
+                            View layout = inflater.inflate(R.layout.toast_logout,
+                                    (ViewGroup) mView.findViewById(R.id
+                                            .toast_layout_root));
+
+                            TextView text = (TextView) layout.findViewById(R.id.toast_save_text);
+                            text.setText("Upload failed");
+
+                            Toast toast = new Toast(getContext().getApplicationContext());
+                            //toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+                            toast.setGravity(Gravity.BOTTOM, 0, 200);
+                            toast.setDuration(Toast.LENGTH_SHORT);
+                            toast.setView(layout);
+                            toast.show();
                         }
                     }
                 };
