@@ -324,6 +324,9 @@ public class StoryObject implements Comparable<StoryObject>{
         this.tags = tags;
     }
 
+    public boolean hasChildren() {
+        return (this.children != null && !this.children.isEmpty());
+    }
 
     public void setParentString(String parentId) {
         if (parentId == null) {

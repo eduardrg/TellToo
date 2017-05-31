@@ -5,15 +5,21 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.bauble_app.bauble.MainNavActivity;
+import com.bauble_app.bauble.OnSwipeTouchListener;
 import com.bauble_app.bauble.R;
 import com.bauble_app.bauble.StoryObject;
 import com.bauble_app.bauble.StorySingleton;
 import com.bauble_app.bauble.ViewFragment;
+import com.bauble_app.bauble.create.ReplyFragment;
 import com.bumptech.glide.Glide;
 
 import java.io.File;
@@ -32,6 +38,8 @@ public class ExploreFragment extends Fragment {
     private View mView;
     // TODO: this can be used to add a back button
     private Stack<StoryObject> mClickStack;
+    private Button mBack;
+    private OnSwipeTouchListener mSwipeListener;
 
     public ExploreFragment() {
         // Required empty public constructor
@@ -52,6 +60,57 @@ public class ExploreFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_explore, container, false);
         mView = v;
+        mBack = (Button) v.findViewById(R.id
+                .explore_back);
+        mBack.setVisibility(View.GONE);
+        mBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("BackDebug", mClickStack.toString());
+                if (!mClickStack.isEmpty() && mClickStack.size() > 1) {
+                    mClickStack.pop();
+                    updateUI(mClickStack.peek());
+                }
+                if (mClickStack.isEmpty() || mClickStack.size() == 1) {
+                    mBack.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        mSwipeListener = new OnSwipeTouchListener(getActivity()) {
+            public void onSwipeTop() {
+                Toast.makeText(getActivity(), "top", Toast.LENGTH_SHORT).show();
+                this.onSwipeRight();
+            }
+            public void onSwipeRight() { // get child before, the one that is on the left
+                Toast.makeText(getActivity(), "right", Toast.LENGTH_SHORT).show();
+                if (mRoot.getChildren() != null && !mRoot.getChildren().isEmpty
+                        ()) {
+                    processNav(mStorySingleton.getStory(mRoot.getChildren().get
+                            (0)));
+                }
+            }
+            public void onSwipeLeft() {
+                Toast.makeText(getActivity(), "left", Toast.LENGTH_SHORT).show();
+
+                if (mRoot.getChildren() != null && mRoot.getChildren().size
+                        () >= 2) {
+                    processNav(mStorySingleton.getStory(mRoot.getChildren().get
+                            (1)));
+                }
+            }
+            public void onSwipeBottom() {
+                Toast.makeText(getActivity(), "bottom", Toast.LENGTH_SHORT).show();
+                processNav(mStorySingleton.getStory(mRoot.getParentString()));
+            }
+
+        };
+
+        // Set Swipe Action Recognizer
+        LinearLayout wholeView = (LinearLayout) v.findViewById(R.id
+                .explore_whole_view);
+        wholeView.setOnTouchListener(mSwipeListener);
+
         mRoot = mStorySingleton.getViewStory();
         if (mRoot == null) {
             if (!mStorySingleton.isEmpty()) {
@@ -63,24 +122,6 @@ public class ExploreFragment extends Fragment {
             mClickStack.push(mRoot);
             showChildrenLoop(mRoot, "explore_root");
         }
-        /*
-        Gson gsonDebug = new GsonBuilder().setPrettyPrinting().create();
-        String rootDebug = gsonDebug.toJson(mRoot, StoryObject.class);
-        System.out.println(rootDebug);
-
-        String rootImageFileName = mRoot.grabUniqueId() + "" +
-                ".png";
-        File rootImageFile = new File(MainNavActivity
-                .THUMB_ROOT_DIR,
-                rootImageFileName);
-        CircleImageView root = (CircleImageView)
-                v
-                        .findViewById(R.id
-                                .explore_root);
-        Glide.with(getContext()).load(rootImageFile)
-                .into(root);
-        showChildren(v);
-        */
         return v;
     }
 
@@ -96,6 +137,27 @@ public class ExploreFragment extends Fragment {
         attachListeners(uniqueId, cover);
     }
 
+    private void processNav(StoryObject clickedStory) {
+        if (clickedStory != null) {
+            // Add the clicked story to the back stack
+            mClickStack.push(clickedStory);
+            updateUI(clickedStory);
+            // Show the back button because the stack is guaranteed non-empty
+            mBack.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void updateUI(StoryObject clickedStory) {
+        if (clickedStory != null) {
+            // Set the new root to the clicked story
+            mRoot = clickedStory;
+            resetTreeCovers((ViewGroup) mView);
+            // Load cover images into children that exist
+            showChildrenLoop(mRoot, "explore_root");
+            // Show a preview of the clicked story at top
+            showReply(clickedStory.grabUniqueId());
+        }
+    }
     // for when we are redrawing the tree
     // we need to load "blank" images into the cover CircleImageViews
     // and remove any lingering tags/listeners so that clicking them does
@@ -119,27 +181,40 @@ public class ExploreFragment extends Fragment {
                 resetTreeCovers((ViewGroup) v);
             }
         }
-
     }
 
-    /*
-     TODO: maybe use swipe gestures to navigate instead, bring up a preview of
-      the
-      story on double tap and, open the story on long press
-    */
+    private void showReply(final String uniqueId) {
+        if (uniqueId != null) {
+            Bundle bundle = new Bundle();
+            bundle.putString("replyStoryKey", uniqueId);
+            Fragment replyFrag = new ReplyFragment();
+            replyFrag.setArguments(bundle);
+            getChildFragmentManager().beginTransaction().replace(R.id
+                    .explore_preview, replyFrag).commit();
+            getView().findViewById(R.id.explore_preview)
+                    .setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            mStorySingleton.setViewKey(uniqueId);
+                            getActivity().getSupportFragmentManager()
+                                    .beginTransaction().replace
+                                    (R.id.content, new ViewFragment())
+                                    .commit();
+                        }
+                    });
+        }
+    }
+
     private void attachListeners(String uniqueId, CircleImageView cover) {
         cover.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Object tag = v.getTag(v.getId());
+                final Object tag = v.getTag(v.getId());
                 if (tag != null && tag instanceof String) {
                     StoryObject clickedStory = mStorySingleton.getStory(
                             (String) tag);
                     if (!clickedStory.equals(mRoot)) {
-                        mClickStack.push(clickedStory);
-                        mRoot = mStorySingleton.getStory((String) tag);
-                        resetTreeCovers((ViewGroup) mView);
-                        showChildrenLoop(mRoot, "explore_root");
+                        processNav(clickedStory);
                     }
                 }
             }
@@ -158,6 +233,7 @@ public class ExploreFragment extends Fragment {
                 return true;
             }
         });
+        cover.setOnTouchListener(mSwipeListener);
 
     }
     private void showChildrenLoop(StoryObject so, String idAsString) {
@@ -205,91 +281,5 @@ public class ExploreFragment extends Fragment {
         }
 
     }
-/*
-    private void showChildren(View v) {
-        if (mRoot.getChildren() != null) {
-            System.out.println("root has children:" + mRoot.getChildren()
-                    .size());
-            List<String> children = mRoot.getChildren();
-            int childCount = children.size();
-            if (childCount >= 1) {
-                String leftChildImageFileName = children.get(0) + ".png";
-                File leftChildImageFile = new File(MainNavActivity
-                        .THUMB_ROOT_DIR,
-                        leftChildImageFileName);
-                CircleImageView root_left = (CircleImageView) v
-                        .findViewById(R.id.explore_root_left);
-                Glide.with(getContext()).load(leftChildImageFile).into(root_left);
-
-                List<String> grandChildren = mStorySingleton.getStory
-                        (children.get(0)).getChildren();
-                int grandChildCount = grandChildren.size();
-                if (grandChildCount >= 1) {
-                    String leftGrandChildImageFileName = grandChildren.get(0) +
-                            ".png";
-                    File leftGrandChildImageFile = new File(MainNavActivity
-                            .THUMB_ROOT_DIR,
-                            leftGrandChildImageFileName);
-                    CircleImageView root_left_left = (CircleImageView) v
-                            .findViewById(R.id.explore_root_left_left);
-                    Glide.with(getContext()).load(leftGrandChildImageFile)
-                            .into(root_left_left);
-
-                }
-                if (grandChildCount >= 2) {
-                    String rightGrandChildImageFileName = grandChildren.get(1) + "" +
-                            ".png";
-                    File rightGrandChildImageFile = new File(MainNavActivity
-                            .THUMB_ROOT_DIR,
-                            rightGrandChildImageFileName);
-                    CircleImageView root_left_right = (CircleImageView)
-                            v
-                            .findViewById(R.id.explore_root_left_right);
-                    Glide.with(getContext()).load(rightGrandChildImageFile)
-                            .into(root_left_right);
-                }
-            }
-            if (childCount >= 2) {
-                String imageFileName = children.get(1) + ".png";
-                File imageFile = new File(MainNavActivity.THUMB_ROOT_DIR,
-                        imageFileName);
-                CircleImageView root_right = (CircleImageView) v
-                        .findViewById(R.id.explore_root_right);
-                Glide.with(getContext()).load(imageFile).into(root_right);
-
-                List<String> grandChildren = mStorySingleton.getStory
-                        (children.get(1)).getChildren();
-                int grandChildCount = grandChildren.size();
-                if (grandChildCount >= 1) {
-                    String leftGrandChildImageFileName = grandChildren.get(0) +
-                            ".png";
-                    File leftGrandChildImageFile = new File(MainNavActivity
-                            .THUMB_ROOT_DIR,
-                            leftGrandChildImageFileName);
-                    CircleImageView root_right_left = (CircleImageView)
-                            v
-                            .findViewById(R.id.explore_root_right_left);
-                    Glide.with(getContext()).load(leftGrandChildImageFile)
-                            .into(root_right_left);
-
-                }
-                if (grandChildCount >= 2) {
-                    String rightGrandChildImageFileName = grandChildren.get(1) + "" +
-                            ".png";
-                    File rightGrandChildImageFile = new File(MainNavActivity
-                            .THUMB_ROOT_DIR,
-                            rightGrandChildImageFileName);
-                    CircleImageView root_right_right = (CircleImageView)
-                            v
-                                    .findViewById(R.id
-                                            .explore_root_right_right);
-                    Glide.with(getContext()).load(rightGrandChildImageFile)
-                            .into(root_right_right);
-                }
-            }
-
-        }
-    }
-    */
 
 }

@@ -49,6 +49,7 @@
     <string name="auth_choice_page_desc">You need an account to do that.</string>
     <string name="tag_page_title">Tags</string>
     <string name="tag_page_desc">Tag the content of your story so the community can find it!</string>
+    <string name="explore_back_text"><![CDATA[< Back]]></string>
 
     <string name="capstone_night_description">Tonight is a special night full of promising projects! TellToo will facilitate this exciting moment by bringing together the stories of tonight. By donating (with completely imaginary money), you help fund and support future capstone projects as well as receive a collection of every story told tonight! </string>
 
