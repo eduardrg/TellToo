@@ -875,6 +875,7 @@ public class ViewFragment extends Fragment {
                 child.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        dialog.dismiss();
                         StorySingleton.getInstance().setViewKey(uniqueIdentifyer);
                         // Placeholder for transition to view
                         // ViewFragment.this.fragManager = getActivity().getSupportFragmentManager();

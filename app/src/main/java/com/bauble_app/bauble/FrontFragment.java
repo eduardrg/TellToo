@@ -61,7 +61,8 @@ public class FrontFragment extends Fragment {
         final View v = inflater.inflate(R.layout.fragment_front, container,
                 false);
 
-        mStory = StorySingleton.getInstance().getViewStory();
+        mStory = StorySingleton.getInstance().getStory(0);
+        mFragManager = getActivity().getSupportFragmentManager();
 
         // get and set images & audio
         String imageFileNamePre = "";
@@ -279,6 +280,7 @@ public class FrontFragment extends Fragment {
                 child.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        dialog.dismiss();
                         StorySingleton.getInstance().setViewKey(uniqueIdentifyer);
                         // Placeholder for transition to view
                         // ViewFragment.this.fragManager = getActivity().getSupportFragmentManager();
