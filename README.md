@@ -5,11 +5,6 @@ TellToo is an Android application for listening to and sharing voice recordings.
 - [Overview](#overview)
 - [Demo](#demo)
 - [Screens](#screens)
-  * [Community](#community)
-  * [View](#view)
-  * [Create](#create)
-  * [Profile](#profile)
-  * [Explore](#explore)
 - [Key Features](#key-features)
 - [Technologies](#technologies)
 - [Limitations](#limitations)
@@ -22,20 +17,27 @@ TellToo focuses on the journey we take as individuals to find meaning, purpose, 
 ## Demo
 See the docs/demo_media for demo videos and screens.
 ## Screens
-### Community
-![Community](docs/demo_media/Community.png)
+<table>
+ <tr>
+  <td><h3>Community</td>
+  <td><h3>View</td>
+  <td><h3>Create</td>
+ </tr>
+ <tr>
+  <td><img src="docs/demo_media/Community.png"/></td>
+  <td><img src="docs/demo_media/View.png"/></td>
+  <td><img src="docs/demo_media/Create1.png"/></td>
+ </tr>
+ <tr>
+  <td><h3>Profile</td>
+  <td><h3>Explore</td>
+ </tr>
+ <tr>
+  <td><img src="docs/demo_media/Profile.png" /></td>
+  <td><img src="docs/demo_media/Explore.png" /></td>
+ </tr>
+</table>
 
-### View
-![View](docs/demo_media/View.png)
-
-### Create
-![Create](docs/demo_media/Create1.png)
-
-### Profile
-![Profile](docs/demo_media/Profile.png)
-
-### Explore
-![Explore](docs/demo_media/Explore.png)
 
 ## Key Features
   1. Record stories
@@ -60,7 +62,7 @@ We use Firebase for managing user authentication, data storage, and data synchro
 ## Limitations
   1. There are discrepancies between our design prototype and the current state of its implementation.
   2. User data is not available across devices.
-    a. The current demo stores data locally, in device storage. It was built for demonstration on UW iSchool Capstone Night with the expectation that WiFi and cellular service would be unavailable. The most recent build using Firebase is at https://github.com/eduardrg/Bauble/tree/profile-2.
+    a. The current demo stores data locally, in device storage. It was built for demonstration on UW iSchool Capstone Night with the expectation that WiFi and cellular service would be unavailable. The most recent build using Firebase is at https://github.com/eduardrg/TellToo/tree/profile-2.
   3. Story privacy settings are collected, but permissions are not yet implemented.
   4. All stories are public to all users.
   5. Tags are collected, but tag search & display are not yet implemented.
@@ -69,19 +71,19 @@ We use Firebase for managing user authentication, data storage, and data synchro
 ## Installation
 TellToo is currently unreleased. If you would like to install it for testing or development:
   1. Install Android Studio
-  2. Clone https://github.com/eduardrg/Bauble/ 
+  2. Clone https://github.com/eduardrg/TellToo/ 
   3. Import your cloned repo as a project in Android Studio
   4. Build and run the project on a physical Android device. Running the app on an emulator is possible but uninteresting, because as of this writing, the Android Studio emulator does not support recording from a virtualized microphone.
 
 ## Credits
 ### Project Manager, Developer 
-Chris Li • chris@telltoo.us • ![www.linkedin.com/in/christopher-li-527305b6](www.linkedin.com/in/christopher-li-527305b6)  
+Chris Li • chrisli8@uw.edu • <a href="https://www.linkedin.com/in/christopher-li-527305b6">LinkedIn</a>
 ### Lead Developer
-Eduard Grigoryan • eduard@telltoo.us • ![www.linkedin.com/in/eduardrg](www.linkedin.com/in/eduardrg)   
+Eduard Grigoryan • eduardrg@uw.edu • <a href="https://www.linkedin.com/in/eduardrg">LinkedIn</a>  
 ### UX & UI Designer
-Sanchya Mahajan • sm96@telltoo.us • ![www.linkedin.com/in/sanchyamahajan](www.linkedin.com/in/sanchyamahajan)   
+Sanchya Mahajan • sm96@uw.edu • <a href="https://www.linkedin.com/in/sanchyamahajan">LinkedIn</a>
 ### Lead UX & UI Designer
-Joel Elizaga • joel@telltoo.us • ![www.joelelizaga.com](www.joelelizaga.com)   
+Joel Elizaga • jelizaga@uw.edu • <a href="https://www.joelelizaga.com">Portfolio</a>   
 
 ## License
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
@@ -92,6 +94,6 @@ Unless required by applicable law or agreed to in writing, software distributed 
 limitations under the License.
 
 ## Links
-GitHub: https://github.com/eduardrg/bauble  
+GitHub: https://github.com/eduardrg/TellToo  
 Website: https://telltoo.us  
 Design prototype: https://invis.io/FUBBG4FJ7  
